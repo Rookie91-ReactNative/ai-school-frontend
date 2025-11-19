@@ -1,98 +1,287 @@
-﻿import api from './api';
+import api from './api';
+import { ActivityType } from './teamService';
 
-// ✅ Define types directly instead of importing/re-exporting
+// ============================================
+// ENUMS
+// ============================================
 export enum EventType {
-    Sports = 0,
-    Academic = 1,
-    Cultural = 2,
-    Trip = 3,
-    Other = 4
+    Training = 0,
+    SchoolCompetition = 1,
+    DistrictCompetition = 2,
+    StateCompetition = 3,
+    NationalCompetition = 4,
+    InternationalCompetition = 5,
+    FriendlyMatch = 6,
+    Performance = 7,
+    Workshop = 8,
+    Camp = 9,
+    Other = 10
 }
 
+export enum EventStatus {
+    Planned = 0,
+    Confirmed = 1,
+    InProgress = 2,
+    Completed = 3,
+    Cancelled = 4,
+    Postponed = 5
+}
+
+export const EventTypeLabels: Record<EventType, string> = {
+    [EventType.Training]: 'Training Session',
+    [EventType.SchoolCompetition]: 'School Competition',
+    [EventType.DistrictCompetition]: 'District Competition',
+    [EventType.StateCompetition]: 'State Competition',
+    [EventType.NationalCompetition]: 'National Competition',
+    [EventType.InternationalCompetition]: 'International Competition',
+    [EventType.FriendlyMatch]: 'Friendly Match',
+    [EventType.Performance]: 'Performance',
+    [EventType.Workshop]: 'Workshop',
+    [EventType.Camp]: 'Camp',
+    [EventType.Other]: 'Other'
+};
+
+export const EventStatusLabels: Record<EventStatus, string> = {
+    [EventStatus.Planned]: 'Planned',
+    [EventStatus.Confirmed]: 'Confirmed',
+    [EventStatus.InProgress]: 'In Progress',
+    [EventStatus.Completed]: 'Completed',
+    [EventStatus.Cancelled]: 'Cancelled',
+    [EventStatus.Postponed]: 'Postponed'
+};
+
+export const EventStatusColors: Record<EventStatus, string> = {
+    [EventStatus.Planned]: 'bg-gray-100 text-gray-800',
+    [EventStatus.Confirmed]: 'bg-blue-100 text-blue-800',
+    [EventStatus.InProgress]: 'bg-yellow-100 text-yellow-800',
+    [EventStatus.Completed]: 'bg-green-100 text-green-800',
+    [EventStatus.Cancelled]: 'bg-red-100 text-red-800',
+    [EventStatus.Postponed]: 'bg-orange-100 text-orange-800'
+};
+
+// ============================================
+// INTERFACES
+// ============================================
 export interface ActivityEvent {
     eventID: number;
-    eventCode: string;
-    eventName: string;
-    eventType: EventType;
-    description?: string;
-    venue?: string;
-    startDate: Date;
-    endDate: Date;
-    teacherID?: number;
     schoolID: number;
-    isActive: boolean;
-    createdDate: Date;
-    updatedDate?: Date;
-}
-
-export interface CreateEventDto {
-    eventCode: string;
+    teamID?: number;
     eventName: string;
+    eventCode: string;
     eventType: EventType;
+    activityType: number;
+    status: EventStatus;
+    eventDate: string;
+    startTime: string;
+    endTime?: string;
+    venue: string;
+    venueAddress?: string;
+    organizer?: string;
+    opponentSchool?: string;
+    leadingTeacherID?: number;
+    transportationDetails?: string;
+    uniformRequirements?: string;
     description?: string;
-    venue?: string;
-    startDate: string;
-    endDate: string;
-    teacherID?: number;
+    specialInstructions?: string;
+    requiresParentConsent: boolean;
+    parentNotificationSent: boolean;
+    notificationSentDate?: string;
+    result?: string;
+    awardsReceived?: string;
+    remarks?: string;
+    isActive: boolean; // ✅ NEW FIELD
+    createdDate: string;
+    createdBy: number;
+    updatedDate?: string;
+    updatedBy?: number;
 }
 
-export interface UpdateEventDto {
-    eventName?: string;
-    eventType?: EventType;
-    description?: string;
-    venue?: string;
-    startDate?: string;
-    endDate?: string;
-    teacherID?: number;
-    isActive?: boolean;
+export interface EventWithDetails extends ActivityEvent {
+    team?: {
+        teamID: number;
+        teamName: string;
+        activityType: number;
+    };
+    leadingTeacher?: {
+        teacherID: number;
+        fullName: string;
+        email: string;
+        phoneNumber: string;
+    };
+    totalParticipants: number;
+    confirmedParticipants: number;
+    attendedParticipants: number;
+    participants: EventParticipant[];
 }
 
 export interface EventParticipant {
     participantID: number;
     eventID: number;
     studentID: number;
-    studentName: string;
     studentCode: string;
-    role?: string;
-    registrationDate: Date;
+    studentName: string;
+    gender: string;
+    grade: string;
+    class: string;
+    isFromTeam: boolean;
+    teamName?: string;
+    role: string;
+    position?: string;
+    attendanceConfirmed: boolean;
+    parentConsentReceived: boolean;
+    attended: boolean;
+    performance?: string;
+    remarks?: string;
 }
 
-class EventService {
-    async getAllEvents(activeOnly: boolean = true): Promise<ActivityEvent[]> {
-        const response = await api.get(`/activityevent?activeOnly=${activeOnly}`);
-        return response.data.data;
-    }
+export interface EventCreateDto {
+    teamID?: number;
+    eventName: string;
+    eventCode: string;
+    eventType: EventType;
+    activityType: number;
+    status: EventStatus;
+    eventDate: string;
+    startTime: string;
+    endTime?: string;
+    venue: string;
+    venueAddress?: string;
+    organizer?: string;
+    opponentSchool?: string;
+    leadingTeacherID?: number;
+    transportationDetails?: string;
+    uniformRequirements?: string;
+    description?: string;
+    specialInstructions?: string;
+    requiresParentConsent: boolean;
+    result?: string;
+    awardsReceived?: string;
+    remarks?: string;
+}
 
-    async getEvent(id: number): Promise<ActivityEvent> {
+export interface EventUpdateDto {
+    eventName?: string;
+    eventCode?: string;
+    eventType?: EventType;
+    activityType?: ActivityType;
+    status?: EventStatus;
+    eventDate?: string;
+    startTime?: string;
+    endTime?: string;
+    venue?: string;
+    venueAddress?: string;
+    organizer?: string;
+    opponentSchool?: string;
+    leadingTeacherID?: number;
+    transportationDetails?: string;
+    uniformRequirements?: string;
+    description?: string;
+    specialInstructions?: string;
+    requiresParentConsent?: boolean;
+    teamID?: number;
+    result?: string;
+    awardsReceived?: string;
+    remarks?: string;
+}
+
+export interface AddEventParticipantsRequest {
+    teamID?: number;
+    studentIDs?: number[];
+    role?: string;
+    isFromTeam: boolean;
+}
+
+export interface UpdateEventParticipantRequest {
+    role?: string;
+    position?: string;
+    attendanceConfirmed: boolean;
+    parentConsentReceived: boolean;
+    attended: boolean;
+    performance?: string;
+    remarks?: string;
+}
+
+export interface EventCalendarItem {
+    eventID: number;
+    eventName: string;
+    eventType: EventType;
+    activityType: number;
+    status: EventStatus;
+    eventDate: string;
+    startTime: string;
+    venue: string;
+    teamName?: string;
+    participantCount: number;
+}
+
+// ============================================
+// SERVICE
+// ============================================
+export const eventService = {
+    // Get all events for the school
+    getAllEvents: async (
+        startDate?: string,
+        endDate?: string,
+        eventType?: EventType,
+        status?: EventStatus,
+        teamId?: number
+    ): Promise<ActivityEvent[]> => {
+        const params = new URLSearchParams();
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        if (eventType !== undefined) params.append('eventType', eventType.toString());
+        if (status !== undefined) params.append('status', status.toString());
+        if (teamId) params.append('teamId', teamId.toString());
+
+        const response = await api.get(`/activityevent?${params.toString()}`);
+        return response.data.data;
+    },
+
+    // Get event by ID with full details
+    getEventById: async (id: number): Promise<EventWithDetails> => {
         const response = await api.get(`/activityevent/${id}`);
         return response.data.data;
-    }
+    },
 
-    async createEvent(data: CreateEventDto): Promise<ActivityEvent> {
-        const response = await api.post('/activityevent', data);
+    // Create new event
+    createEvent: async (event: EventCreateDto): Promise<ActivityEvent> => {
+        const response = await api.post('/activityevent', event);
         return response.data.data;
-    }
+    },
 
-    async updateEvent(id: number, data: UpdateEventDto): Promise<void> {
-        await api.put(`/activityevent/${id}`, data);
-    }
+    // Update event
+    updateEvent: async (id: number, event: EventUpdateDto): Promise<void> => {
+        await api.put(`/activityevent/${id}`, event);
+    },
 
-    async deleteEvent(id: number): Promise<void> {
+    // Delete event
+    deleteEvent: async (id: number): Promise<void> => {
         await api.delete(`/activityevent/${id}`);
-    }
+    },
 
-    async getParticipants(eventId: number): Promise<EventParticipant[]> {
-        const response = await api.get(`/activityevent/${eventId}/participants`);
+    // Add participants to event
+    addParticipants: async (eventId: number, request: AddEventParticipantsRequest): Promise<void> => {
+        await api.post(`/activityevent/${eventId}/participants`, request);
+    },
+
+    // Update participant
+    updateParticipant: async (participantId: number, participant: UpdateEventParticipantRequest): Promise<void> => {
+        await api.put(`/activityevent/participants/${participantId}`, participant);
+    },
+
+    // Remove participant
+    removeParticipant: async (participantId: number): Promise<void> => {
+        await api.delete(`/activityevent/participants/${participantId}`);
+    },
+
+    // Get calendar view
+    getCalendar: async (month: number, year: number): Promise<EventCalendarItem[]> => {
+        const response = await api.get(`/activityevent/calendar?month=${month}&year=${year}`);
         return response.data.data;
-    }
+    },
 
-    async addParticipants(eventId: number, studentIds: number[]): Promise<void> {
-        await api.post(`/activityevent/${eventId}/participants`, { studentIds });
+    // Send parent notifications
+    sendParentNotifications: async (eventId: number): Promise<void> => {
+        await api.post(`/activityevent/${eventId}/notify-parents`);
     }
-
-    async removeParticipant(eventId: number, studentId: number): Promise<void> {
-        await api.delete(`/activityevent/${eventId}/participants/${studentId}`);
-    }
-}
-
-export const eventService = new EventService();
+};
