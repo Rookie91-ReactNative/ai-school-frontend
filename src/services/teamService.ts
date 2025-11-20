@@ -271,8 +271,9 @@ export const teamService = {
         await api.put(`/team/members/${memberId}`, member);
     },
 
-    // Remove team member
-    removeTeamMember: async (memberId: number): Promise<void> => {
-        await api.delete(`/team/members/${memberId}`);
+    async updateMemberRole(teamId: number, studentId: number, role: string): Promise<void> {
+        await api.put(`/team/${teamId}/members/${studentId}`, { role });
     }
-};
+}
+
+export const teamService = new TeamService();

@@ -1,4 +1,5 @@
 import api from './api';
+import { ActivityType } from './teamService';
 
 // ============================================
 // ENUMS
@@ -81,18 +82,14 @@ export interface ActivityEvent {
     transportationDetails?: string;
     uniformRequirements?: string;
     description?: string;
-    specialInstructions?: string;
-    requiresParentConsent: boolean;
-    parentNotificationSent: boolean;
-    notificationSentDate?: string;
-    result?: string;
-    awardsReceived?: string;
-    remarks?: string;
+    venue?: string;
+    startDate: Date;
+    endDate: Date;
+    teacherID?: number;
+    schoolID: number;
     isActive: boolean;
-    createdDate: string;
-    createdBy: number;
-    updatedDate?: string;
-    updatedBy?: number;
+    createdDate: Date;
+    updatedDate?: Date;
 }
 
 export interface EventWithDetails extends ActivityEvent {
@@ -162,18 +159,6 @@ export interface EventUpdateDto {
     eventName?: string;
     eventCode?: string;
     eventType?: EventType;
-    activityType?: number;
-    status?: EventStatus;
-    eventDate?: string;
-    startTime?: string;
-    endTime?: string;
-    venue?: string;
-    venueAddress?: string;
-    organizer?: string;
-    opponentSchool?: string;
-    leadingTeacherID?: number;
-    transportationDetails?: string;
-    uniformRequirements?: string;
     description?: string;
     specialInstructions?: string;
     requiresParentConsent?: boolean;
@@ -279,8 +264,9 @@ export const eventService = {
         return response.data.data;
     },
 
-    // Send parent notifications
-    sendParentNotifications: async (eventId: number): Promise<void> => {
-        await api.post(`/activityevent/${eventId}/notify-parents`);
+    async removeParticipant(eventId: number, studentId: number): Promise<void> {
+        await api.delete(`/activityevent/${eventId}/participants/${studentId}`);
     }
-};
+}
+
+export const eventService = new EventService();
