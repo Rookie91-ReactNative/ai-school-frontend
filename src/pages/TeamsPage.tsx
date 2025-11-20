@@ -1,7 +1,9 @@
 ﻿import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { getTranslatedActivityType } from '../utils/activityTypeTranslations';
 import {
     Users, Plus, Search, Filter, Eye, Edit, Calendar,
-    MapPin, User, /*Hash,*/ Trophy, Star
+    MapPin, User, Trophy, Star
 } from 'lucide-react';
 import { teamService, ActivityType, ActivityTypeLabels, ActivityCategories, type TeamWithDetails } from '../services/teamService';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
@@ -11,6 +13,7 @@ import EditTeamModal from '../components/Teams/EditTeamModal';
 import TeamDetailsModal from '../components/Teams/TeamDetailsModal';
 
 const TeamsPage = () => {
+    const { t } = useTranslation();
     const [teams, setTeams] = useState<TeamWithDetails[]>([]);
     const [filteredTeams, setFilteredTeams] = useState<TeamWithDetails[]>([]);
     const [loading, setLoading] = useState(true);
@@ -88,21 +91,15 @@ const TeamsPage = () => {
         setViewTeamId(teamId);
     };
 
-    // ✅ FIXED: Fetch full team details before opening edit modal
     const handleEditTeam = async (team: TeamWithDetails) => {
         try {
             setLoadingTeamDetails(true);
-
-            // Fetch full team details with all fields
             const fullTeamDetails = await teamService.getTeamById(team.teamID);
-
-            console.log('Full team details for editing:', fullTeamDetails);
-
             setSelectedTeam(fullTeamDetails);
             setIsEditModalOpen(true);
         } catch (error) {
             console.error('Error loading team details:', error);
-            alert('Failed to load team details');
+            alert(t('teams.errors.loadFailed'));
         } finally {
             setLoadingTeamDetails(false);
         }
@@ -120,10 +117,10 @@ const TeamsPage = () => {
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                             <Users className="w-8 h-8 text-blue-600" />
-                            Teams & Activities
+                            {t('teams.title')}
                         </h1>
                         <p className="text-gray-600 mt-2">
-                            Manage school teams, clubs, and extracurricular activities
+                            {t('teams.subtitle')}
                         </p>
                     </div>
                     <button
@@ -131,7 +128,7 @@ const TeamsPage = () => {
                         className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
                         <Plus className="w-5 h-5" />
-                        Create Team
+                        {t('teams.actions.createTeam')}
                     </button>
                 </div>
 
@@ -143,7 +140,7 @@ const TeamsPage = () => {
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <input
                                 type="text"
-                                placeholder="Search teams, codes, or coaches..."
+                                placeholder={t('teams.search.placeholder')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -158,10 +155,10 @@ const TeamsPage = () => {
                                 onChange={(e) => setSelectedCategory(e.target.value)}
                                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
                             >
-                                <option value="All">All Categories</option>
+                                <option value="All">{t('teams.filters.allCategories')}</option>
                                 {Object.keys(ActivityCategories).map((category) => (
                                     <option key={category} value={category}>
-                                        {category}
+                                        {t(`teams.categories.${category.toLowerCase().replace(/\s+/g, '')}`)}
                                     </option>
                                 ))}
                             </select>
@@ -172,22 +169,24 @@ const TeamsPage = () => {
                             <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <select
                                 value={selectedActivityType}
-                                onChange={(e) => setSelectedActivityType(e.target.value === 'All' ? 'All' : parseInt(e.target.value) as ActivityType)}
+                                onChange={(e) => setSelectedActivityType(e.target.value === 'All' ? 'All' : parseInt(e.target.value))}
                                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
                             >
-                                <option value="All">All Activities</option>
-                                {Object.entries(ActivityType)
-                                    .filter(([key]) => isNaN(Number(key)))
-                                    .map(([key, value]) => (
-                                        <option key={key} value={value}>
-                                            {ActivityTypeLabels[value as ActivityType]}
-                                        </option>
-                                    ))}
+                                <option value="All">{t('teams.filters.allTypes')}</option>
+                                {Object.entries(ActivityCategories).map(([category, types]) => (
+                                    <optgroup key={category} label={t(`teams.categories.${category.toLowerCase().replace(/\s+/g, '')}`)}>
+                                        {types.map((type) => (
+                                            <option key={type} value={type}>
+                                                {ActivityTypeLabels[type]}
+                                            </option>
+                                        ))}
+                                    </optgroup>
+                                ))}
                             </select>
                         </div>
                     </div>
 
-                    {/* Active Filter Toggle */}
+                    {/* Active/Inactive Toggle */}
                     <div className="mt-4 flex items-center gap-2">
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input
@@ -196,68 +195,80 @@ const TeamsPage = () => {
                                 onChange={(e) => setShowActiveOnly(e.target.checked)}
                                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                             />
-                            <span className="text-sm text-gray-700">Show active teams only</span>
+                            <span className="text-sm text-gray-700">{t('teams.filters.showActiveOnly')}</span>
                         </label>
-                        <span className="text-sm text-gray-500 ml-auto">
-                            {filteredTeams.length} team{filteredTeams.length !== 1 ? 's' : ''} found
-                        </span>
                     </div>
                 </div>
             </div>
 
-            {/* Teams Grid */}
+            {/* Results Count */}
+            <div className="mb-4">
+                <p className="text-sm text-gray-600">
+                    {t('teams.results.showing', {
+                        count: filteredTeams.length,
+                        total: teams.length
+                    })}
+                </p>
+            </div>
+
+            {/* Empty State */}
             {filteredTeams.length === 0 ? (
-                <div className="text-center py-12 bg-white rounded-lg shadow-sm border">
+                <div className="text-center py-12">
                     <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No teams found</h3>
-                    <p className="text-gray-600 mb-4">
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        {t('teams.empty.title')}
+                    </h3>
+                    <p className="text-gray-600 mb-6">
                         {searchTerm || selectedCategory !== 'All' || selectedActivityType !== 'All'
-                            ? 'Try adjusting your filters'
-                            : 'Get started by creating your first team'}
+                            ? t('teams.empty.noResults')
+                            : t('teams.empty.noTeams')}
                     </p>
                     {!searchTerm && selectedCategory === 'All' && selectedActivityType === 'All' && (
                         <button
                             onClick={() => setIsAddModalOpen(true)}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             <Plus className="w-5 h-5" />
-                            Create Team
+                            {t('teams.actions.createTeam')}
                         </button>
                     )}
                 </div>
             ) : (
                 <>
+                    {/* Teams Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {currentTeams.map((team) => (
                             <div
                                 key={team.teamID}
-                                className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow"
+                                className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow overflow-hidden"
                             >
                                 {/* Card Header */}
-                                <div className="p-4 border-b">
+                                <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
                                     <div className="flex items-start justify-between mb-2">
                                         <div className="flex-1">
                                             <h3 className="text-lg font-semibold text-gray-900 mb-1">
                                                 {team.teamName}
                                             </h3>
-                                            <p className="text-sm text-gray-500">{team.teamCode}</p>
+                                            <p className="text-sm text-gray-600 font-mono">
+                                                {team.teamCode}
+                                            </p>
                                         </div>
                                         {team.isActive ? (
                                             <span className="px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">
-                                                Active
+                                                {t('teams.status.active')}
                                             </span>
                                         ) : (
                                             <span className="px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full">
-                                                Inactive
+                                                {t('teams.status.inactive')}
                                             </span>
                                         )}
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                                            {team.activityCategory}
+                                            {t(`teams.categories.${team.activityCategory.toLowerCase().replace(/\s+/g, '')}`)}
                                         </span>
                                         <span className="text-xs text-gray-600">
-                                            {team.activityTypeName}
+                                            {getTranslatedActivityType(team.activityTypeName, t)}
                                         </span>
                                     </div>
                                 </div>
@@ -268,7 +279,7 @@ const TeamsPage = () => {
                                     {team.coach && (
                                         <div className="flex items-center gap-2 text-sm">
                                             <User className="w-4 h-4 text-gray-400" />
-                                            <span className="text-gray-600">Coach:</span>
+                                            <span className="text-gray-600">{t('teams.fields.coach')}:</span>
                                             <span className="font-medium text-gray-900">
                                                 {team.coach.fullName}
                                             </span>
@@ -279,7 +290,10 @@ const TeamsPage = () => {
                                     <div className="flex items-center gap-2 text-sm">
                                         <Users className="w-4 h-4 text-gray-400" />
                                         <span className="text-gray-600">
-                                            {team.currentMemberCount} / {team.maxMembers} members
+                                            {t('teams.fields.members', {
+                                                current: team.currentMemberCount,
+                                                max: team.maxMembers
+                                            })}
                                         </span>
                                     </div>
 
@@ -331,7 +345,7 @@ const TeamsPage = () => {
                                         className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                                     >
                                         <Eye className="w-4 h-4" />
-                                        View
+                                        {t('teams.actions.view')}
                                     </button>
                                     <button
                                         onClick={() => handleEditTeam(team)}
@@ -339,7 +353,7 @@ const TeamsPage = () => {
                                         className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <Edit className="w-4 h-4" />
-                                        {loadingTeamDetails ? 'Loading...' : 'Edit'}
+                                        {loadingTeamDetails ? t('teams.actions.loading') : t('teams.actions.edit')}
                                     </button>
                                 </div>
                             </div>
@@ -348,11 +362,11 @@ const TeamsPage = () => {
 
                     {/* Pagination */}
                     {totalPages > 1 && (
-                        <div className="border-t border-gray-200 px-6 py-4">
+                        <div className="border-t border-gray-200 px-6 py-4 mt-6">
                             <Pagination
                                 currentPage={currentPage}
                                 totalPages={totalPages}
-                                    totalItems={filteredTeams.length}
+                                totalItems={filteredTeams.length}
                                 itemsPerPage={itemsPerPage}
                                 onPageChange={setCurrentPage}
                             />

@@ -746,5 +746,211 @@
     "userAccountMsg3": "ℹ️ 教师账号将默认创建，无需登录权限。您可以稍后创建用户账号。",
     "createTeacherUserAcct": "创建教师和用户帐户",
     "usingCustomPassword": "使用自定义密码"
+  },
+  "teams": {
+    "title": "团队与活动",
+    "subtitle": "管理学校团队、俱乐部和课外活动",
+    "loading": "加载团队详情中...",
+    "search": {
+      "placeholder": "搜索团队、代码或教练..."
+    },
+    "filters": {
+      "allCategories": "所有类别",
+      "allTypes": "所有类型",
+      "showActiveOnly": "仅显示活跃团队"
+    },
+    "details": {
+      "members": "成员",
+      "established": "成立时间",
+      "status": "状态",
+      "mainCoach": "主教练",
+      "assistantCoach": "助理教练"
+    },
+    "categories": {
+      "sports": "体育运动",
+      "performingarts": "表演艺术",
+      "academic&cultural": "学术 & 文化",
+      "creative&visualarts": "创意与视觉艺术",
+      "uniformedbodies": "制服团体",
+      "service&leadership": "服务与领导力",
+      "other": "其他"
+    },
+    "members": {
+      "title": "团队成员",
+      "addMembers": "添加成员",
+      "addNew": "添加新成员",
+      "position": "位置（可选）",
+      "positionPlaceholder": "例如：前锋、后卫、守门员",
+      "selectStudents": "选择学生",
+      "addCount": "添加 {{count}} 名成员",
+      "noMembers": "暂无成员。添加学生到团队。",
+      "captain": "队长",
+      "viceCaptain": "副队长",
+      "remove": "移除",
+      "editDetails": "编辑成员详情",
+      "editing": "正在编辑",
+      "jerseyNumber": "球衣号码",
+      "jerseyPlaceholder": "例如：10",
+      "selectAtLeastOne": "请至少选择一名学生",
+      "addFailed": "添加成员失败",
+      "updateFailed": "更新成员失败",
+      "removeFailed": "移除成员失败",
+      "confirmRemove": "您确定要将 {{name}} 从团队中移除吗？",
+      "filterByClass": "按班级筛选",
+      "allClasses": "所有班级",
+      "searchByName": "按姓名搜索",
+      "searchPlaceholder": "搜索学生姓名...",
+      "available": "可用",
+      "noStudentsFound": "未找到学生"
+    },
+    "status": {
+      "active": "活跃",
+      "inactive": "不活跃"
+    },
+    "fields": {
+      "teamName": "团队名称",
+      "teamCode": "团队代码",
+      "activityType": "活动类型",
+      "coach": "教练",
+      "assistantCoach": "助理教练",
+      "members": "{{current}} / {{max}} 成员",
+      "maxMembers": "最大成员数",
+      "trainingSchedule": "训练时间表",
+      "trainingVenue": "训练场地",
+      "ageGroup": "年龄组",
+      "division": "组别",
+      "establishedDate": "成立日期",
+      "description": "描述",
+      "achievements": "成就",
+      "objectives": "目标",
+      "requirements": "要求",
+      "isActive": "团队活跃"
+    },
+    "actions": {
+      "createTeam": "创建团队",
+      "view": "查看",
+      "edit": "编辑",
+      "delete": "删除",
+      "save": "保存",
+      "cancel": "取消",
+      "loading": "加载中...",
+      "close": "关闭",
+      "saveChanges": "保存更改",
+      "saving": "保存中..."
+    },
+    "results": {
+      "showing": "显示 {{count}} / {{total}} 个团队"
+    },
+    "empty": {
+      "title": "未找到团队",
+      "noResults": "没有符合您搜索条件的团队。请尝试调整您的筛选条件。",
+      "noTeams": "开始创建您的第一个团队吧。"
+    },
+    "modal": {
+      "add": {
+        "title": "创建新团队",
+        "subtitle": "添加新的体育或活动团队"
+      },
+      "edit": {
+        "title": "编辑团队",
+        "subtitle": "更新团队信息"
+      },
+      "details": {
+        "title": "团队详情",
+        "subtitle": "查看完整的团队信息"
+      },
+      "sections": {
+        "basicInfo": "基本信息",
+        "coachingStaff": "教练团队",
+        "teamDetails": "团队详情",
+        "trainingInfo": "训练信息",
+        "additionalInfo": "附加信息",
+        "members": "团队成员",
+        "achievements": "成就"
+      }
+    },
+    "placeholders": {
+      "teamName": "例如：篮球队 A",
+      "teamCode": "例如：BBALL-A",
+      "ageGroup": "例如：15岁以下、18岁以下",
+      "division": "例如：A组、B组",
+      "description": "团队简介...",
+      "trainingSchedule": "例如：周一和周三，下午4-6点",
+      "trainingVenue": "例如：学校体育馆",
+      "achievements": "列出团队成就和奖项...",
+      "objectives": "团队目标和宗旨...",
+      "requirements": "加入本团队的要求...",
+      "selectCoach": "选择教练",
+      "selectAssistant": "选择助理教练"
+    },
+    "validation": {
+      "required": "此字段为必填项",
+      "teamNameRequired": "团队名称为必填项",
+      "teamCodeRequired": "团队代码为必填项",
+      "maxMembersMin": "最大成员数至少为1"
+    },
+    "messages": {
+      "createSuccess": "团队创建成功！",
+      "updateSuccess": "团队更新成功！",
+      "deleteSuccess": "团队删除成功！",
+      "loadFailed": "加载团队详情失败"
+    },
+    "errors": {
+      "loadFailed": "加载团队详情失败",
+      "createFailed": "创建团队失败",
+      "updateFailed": "更新团队失败",
+      "deleteFailed": "删除团队失败"
+    },
+    "confirmations": {
+      "delete": "您确定要删除此团队吗？",
+      "deleteWarning": "此操作无法撤销。"
+    }
+  },
+  "activityTypes": {
+    "football": "足球",
+    "basketball": "篮球",
+    "badminton": "羽毛球",
+    "tableTennis": "乒乓球",
+    "volleyball": "排球",
+    "netball": "投球",
+    "athletics": "田径",
+    "swimming": "游泳",
+    "cricket": "板球",
+    "rugby": "橄榄球",
+    "hockey": "曲棍球",
+    "sepakTakraw": "藤球",
+    "martialArts": "武术",
+    "gymnastics": "体操",
+    "_24FestiveDrums": "24节令鼓",
+    "choir": "合唱团",
+    "orchestra": "管弦乐团",
+    "dance": "舞蹈",
+    "drama": "戏剧",
+    "traditionalMusic": "传统音乐",
+    "debate": "辩论",
+    "scienceClub": "科学学会",
+    "mathematicsClub": "数学学会",
+    "languageClub": "语文学会",
+    "historyClub": "历史学会",
+    "geographyClub": "地理学会",
+    "roboticsClub": "机器人学会",
+    "itClub": "资讯工艺学会",
+    "photographyClub": "摄影学会",
+    "chess": "象棋",
+    "artAndCraft": "美术与手工艺",
+    "painting": "绘画",
+    "sculpture": "雕塑",
+    "calligraphy": "书法",
+    "scouts": "童军",
+    "girlGuides": "女童军",
+    "cadet": "学生军",
+    "stJohnAmbulance": "圣约翰救伤队",
+    "redCrescent": "红新月会",
+    "prefect": "学长",
+    "studentCouncil": "学生理事会",
+    "libraryClub": "图书馆学会",
+    "environmentalClub": "环保学会",
+    "other": "其他"
   }
+
 }

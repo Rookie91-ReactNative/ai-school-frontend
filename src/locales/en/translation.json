@@ -746,5 +746,210 @@
     "userAccountMsg3": "ℹ️ Teacher will be created without login access. You can create a user account later.",
     "createTeacherUserAcct": "Create Teacher & User Account",
     "usingCustomPassword": "Using custom password"
+  },
+  "teams": {
+    "title": "Teams & Activities",
+    "subtitle": "Manage school teams, clubs, and extracurricular activities",
+    "loading": "Loading team details...",
+    "search": {
+      "placeholder": "Search teams, codes, or coaches..."
+    },
+    "filters": {
+      "allCategories": "All Categories",
+      "allTypes": "All Types",
+      "showActiveOnly": "Show active teams only"
+    },
+    "details": {
+      "members": "Members",
+      "established": "Established",
+      "status": "Status",
+      "mainCoach": "Main Coach",
+      "assistantCoach": "Assistant Coach"
+    },
+    "categories": {
+      "sports": "Sports",
+      "performingarts": "Performing Arts",
+      "academic&cultural": "Academic & Cultural",
+      "creative&visualarts": "Creative & Visual Arts",
+      "uniformedbodies": "Uniformed Bodies",
+      "service&leadership": "Service & Leadership",
+      "other": "Other"
+    },
+    "members": {
+      "title": "Team Members",
+      "addMembers": "Add Members",
+      "addNew": "Add New Members",
+      "position": "Position (Optional)",
+      "positionPlaceholder": "e.g., Forward, Defender, Goalkeeper",
+      "selectStudents": "Select Students",
+      "addCount": "Add {{count}} Member(s)",
+      "noMembers": "No members yet. Add students to the team.",
+      "captain": "Captain",
+      "viceCaptain": "Vice Captain",
+      "remove": "Remove",
+      "editDetails": "Edit Member Details",
+      "editing": "Editing",
+      "jerseyNumber": "Jersey Number",
+      "jerseyPlaceholder": "e.g., 10",
+      "selectAtLeastOne": "Please select at least one student",
+      "addFailed": "Failed to add members",
+      "updateFailed": "Failed to update member",
+      "removeFailed": "Failed to remove member",
+      "confirmRemove": "Are you sure you want to remove {{name}} from the team?",
+      "filterByClass": "Filter by Class",
+      "allClasses": "All Classes",
+      "searchByName": "Search by Name",
+      "searchPlaceholder": "Search student name...",
+      "available": "available",
+      "noStudentsFound": "No students found"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "fields": {
+      "teamName": "Team Name",
+      "teamCode": "Team Code",
+      "activityType": "Activity Type",
+      "coach": "Coach",
+      "assistantCoach": "Assistant Coach",
+      "members": "{{current}} / {{max}} members",
+      "maxMembers": "Max Members",
+      "trainingSchedule": "Training Schedule",
+      "trainingVenue": "Training Venue",
+      "ageGroup": "Age Group",
+      "division": "Division",
+      "establishedDate": "Established Date",
+      "description": "Description",
+      "achievements": "Achievements",
+      "objectives": "Objectives",
+      "requirements": "Requirements",
+      "isActive": "Is Active"
+    },
+    "actions": {
+      "createTeam": "Create Team",
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel",
+      "loading": "Loading...",
+      "close": "Close",
+      "saveChanges": "Save changes",
+      "saving": "Saving..."
+    },
+    "results": {
+      "showing": "Showing {{count}} of {{total}} teams"
+    },
+    "empty": {
+      "title": "No Teams Found",
+      "noResults": "No teams match your search criteria. Try adjusting your filters.",
+      "noTeams": "Get started by creating your first team."
+    },
+    "modal": {
+      "add": {
+        "title": "Create New Team",
+        "subtitle": "Add a new sports or activity team"
+      },
+      "edit": {
+        "title": "Edit Team",
+        "subtitle": "Update team information"
+      },
+      "details": {
+        "title": "Team Details",
+        "subtitle": "View complete team information"
+      },
+      "sections": {
+        "basicInfo": "Basic Information",
+        "coachingStaff": "Coaching Staff",
+        "teamDetails": "Team Details",
+        "trainingInfo": "Training Information",
+        "additionalInfo": "Additional Information",
+        "members": "Team Members",
+        "achievements": "Achievements"
+      }
+    },
+    "placeholders": {
+      "teamName": "e.g., Basketball Team A",
+      "teamCode": "e.g., BBALL-A",
+      "ageGroup": "e.g., Under-15, Under-18",
+      "division": "e.g., A Division, B Division",
+      "description": "Brief description of the team...",
+      "trainingSchedule": "e.g., Monday & Wednesday, 4-6 PM",
+      "trainingVenue": "e.g., School Gymnasium",
+      "achievements": "List team achievements and awards...",
+      "objectives": "Team goals and objectives...",
+      "requirements": "Requirements to join this team...",
+      "selectCoach": "Select Coach",
+      "selectAssistant": "Select Assistant Coach"
+    },
+    "validation": {
+      "required": "This field is required",
+      "teamNameRequired": "Team name is required",
+      "teamCodeRequired": "Team code is required",
+      "maxMembersMin": "Max members must be at least 1"
+    },
+    "messages": {
+      "createSuccess": "Team created successfully!",
+      "updateSuccess": "Team updated successfully!",
+      "deleteSuccess": "Team deleted successfully!",
+      "loadFailed": "Failed to load team details"
+    },
+    "errors": {
+      "loadFailed": "Failed to load team details",
+      "createFailed": "Failed to create team",
+      "updateFailed": "Failed to update team",
+      "deleteFailed": "Failed to delete team"
+    },
+    "confirmations": {
+      "delete": "Are you sure you want to delete this team?",
+      "deleteWarning": "This action cannot be undone."
+    }
+  },
+  "activityTypes": {
+    "football": "Football/Soccer",
+    "basketball": "Basketball",
+    "badminton": "Badminton",
+    "tableTennis": "Table Tennis",
+    "volleyball": "Volleyball",
+    "netball": "Netball",
+    "athletics": "Athletics",
+    "swimming": "Swimming",
+    "cricket": "Cricket",
+    "rugby": "Rugby",
+    "hockey": "Hockey",
+    "sepakTakraw": "Sepak Takraw",
+    "martialArts": "Martial Arts",
+    "gymnastics": "Gymnastics",
+    "_24FestiveDrums": "24 Festive Drums",
+    "choir": "Choir",
+    "orchestra": "Orchestra",
+    "dance": "Dance",
+    "drama": "Drama",
+    "traditionalMusic": "Traditional Music",
+    "debate": "Debate",
+    "scienceClub": "Science Club",
+    "mathematicsClub": "Mathematics Club",
+    "languageClub": "Language Club",
+    "historyClub": "History Club",
+    "geographyClub": "Geography Club",
+    "roboticsClub": "Robotics Club",
+    "itClub": "IT Club",
+    "photographyClub": "Photography Club",
+    "chess": "Chess",
+    "artAndCraft": "Art & Craft",
+    "painting": "Painting",
+    "sculpture": "Sculpture",
+    "calligraphy": "Calligraphy",
+    "scouts": "Scouts",
+    "girlGuides": "Girl Guides",
+    "cadet": "Cadet",
+    "stJohnAmbulance": "St. John Ambulance",
+    "redCrescent": "Red Crescent",
+    "prefect": "Prefect",
+    "studentCouncil": "Student Council",
+    "libraryClub": "Library Club",
+    "environmentalClub": "Environmental Club",
+    "other": "Other"
   }
 }

@@ -746,5 +746,210 @@
     "userAccountMsg3": "ℹ️ Guru akan dibuat tanpa akses log masuk. Anda boleh membuat akaun pengguna kemudian.",
     "createTeacherUserAcct": "Buat Akaun Guru & Pengguna",
     "usingCustomPassword": "Menggunakan kata laluan tersuai"
+  },
+  "teams": {
+    "title": "Pasukan & Aktiviti",
+    "subtitle": "Urus pasukan sekolah, kelab, dan aktiviti kokurikulum",
+    "loading": "Memuatkan butiran pasukan...",
+    "search": {
+      "placeholder": "Cari pasukan, kod, atau jurulatih..."
+    },
+    "filters": {
+      "allCategories": "Semua Kategori",
+      "allTypes": "Semua Jenis",
+      "showActiveOnly": "Tunjuk pasukan aktif sahaja"
+    },
+    "details": {
+      "members": "Ahli",
+      "established": "Ditubuhkan",
+      "status": "Status",
+      "mainCoach": "Jurulatih Utama",
+      "assistantCoach": "Jurulatih Pembantu"
+    },
+    "categories": {
+      "sports": "Sukan",
+      "performingarts": "Seni Persembahan",
+      "academic&cultural": "Akademik & Kebudayaan",
+      "creative&visualarts": "Seni Kreatif & Visual",
+      "uniformedbodies": "Badan Beruniform",
+      "service&leadership": "Perkhidmatan & Kepimpinan",
+      "other": "Lain-lain"
+    },
+    "members": {
+      "title": "Ahli Pasukan",
+      "addMembers": "Tambah Ahli",
+      "addNew": "Tambah Ahli Baharu",
+      "position": "Kedudukan (Pilihan)",
+      "positionPlaceholder": "cth: Penyerang, Pertahanan, Penjaga Gol",
+      "selectStudents": "Pilih Pelajar",
+      "addCount": "Tambah {{count}} Ahli",
+      "noMembers": "Tiada ahli lagi. Tambah pelajar ke pasukan.",
+      "captain": "Kapten",
+      "viceCaptain": "Naib Kapten",
+      "remove": "Keluarkan",
+      "editDetails": "Edit Butiran Ahli",
+      "editing": "Mengedit",
+      "jerseyNumber": "Nombor Jersi",
+      "jerseyPlaceholder": "cth: 10",
+      "selectAtLeastOne": "Sila pilih sekurang-kurangnya seorang pelajar",
+      "addFailed": "Gagal menambah ahli",
+      "updateFailed": "Gagal mengemas kini ahli",
+      "removeFailed": "Gagal mengeluarkan ahli",
+      "confirmRemove": "Adakah anda pasti mahu mengeluarkan {{name}} daripada pasukan?",
+      "filterByClass": "Tapis mengikut Kelas",
+      "allClasses": "Semua Kelas",
+      "searchByName": "Cari mengikut Nama",
+      "searchPlaceholder": "Cari nama pelajar...",
+      "available": "tersedia",
+      "noStudentsFound": "Tiada pelajar dijumpai"
+    },
+    "status": {
+      "active": "Aktif",
+      "inactive": "Tidak Aktif"
+    },
+    "fields": {
+      "teamName": "Nama Pasukan",
+      "teamCode": "Kod Pasukan",
+      "activityType": "Jenis Aktiviti",
+      "coach": "Jurulatih",
+      "assistantCoach": "Penolong Jurulatih",
+      "members": "{{current}} / {{max}} ahli",
+      "maxMembers": "Bilangan Ahli Maksimum",
+      "trainingSchedule": "Jadual Latihan",
+      "trainingVenue": "Tempat Latihan",
+      "ageGroup": "Kumpulan Umur",
+      "division": "Bahagian",
+      "establishedDate": "Tarikh Ditubuhkan",
+      "description": "Penerangan",
+      "achievements": "Pencapaian",
+      "objectives": "Objektif",
+      "requirements": "Keperluan",
+      "isActive": "Adalah Aktif"
+    },
+    "actions": {
+      "createTeam": "Cipta Pasukan",
+      "view": "Lihat",
+      "edit": "Sunting",
+      "delete": "Padam",
+      "save": "Simpan",
+      "cancel": "Batal",
+      "loading": "Memuatkan...",
+      "close": "Tutup",
+      "saveChanges": "Simpan Perubahan",
+      "saving": "Simpan..."
+    },
+    "results": {
+      "showing": "Menunjukkan {{count}} daripada {{total}} pasukan"
+    },
+    "empty": {
+      "title": "Tiada Pasukan Dijumpai",
+      "noResults": "Tiada pasukan yang sepadan dengan kriteria carian anda. Cuba laraskan penapis anda.",
+      "noTeams": "Mulakan dengan mencipta pasukan pertama anda."
+    },
+    "modal": {
+      "add": {
+        "title": "Cipta Pasukan Baru",
+        "subtitle": "Tambah pasukan sukan atau aktiviti baharu"
+      },
+      "edit": {
+        "title": "Sunting Pasukan",
+        "subtitle": "Kemas kini maklumat pasukan"
+      },
+      "details": {
+        "title": "Butiran Pasukan",
+        "subtitle": "Lihat maklumat lengkap pasukan"
+      },
+      "sections": {
+        "basicInfo": "Maklumat Asas",
+        "coachingStaff": "Kakitangan Jurulatih",
+        "teamDetails": "Butiran Pasukan",
+        "trainingInfo": "Maklumat Latihan",
+        "additionalInfo": "Maklumat Tambahan",
+        "members": "Ahli Pasukan",
+        "achievements": "Pencapaian"
+      }
+    },
+    "placeholders": {
+      "teamName": "cth: Pasukan Bola Keranjang A",
+      "teamCode": "cth: BBALL-A",
+      "ageGroup": "cth: Bawah 15, Bawah 18",
+      "division": "cth: Bahagian A, Bahagian B",
+      "description": "Penerangan ringkas tentang pasukan...",
+      "trainingSchedule": "cth: Isnin & Rabu, 4-6 petang",
+      "trainingVenue": "cth: Gimnasium Sekolah",
+      "achievements": "Senaraikan pencapaian dan anugerah pasukan...",
+      "objectives": "Matlamat dan objektif pasukan...",
+      "requirements": "Keperluan untuk menyertai pasukan ini...",
+      "selectCoach": "Pilih Jurulatih",
+      "selectAssistant": "Pilih Penolong Jurulatih"
+    },
+    "validation": {
+      "required": "Medan ini diperlukan",
+      "teamNameRequired": "Nama pasukan diperlukan",
+      "teamCodeRequired": "Kod pasukan diperlukan",
+      "maxMembersMin": "Bilangan ahli maksimum mestilah sekurang-kurangnya 1"
+    },
+    "messages": {
+      "createSuccess": "Pasukan berjaya dicipta!",
+      "updateSuccess": "Pasukan berjaya dikemas kini!",
+      "deleteSuccess": "Pasukan berjaya dipadamkan!",
+      "loadFailed": "Gagal memuatkan butiran pasukan"
+    },
+    "errors": {
+      "loadFailed": "Gagal memuatkan butiran pasukan",
+      "createFailed": "Gagal mencipta pasukan",
+      "updateFailed": "Gagal mengemas kini pasukan",
+      "deleteFailed": "Gagal memadam pasukan"
+    },
+    "confirmations": {
+      "delete": "Adakah anda pasti mahu memadam pasukan ini?",
+      "deleteWarning": "Tindakan ini tidak boleh dibatalkan."
+    }
+  },
+  "activityTypes": {
+    "football": "Bola Sepak",
+    "basketball": "Bola Keranjang",
+    "badminton": "Badminton",
+    "tableTennis": "Ping Pong",
+    "volleyball": "Bola Tampar",
+    "netball": "Bola Jaring",
+    "athletics": "Olahraga",
+    "swimming": "Renang",
+    "cricket": "Kriket",
+    "rugby": "Ragbi",
+    "hockey": "Hoki",
+    "sepakTakraw": "Sepak Takraw",
+    "martialArts": "Seni Mempertahankan Diri",
+    "gymnastics": "Gimnastik",
+    "_24FestiveDrums": "24 Gendang Festif",
+    "choir": "Koir",
+    "orchestra": "Orkestra",
+    "dance": "Tarian",
+    "drama": "Drama",
+    "traditionalMusic": "Muzik Tradisional",
+    "debate": "Bahas",
+    "scienceClub": "Kelab Sains",
+    "mathematicsClub": "Kelab Matematik",
+    "languageClub": "Kelab Bahasa",
+    "historyClub": "Kelab Sejarah",
+    "geographyClub": "Kelab Geografi",
+    "roboticsClub": "Kelab Robotik",
+    "itClub": "Kelab IT",
+    "photographyClub": "Kelab Fotografi",
+    "chess": "Catur",
+    "artAndCraft": "Seni & Kraf",
+    "painting": "Lukisan",
+    "sculpture": "Arca",
+    "calligraphy": "Kaligrafi",
+    "scouts": "Pengakap",
+    "girlGuides": "Pandu Puteri",
+    "cadet": "Kadet",
+    "stJohnAmbulance": "Ambulans St. John",
+    "redCrescent": "Bulan Sabit Merah",
+    "prefect": "Pengawas",
+    "studentCouncil": "Majlis Pelajar",
+    "libraryClub": "Kelab Perpustakaan",
+    "environmentalClub": "Kelab Alam Sekitar",
+    "other": "Lain-lain"
   }
 }

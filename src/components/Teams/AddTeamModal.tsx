@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Users, Calendar, MapPin, Hash, Target } from 'lucide-react';
 import { teamService, ActivityType, ActivityTypeLabels, ActivityCategories, type TeamCreateDto } from '../../services/teamService';
 import { teacherService, type Teacher } from '../../services/teacherService';
+import { getTranslatedActivityType } from '../../utils/activityTypeTranslations';
 
 interface AddTeamModalProps {
     onClose: () => void;
@@ -9,6 +11,7 @@ interface AddTeamModalProps {
 }
 
 const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
+    const { t } = useTranslation();
     const [teachers, setTeachers] = useState<Teacher[]>([]);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState<TeamCreateDto>({
@@ -47,7 +50,7 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
             onSuccess();
         } catch (error) {
             console.error('Error creating team:', error);
-            alert('Failed to create team');
+            alert(t('teams.errors.createFailed'));
         } finally {
             setLoading(false);
         }
@@ -61,19 +64,20 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
                 {/* Header */}
-                <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+                <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between z-10">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-blue-100 rounded-lg">
                             <Users className="w-5 h-5 text-blue-600" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-semibold text-gray-900">Create New Team</h2>
-                            <p className="text-sm text-gray-500">Add a new sports or activity team</p>
+                            <h2 className="text-xl font-semibold text-gray-900">{t('teams.modal.add.title')}</h2>
+                            <p className="text-sm text-gray-500">{t('teams.modal.add.subtitle')}</p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
                         className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        aria-label={t('teams.actions.close')}
                     >
                         <X className="w-5 h-5" />
                     </button>
@@ -84,14 +88,14 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                     {/* Basic Information */}
                     <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-                            Basic Information
+                            {t('teams.modal.sections.basicInfo')}
                         </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Team Name */}
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Team Name <span className="text-red-500">*</span>
+                                    {t('teams.fields.teamName')} <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -99,14 +103,14 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                                     value={formData.teamName}
                                     onChange={(e) => handleChange('teamName', e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="e.g., Basketball Team A"
+                                    placeholder={t('teams.placeholders.teamName')}
                                 />
                             </div>
 
                             {/* Team Code */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Team Code <span className="text-red-500">*</span>
+                                    {t('teams.fields.teamCode')} <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -114,14 +118,14 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                                     value={formData.teamCode}
                                     onChange={(e) => handleChange('teamCode', e.target.value.toUpperCase())}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="e.g., BBALL-A"
+                                    placeholder={t('teams.placeholders.teamCode')}
                                 />
                             </div>
 
                             {/* Activity Type */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Activity Type <span className="text-red-500">*</span>
+                                    {t('teams.fields.activityType')} <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     required
@@ -130,10 +134,13 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 >
                                     {Object.entries(ActivityCategories).map(([category, types]) => (
-                                        <optgroup key={category} label={category}>
+                                        <optgroup
+                                            key={category}
+                                            label={t(`teams.categories.${category.toLowerCase().replace(/\s+/g, '')}`)}
+                                        >
                                             {types.map((type) => (
                                                 <option key={type} value={type}>
-                                                    {ActivityTypeLabels[type]}
+                                                    {getTranslatedActivityType(ActivityTypeLabels[type], t)}
                                                 </option>
                                             ))}
                                         </optgroup>
@@ -146,21 +153,21 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                     {/* Coaching Staff */}
                     <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-                            Coaching Staff
+                            {t('teams.modal.sections.coachingStaff')}
                         </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Main Coach */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Main Coach / Teacher
+                                    {t('teams.fields.coach')}
                                 </label>
                                 <select
                                     value={formData.coachTeacherID || ''}
                                     onChange={(e) => handleChange('coachTeacherID', e.target.value ? parseInt(e.target.value) : undefined)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 >
-                                    <option value="">Select Coach</option>
+                                    <option value="">{t('teams.placeholders.selectCoach')}</option>
                                     {teachers.map((teacher) => (
                                         <option key={teacher.teacherID} value={teacher.teacherID}>
                                             {teacher.fullName} ({teacher.teacherCode})
@@ -172,14 +179,14 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                             {/* Assistant Coach */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Assistant Coach
+                                    {t('teams.fields.assistantCoach')}
                                 </label>
                                 <select
                                     value={formData.assistantCoachID || ''}
                                     onChange={(e) => handleChange('assistantCoachID', e.target.value ? parseInt(e.target.value) : undefined)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 >
-                                    <option value="">Select Assistant Coach</option>
+                                    <option value="">{t('teams.placeholders.selectAssistant')}</option>
                                     {teachers.filter(t => t.teacherID !== formData.coachTeacherID).map((teacher) => (
                                         <option key={teacher.teacherID} value={teacher.teacherID}>
                                             {teacher.fullName} ({teacher.teacherCode})
@@ -193,7 +200,7 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                     {/* Team Details */}
                     <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-                            Team Details
+                            {t('teams.modal.sections.teamDetails')}
                         </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -201,14 +208,14 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     <Target className="w-4 h-4 inline mr-1" />
-                                    Age Group
+                                    {t('teams.fields.ageGroup')}
                                 </label>
                                 <input
                                     type="text"
                                     value={formData.ageGroup || ''}
                                     onChange={(e) => handleChange('ageGroup', e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="e.g., Under-15, Under-18"
+                                    placeholder={t('teams.placeholders.ageGroup')}
                                 />
                             </div>
 
@@ -216,14 +223,14 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     <Hash className="w-4 h-4 inline mr-1" />
-                                    Division
+                                    {t('teams.fields.division')}
                                 </label>
                                 <input
                                     type="text"
                                     value={formData.division || ''}
                                     onChange={(e) => handleChange('division', e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="e.g., A Division, B Division"
+                                    placeholder={t('teams.placeholders.division')}
                                 />
                             </div>
 
@@ -231,7 +238,7 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     <Users className="w-4 h-4 inline mr-1" />
-                                    Max Members <span className="text-red-500">*</span>
+                                    {t('teams.fields.maxMembers')} <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="number"
@@ -247,7 +254,7 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     <Calendar className="w-4 h-4 inline mr-1" />
-                                    Established Date <span className="text-red-500">*</span>
+                                    {t('teams.fields.establishedDate')} <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="date"
@@ -263,21 +270,21 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                     {/* Training Information */}
                     <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-                            Training Information
+                            {t('teams.modal.sections.trainingInfo')}
                         </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Training Schedule */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Training Schedule
+                                    {t('teams.fields.trainingSchedule')}
                                 </label>
                                 <input
                                     type="text"
                                     value={formData.trainingSchedule || ''}
                                     onChange={(e) => handleChange('trainingSchedule', e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="e.g., Monday & Wednesday 4-6 PM"
+                                    placeholder={t('teams.placeholders.trainingSchedule')}
                                 />
                             </div>
 
@@ -285,14 +292,14 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     <MapPin className="w-4 h-4 inline mr-1" />
-                                    Training Venue
+                                    {t('teams.fields.trainingVenue')}
                                 </label>
                                 <input
                                     type="text"
                                     value={formData.trainingVenue || ''}
                                     onChange={(e) => handleChange('trainingVenue', e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="e.g., School Hall, Sports Field"
+                                    placeholder={t('teams.placeholders.trainingVenue')}
                                 />
                             </div>
                         </div>
@@ -300,14 +307,14 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                         {/* Description */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Description
+                                {t('teams.fields.description')}
                             </label>
                             <textarea
                                 value={formData.description || ''}
                                 onChange={(e) => handleChange('description', e.target.value)}
                                 rows={3}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Team description, goals, or additional information..."
+                                placeholder={t('teams.placeholders.description')}
                             />
                         </div>
                     </div>
@@ -319,14 +326,14 @@ const AddTeamModal = ({ onClose, onSuccess }: AddTeamModalProps) => {
                             onClick={onClose}
                             className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                         >
-                            Cancel
+                            {t('teams.actions.cancel')}
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
                             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {loading ? 'Creating...' : 'Create Team'}
+                            {loading ? t('teams.actions.loading') : t('teams.actions.save')}
                         </button>
                     </div>
                 </form>
