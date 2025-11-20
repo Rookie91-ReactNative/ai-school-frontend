@@ -114,7 +114,7 @@ export const ActivityCategories = {
         ActivityType.MartialArts, ActivityType.Gymnastics
     ],
     'Performing Arts': [
-        ActivityType.Choir, ActivityType.Orchestra, ActivityType.Dance,
+        ActivityType._24FestiveDrums, ActivityType.Choir, ActivityType.Orchestra, ActivityType.Dance,
         ActivityType.Drama, ActivityType.TraditionalMusic
     ],
     'Academic & Cultural': [
