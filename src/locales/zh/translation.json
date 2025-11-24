@@ -73,7 +73,8 @@
     "teachers": "老师",
     "teams": "团队",
     "events": "活动",
-    "eventsReport": "活动报告"
+    "eventsReport": "活动报告",
+    "importStudents": "输入学生"
   },
   "unauthorized": {
     "title": "访问被拒绝",
@@ -535,10 +536,12 @@
     "enrolled": "已注册",
     "notEnrolled": "未注册",
     "notEnrolledFilter": "⚠️ 未注册（无学年）",
+    "otherNameHint": "其他语言的别名（例如，中文名、泰米尔语名）",
 
     "table": {
       "studentCode": "学生代码",
       "name": "姓名",
+      "otherName": "其它名字",
       "gender": "性别",
       "academicInfo": "学术信息",
       "contact": "联系方式",
@@ -565,6 +568,7 @@
       "enrollNow": "立即注册学生",
       "studentCode": "学生代码",
       "fullName": "全名",
+      "otherName": "其它名字",
       "email": "电子邮件",
       "phoneNumber": "电话号码",
       "dateOfBirth": "出生日期",

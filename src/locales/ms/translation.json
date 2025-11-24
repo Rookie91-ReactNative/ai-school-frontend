@@ -73,7 +73,8 @@
     "teachers": "Guru",
     "teams": "Pasukan",
     "events": "Peristiwa",
-    "eventsReport": "Laporan peristiwa"
+    "eventsReport": "Laporan peristiwa",
+    "importStudents": "Import Pelajar"
   },
   "unauthorized": {
     "title": "Akses Ditolak",
@@ -535,10 +536,12 @@
     "enrolled": "Berdaftar",
     "notEnrolled": "Tidak Berdaftar",
     "notEnrolledFilter": "⚠️ Tidak Mendaftar (Tiada Tahun Akademik)",
+    "otherNameHint": "Nama alternatif dalam bahasa lain (cth., nama Cina 中文名, nama Tamil)",
 
     "table": {
       "studentCode": "Kod Pelajar",
       "name": "Nama",
+      "otherName": "Name Lain",
       "gender": "Jantina",
       "academicInfo": "Maklumat Akademik",
       "contact": "Hubungan",
@@ -565,6 +568,7 @@
       "enrollNow": "Daftar pelajar sekarang",
       "studentCode": "Kod Pelajar",
       "fullName": "Nama Penuh",
+      "otherName": "Name Lain",
       "email": "E-mel",
       "phoneNumber": "Nombor Telefon",
       "dateOfBirth": "Tarikh Lahir",

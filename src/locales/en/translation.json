@@ -73,7 +73,8 @@
     "teachers": "Teachers",
     "teams": "Teams",
     "events": "Events",
-    "eventsReport": "Events Report"
+    "eventsReport": "Events Report",
+    "importStudents": "Import Students"
   },
   "unauthorized": {
     "title": "Access Denied",
@@ -535,10 +536,12 @@
     "enrolled": "Enrolled",
     "notEnrolled": "Not Enrolled",
     "notEnrolledFilter": "⚠️ Not Enrolled (No Academic Year)",
+    "otherNameHint": "Alternative name in another language (e.g., Chinese name 中文名, Tamil name)",
 
     "table": {
       "studentCode": "Student Code",
       "name": "Full Name",
+      "otherName": "Other Name",
       "gender": "Gender",
       "academicInfo": "Academic Info",
       "contact": "Contact",
@@ -565,6 +568,7 @@
       "enrollNow": "Enroll student now",
       "studentCode": "Student Code",
       "fullName": "Full Name",
+      "otherName": "Other Name",
       "email": "Email",
       "phoneNumber": "Phone Number",
       "dateOfBirth": "Date of Birth",
@@ -1312,5 +1316,100 @@
     },
 
     "noEventsFound": "No events found"
+  },
+
+  "import": {
+    "title": "Import Students",
+    "subtitle": "Import student data from Excel or CSV files with class enrollment",
+    "loadingValidation": "Loading validation data...",
+    "steps": {
+      "upload": "Upload File",
+      "preview": "Preview Data",
+      "result": "Result"
+    },
+    "template": {
+      "title": "Download Template",
+      "description": "Download the Excel template with the correct column format. Fill in your student data including Academic Year and Class, then upload it.",
+      "download": "Download Template"
+    },
+    "upload": {
+      "dragDrop": "Drag and drop your file here",
+      "or": "or",
+      "browse": "Browse Files",
+      "supportedFormats": "Supported formats: .xlsx, .xls, .csv",
+      "removeFile": "Remove file and start over"
+    },
+    "availableData": {
+      "title": "Available Data for Import",
+      "academicYears": "Academic Years",
+      "grades": "Grades",
+      "classes": "Classes",
+      "none": "None available",
+      "more": "more"
+    },
+    "columns": {
+      "title": "Required Columns",
+      "requiredNote": "Required fields",
+      "studentCode": "Student Code",
+      "academicYear": "Academic Year",
+      "class": "Class",
+      "fullName": "Full Name",
+      "otherName": "Other Name (中文名/Nama Lain)",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "parentName": "Parent Name",
+      "parentContact": "Parent Contact",
+      "parentEmail": "Parent Email",
+      "address": "Address"
+    },
+    "preview": {
+      "totalRows": "Total Rows",
+      "valid": "Valid",
+      "invalid": "Invalid",
+      "status": "Status",
+      "actions": "Actions",
+      "remove": "Remove",
+      "cancel": "Cancel",
+      "importing": "Importing...",
+      "importValid": "Import {{count}} Valid Students"
+    },
+    "validation": {
+      "studentCodeRequired": "Student code is required",
+      "fullNameRequired": "Full name is required",
+      "dateOfBirthRequired": "Date of birth is required",
+      "genderRequired": "Gender is required",
+      "academicYearRequired": "Academic year is required",
+      "classRequired": "Class is required",
+      "invalidDateFormat": "Invalid date format (use YYYY-MM-DD)",
+      "invalidGender": "Invalid gender. Use: Male/Female, M/F, Lelaki/Perempuan, L/P, 男/女",
+      "invalidEmail": "Invalid email format",
+      "invalidParentEmail": "Invalid parent email format",
+      "invalidAcademicYear": "Academic year '{{year}}' not found in system",
+      "invalidClass": "Class '{{className}}' not found in system"
+    },
+    "errors": {
+      "invalidFileType": "Invalid file type. Please upload an Excel (.xlsx, .xls) or CSV file.",
+      "emptyFile": "The file is empty or has no data rows.",
+      "noValidData": "No valid data found in the file.",
+      "parseError": "Error parsing the file. Please check the format.",
+      "readError": "Error reading the file.",
+      "noValidRows": "No valid rows to import.",
+      "importFailed": "Import failed. Please try again.",
+      "loadValidationFailed": "Failed to load validation data. Please refresh the page."
+    },
+    "result": {
+      "successTitle": "Import Completed Successfully!",
+      "failedTitle": "Import Completed with Errors",
+      "summary": "Students have been imported and enrolled in their respective classes:",
+      "imported": "Students Imported",
+      "failed": "Failed",
+      "skipped": "Skipped (Duplicates)",
+      "errorDetails": "Error Details",
+      "row": "Row",
+      "importMore": "Import More Students",
+      "viewStudents": "View Students List"
+    }
   }
 }

@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, AlertCircle } from 'lucide-react';
 import { studentService } from '../../services/studentService';
 import { authService } from '../../services/authService';
@@ -11,14 +12,17 @@ interface AddStudentModalProps {
 }
 
 const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) => {
+    const { t } = useTranslation();
+
     // Get current user's school ID immediately
     const currentUser = authService.getCurrentUser();
-    const userSchoolId = currentUser?.schoolID ?? 1; // ✅ Use nullish coalescing, defaults to 1
+    const userSchoolId = currentUser?.schoolID ?? 1;
 
     const [formData, setFormData] = useState({
         schoolID: userSchoolId,
         studentCode: '',
         fullName: '',
+        otherName: '',  // NEW: Other Name field
         email: '',
         phoneNumber: '',
         parentName: '',
@@ -32,7 +36,7 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState<string[]>([]);
 
-    // Update schoolID if user changes (shouldn't happen, but good practice)
+    // Update schoolID if user changes
     useEffect(() => {
         const currentUser = authService.getCurrentUser();
         if (currentUser?.schoolID !== undefined) {
@@ -50,7 +54,6 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
             ...formData,
             [e.target.name]: e.target.value,
         });
-        // Clear errors when user starts typing
         if (errors.length > 0) {
             setErrors([]);
         }
@@ -62,13 +65,12 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
         setErrors([]);
 
         try {
-            // Prepare the data - convert empty strings to undefined (omit them)
             const submitData: CreateStudentDto = {
                 schoolID: formData.schoolID,
                 studentCode: formData.studentCode,
                 fullName: formData.fullName,
                 gender: formData.gender,
-                // Only include optional fields if they have values
+                ...(formData.otherName && { otherName: formData.otherName }),  // NEW
                 ...(formData.dateOfBirth && { dateOfBirth: formData.dateOfBirth }),
                 ...(formData.email && { email: formData.email }),
                 ...(formData.phoneNumber && { phoneNumber: formData.phoneNumber }),
@@ -83,7 +85,7 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
             onSuccess();
             onClose();
 
-            // Reset form but keep the correct SchoolID
+            // Reset form
             const currentUser = authService.getCurrentUser();
             const userSchoolId = currentUser?.schoolID ?? 1;
 
@@ -91,6 +93,7 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
                 schoolID: userSchoolId,
                 studentCode: '',
                 fullName: '',
+                otherName: '',  // NEW
                 email: '',
                 phoneNumber: '',
                 parentName: '',
@@ -103,7 +106,6 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
         } catch (err) {
             console.error('Full error:', err);
 
-            // Better error handling with proper typing
             const errorList: string[] = [];
 
             if (err && typeof err === 'object' && 'response' in err) {
@@ -120,14 +122,12 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
                 if (axiosError.response?.data) {
                     const errorData = axiosError.response.data;
 
-                    // Handle different error formats
                     if (errorData.errors) {
                         if (Array.isArray(errorData.errors)) {
                             errorList.push(...errorData.errors);
                         } else if (typeof errorData.errors === 'string') {
                             errorList.push(errorData.errors);
                         } else if (typeof errorData.errors === 'object') {
-                            // Handle validation errors object like { "Email": ["Invalid email"], "Phone": ["Required"] }
                             Object.entries(errorData.errors).forEach(([field, messages]) => {
                                 if (Array.isArray(messages)) {
                                     messages.forEach(msg => errorList.push(`${field}: ${msg}`));
@@ -146,9 +146,8 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
                 errorList.push(err.message);
             }
 
-            // Fallback error message
             if (errorList.length === 0) {
-                errorList.push('Failed to create student. Please try again.');
+                errorList.push(t('students.errors.createFailed'));
             }
 
             setErrors(errorList);
@@ -162,7 +161,7 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
             <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                 {/* Header */}
                 <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-                    <h2 className="text-2xl font-bold text-gray-900">Add New Student</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">{t('students.addModal.title')}</h2>
                     <button
                         onClick={onClose}
                         className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -180,7 +179,7 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
                                 <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
                                 <div className="ml-3 flex-1">
                                     <h3 className="text-sm font-medium text-red-800">
-                                        {errors.length === 1 ? 'There was an error:' : 'There were errors:'}
+                                        {errors.length === 1 ? t('students.errors.errorOccurred') : t('students.errors.errorsOccurred')}
                                     </h3>
                                     <ul className="mt-2 text-sm text-red-700 list-disc list-inside space-y-1">
                                         {errors.map((error, index) => (
@@ -197,7 +196,7 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
                         {/* Student Code */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Student Code <span className="text-red-500">*</span>
+                                {t('students.fields.studentCode')} <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
@@ -213,7 +212,7 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
                         {/* Full Name */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Full Name <span className="text-red-500">*</span>
+                                {t('students.fields.fullName')} <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
@@ -222,14 +221,61 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
                                 onChange={handleChange}
                                 required
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="John Doe"
+                                placeholder={t('students.placeholders.fullName')}
+                            />
+                        </div>
+
+                        {/* Other Name - NEW */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                {t('students.fields.otherName')}
+                            </label>
+                            <input
+                                type="text"
+                                name="otherName"
+                                value={formData.otherName}
+                                onChange={handleChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                            <p className="mt-1 text-xs text-gray-500">{t('students.fields.otherNameHint')}</p>
+                        </div>
+
+                        {/* Gender */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                {t('students.fields.gender')} <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                                name="gender"
+                                value={formData.gender}
+                                onChange={handleChange}
+                                required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            >
+                                <option value="Male">{t('students.gender.male')}</option>
+                                <option value="Female">{t('students.gender.female')}</option>
+                            </select>
+                        </div>
+
+                        {/* Date of Birth */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                {t('students.fields.dateOfBirth')} <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="date"
+                                name="dateOfBirth"
+                                value={formData.dateOfBirth}
+                                onChange={handleChange}
+                                required
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                         </div>
 
                         {/* Email */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Email
+                                {t('students.fields.email')}
                             </label>
                             <input
                                 type="email"
@@ -244,7 +290,7 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
                         {/* Phone Number */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Phone Number
+                                {t('students.fields.phoneNumber')}
                             </label>
                             <input
                                 type="tel"
@@ -252,91 +298,14 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
                                 value={formData.phoneNumber}
                                 onChange={handleChange}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="012-3456789"
+                                placeholder="0123456789"
                             />
                         </div>
 
-                        {/* Date of Birth */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Date of Birth <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="date"
-                                name="dateOfBirth"
-                                value={formData.dateOfBirth}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                        </div>
-
-                        {/* Gender */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Gender <span className="text-red-500">*</span>
-                            </label>
-                            <select
-                                name="gender"
-                                value={formData.gender}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
-                        </div>
-
-                        {/* Parent Name */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Parent Name
-                            </label>
-                            <input
-                                type="text"
-                                name="parentName"
-                                value={formData.parentName}
-                                onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Parent Name"
-                            />
-                        </div>
-
-                        {/* Parent Contact */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Parent Contact
-                            </label>
-                            <input
-                                type="tel"
-                                name="parentContact"
-                                value={formData.parentContact}
-                                onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="012-9876543"
-                            />
-                        </div>
-
-                        {/* Parent Email */}
+                        {/* Address - Full Width */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Parent Email
-                            </label>
-                            <input
-                                type="email"
-                                name="parentEmail"
-                                value={formData.parentEmail}
-                                onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="parent@email.com"
-                            />
-                        </div>
-
-                        {/* Address */}
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Address
+                                {t('students.fields.address')}
                             </label>
                             <textarea
                                 name="address"
@@ -344,34 +313,77 @@ const AddStudentModal = ({ isOpen, onClose, onSuccess }: AddStudentModalProps) =
                                 onChange={handleChange}
                                 rows={2}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Student Address"
+                                placeholder={t('students.placeholders.address')}
                             />
                         </div>
                     </div>
 
-                    {/* Footer */}
+                    {/* Parent Information Section */}
+                    <div className="border-t pt-4 mt-4">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('students.sections.parentInformation')}</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Parent Name */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t('students.fields.parentName')}
+                                </label>
+                                <input
+                                    type="text"
+                                    name="parentName"
+                                    value={formData.parentName}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder={t('students.placeholders.parentName')}
+                                />
+                            </div>
+
+                            {/* Parent Contact */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t('students.fields.parentContact')}
+                                </label>
+                                <input
+                                    type="tel"
+                                    name="parentContact"
+                                    value={formData.parentContact}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="0198765432"
+                                />
+                            </div>
+
+                            {/* Parent Email */}
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t('students.fields.parentEmail')}
+                                </label>
+                                <input
+                                    type="email"
+                                    name="parentEmail"
+                                    value={formData.parentEmail}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="parent@email.com"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Submit Button */}
                     <div className="flex justify-end gap-3 pt-4 border-t">
                         <button
                             type="button"
                             onClick={onClose}
-                            disabled={isLoading}
-                            className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                            className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                         >
-                            Cancel
+                            {t('common.cancel')}
                         </button>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
                         >
-                            {isLoading ? (
-                                <>
-                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                    Creating...
-                                </>
-                            ) : (
-                                'Create Student'
-                            )}
+                            {isLoading ? t('common.creating') : t('students.addModal.createStudent')}
                         </button>
                     </div>
                 </form>

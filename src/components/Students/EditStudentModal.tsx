@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, AlertCircle } from 'lucide-react';
 import { studentService } from '../../services/studentService';
 import type { CreateStudentDto, Student } from '../../types';
@@ -11,10 +12,13 @@ interface EditStudentModalProps {
 }
 
 const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentModalProps) => {
+    const { t } = useTranslation();
+
     const [formData, setFormData] = useState({
         schoolID: student?.schoolID || 1,
         studentCode: student?.studentCode || '',
         fullName: student?.fullName || '',
+        otherName: student?.otherName || '',
         email: student?.email || '',
         phoneNumber: student?.phoneNumber || '',
         parentName: student?.parentName || '',
@@ -35,6 +39,7 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
                 schoolID: student.schoolID,
                 studentCode: student.studentCode,
                 fullName: student.fullName,
+                otherName: student.otherName || '',  // NEW
                 email: student.email || '',
                 phoneNumber: student.phoneNumber || '',
                 parentName: student.parentName || '',
@@ -54,7 +59,6 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
             ...formData,
             [e.target.name]: e.target.value,
         });
-        // Clear errors when user starts typing
         if (errors.length > 0) {
             setErrors([]);
         }
@@ -66,13 +70,12 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
         setErrors([]);
 
         try {
-            // Prepare the data - convert empty strings to undefined (omit them)
             const submitData: CreateStudentDto = {
                 schoolID: formData.schoolID,
                 studentCode: formData.studentCode,
                 fullName: formData.fullName,
                 gender: formData.gender,
-                // Only include optional fields if they have values
+                ...(formData.otherName && { otherName: formData.otherName }),  // NEW
                 ...(formData.dateOfBirth && { dateOfBirth: formData.dateOfBirth }),
                 ...(formData.email && { email: formData.email }),
                 ...(formData.phoneNumber && { phoneNumber: formData.phoneNumber }),
@@ -82,7 +85,6 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
                 ...(formData.address && { address: formData.address }),
             };
 
-            // Call update API
             await studentService.updateStudent(student.studentID, submitData);
 
             onSuccess();
@@ -90,7 +92,6 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
         } catch (err) {
             console.error('Full error:', err);
 
-            // Better error handling with proper typing
             const errorList: string[] = [];
 
             if (err && typeof err === 'object' && 'response' in err) {
@@ -107,7 +108,6 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
                 if (axiosError.response?.data) {
                     const errorData = axiosError.response.data;
 
-                    // Handle different error formats
                     if (errorData.errors) {
                         if (Array.isArray(errorData.errors)) {
                             errorList.push(...errorData.errors);
@@ -132,9 +132,8 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
                 errorList.push(err.message);
             }
 
-            // Fallback error message
             if (errorList.length === 0) {
-                errorList.push('Failed to update student. Please try again.');
+                errorList.push(t('students.errors.updateFailed'));
             }
 
             setErrors(errorList);
@@ -148,7 +147,7 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
             <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                 {/* Header */}
                 <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-                    <h2 className="text-2xl font-bold text-gray-900">Edit Student</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">{t('students.editModal.title')}</h2>
                     <button
                         onClick={onClose}
                         className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -166,7 +165,7 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
                                 <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
                                 <div className="ml-3 flex-1">
                                     <h3 className="text-sm font-medium text-red-800">
-                                        {errors.length === 1 ? 'There was an error:' : 'There were errors:'}
+                                        {errors.length === 1 ? t('students.errors.errorOccurred') : t('students.errors.errorsOccurred')}
                                     </h3>
                                     <ul className="mt-2 text-sm text-red-700 list-disc list-inside space-y-1">
                                         {errors.map((error, index) => (
@@ -178,28 +177,25 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
                         </div>
                     )}
 
+                    {/* Student Code (Read-only) */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            {t('students.fields.studentCode')}
+                        </label>
+                        <input
+                            type="text"
+                            value={formData.studentCode}
+                            disabled
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+                        />
+                    </div>
+
                     {/* Form Fields */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Student Code - Read Only */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Student Code <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                name="studentCode"
-                                value={formData.studentCode}
-                                readOnly
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
-                                placeholder="STU006"
-                            />
-                            <p className="text-xs text-gray-500 mt-1">Student code cannot be changed</p>
-                        </div>
-
                         {/* Full Name */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Full Name <span className="text-red-500">*</span>
+                                {t('students.fields.fullName')} <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
@@ -208,44 +204,46 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
                                 onChange={handleChange}
                                 required
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="John Doe"
                             />
                         </div>
 
-                        {/* Email */}
+                        {/* Other Name - NEW */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Email
+                                {t('students.fields.otherName')}
                             </label>
                             <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
+                                type="text"
+                                name="otherName"
+                                value={formData.otherName}
                                 onChange={handleChange}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="student@email.com"
+                                placeholder={t('students.placeholders.otherName')}
                             />
+                            <p className="mt-1 text-xs text-gray-500">{t('students.fields.otherNameHint')}</p>
                         </div>
 
-                        {/* Phone Number */}
+                        {/* Gender */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Phone Number
+                                {t('students.fields.gender')} <span className="text-red-500">*</span>
                             </label>
-                            <input
-                                type="tel"
-                                name="phoneNumber"
-                                value={formData.phoneNumber}
+                            <select
+                                name="gender"
+                                value={formData.gender}
                                 onChange={handleChange}
+                                required
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="012-3456789"
-                            />
+                            >
+                                <option value="Male">{t('students.gender.male')}</option>
+                                <option value="Female">{t('students.gender.female')}</option>
+                            </select>
                         </div>
 
                         {/* Date of Birth */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Date of Birth <span className="text-red-500">*</span>
+                                {t('students.fields.dateOfBirth')} <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="date"
@@ -257,72 +255,38 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
                             />
                         </div>
 
-                        {/* Gender */}
+                        {/* Email */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Gender <span className="text-red-500">*</span>
-                            </label>
-                            <select
-                                name="gender"
-                                value={formData.gender}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
-                        </div>
-
-                        {/* Parent Name */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Parent Name
-                            </label>
-                            <input
-                                type="text"
-                                name="parentName"
-                                value={formData.parentName}
-                                onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Parent Name"
-                            />
-                        </div>
-
-                        {/* Parent Contact */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Parent Contact
-                            </label>
-                            <input
-                                type="tel"
-                                name="parentContact"
-                                value={formData.parentContact}
-                                onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="012-9876543"
-                            />
-                        </div>
-
-                        {/* Parent Email */}
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Parent Email
+                                {t('students.fields.email')}
                             </label>
                             <input
                                 type="email"
-                                name="parentEmail"
-                                value={formData.parentEmail}
+                                name="email"
+                                value={formData.email}
                                 onChange={handleChange}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="parent@email.com"
                             />
                         </div>
 
-                        {/* Address */}
+                        {/* Phone Number */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                {t('students.fields.phoneNumber')}
+                            </label>
+                            <input
+                                type="tel"
+                                name="phoneNumber"
+                                value={formData.phoneNumber}
+                                onChange={handleChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+
+                        {/* Address - Full Width */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Address
+                                {t('students.fields.address')}
                             </label>
                             <textarea
                                 name="address"
@@ -330,34 +294,73 @@ const EditStudentModal = ({ isOpen, onClose, onSuccess, student }: EditStudentMo
                                 onChange={handleChange}
                                 rows={2}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Student Address"
                             />
                         </div>
                     </div>
 
-                    {/* Footer */}
+                    {/* Parent Information Section */}
+                    <div className="border-t pt-4 mt-4">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('students.sections.parentInformation')}</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Parent Name */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t('students.fields.parentName')}
+                                </label>
+                                <input
+                                    type="text"
+                                    name="parentName"
+                                    value={formData.parentName}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+
+                            {/* Parent Contact */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t('students.fields.parentContact')}
+                                </label>
+                                <input
+                                    type="tel"
+                                    name="parentContact"
+                                    value={formData.parentContact}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+
+                            {/* Parent Email */}
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t('students.fields.parentEmail')}
+                                </label>
+                                <input
+                                    type="email"
+                                    name="parentEmail"
+                                    value={formData.parentEmail}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Submit Button */}
                     <div className="flex justify-end gap-3 pt-4 border-t">
                         <button
                             type="button"
                             onClick={onClose}
-                            disabled={isLoading}
-                            className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                            className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                         >
-                            Cancel
+                            {t('common.cancel')}
                         </button>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
                         >
-                            {isLoading ? (
-                                <>
-                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                    Updating...
-                                </>
-                            ) : (
-                                'Update Student'
-                            )}
+                            {isLoading ? t('common.saving') : t('students.editModal.saveChanges')}
                         </button>
                     </div>
                 </form>

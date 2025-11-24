@@ -119,10 +119,10 @@ const Layout = () => {
             roles: ['SchoolAdmin']
         },
         {
-            path: '/settings',
-            icon: Settings,
-            label: t('nav.settings'),
-            permission: 'SystemConfiguration',
+            path: '/import-students',
+            icon: Users,
+            label: t('nav.importStudents'),
+            permission: 'ImportData', // SchoolAdmin needs this
             roles: ['SchoolAdmin']
         },
         {
@@ -138,6 +138,13 @@ const Layout = () => {
             label: t('nav.eventsReport'),
             permission: 'EventReports',
             roles: ['SchoolAdmin', 'Teacher']
+        },
+        {
+            path: '/settings',
+            icon: Settings,
+            label: t('nav.settings'),
+            permission: 'SystemConfiguration',
+            roles: ['SchoolAdmin']
         },
     ];
 

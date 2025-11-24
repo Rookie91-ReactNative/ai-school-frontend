@@ -24,20 +24,24 @@ export interface LoginResponse {
 
 // Student types
 export interface Student {
-  studentID: number;
-  studentCode: string;
-  fullName: string;
-  email: string;
-  phoneNumber: string;
-  parentContact: string;
-  parentEmail: string;
-  parentName: string;
-  dateOfBirth?: string;
-  gender: string;
-  address: string;
-  isActive: boolean;
-  schoolID: number;
-  enrollmentDate?: string;
+    studentID: number;
+    schoolID: number;
+    studentCode: string;
+    fullName: string;
+    otherName?: string;
+    email?: string;
+    phoneNumber?: string;
+    parentContact?: string;
+    parentEmail?: string;
+    parentName?: string;
+    dateOfBirth?: string;
+    gender?: string;
+    address?: string;
+    isActive: boolean;
+    enrollmentDate?: string;
+    graduationDate?: string;
+    createdDate?: string;
+    updatedDate?: string;
 }
 
 // Student Face Image
@@ -55,14 +59,16 @@ export interface CreateStudentDto {
     schoolID: number;
     studentCode: string;
     fullName: string;
+    otherName?: string;  // <-- ADD THIS LINE
     email?: string;
     phoneNumber?: string;
     parentName?: string;
     parentContact?: string;
     parentEmail?: string;
     dateOfBirth?: string;
-    gender?: string;
+    gender: string;
     address?: string;
+    enrollmentDate?: string;
 }
 
 // Attendance types

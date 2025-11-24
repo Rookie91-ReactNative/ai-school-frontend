@@ -20,6 +20,7 @@ import TeachersPage from './pages/TeachersPage';
 import TeamsPage from './pages/TeamsPage';
 import EventsPage from './pages/EventsPage';
 import EventReportPage from './pages/EventReportPage';
+import ImportStudentsPage from './pages/ImportStudentsPage'
 
 function App() {
     return (
@@ -180,6 +181,18 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <EventsPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/import-students"
+                        element={
+                            <ProtectedRoute
+                                requiredPermission="ImportData"
+                                requiredRole={['SchoolAdmin']}
+                            >
+                                <ImportStudentsPage />
                             </ProtectedRoute>
                         }
                     />

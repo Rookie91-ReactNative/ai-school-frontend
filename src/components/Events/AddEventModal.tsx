@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Calendar, Clock, MapPin, AlertCircle, CheckCircle } from 'lucide-react';
+import { X, Calendar, Clock, MapPin, AlertCircle, CheckCircle, Lock } from 'lucide-react';
 import {
     eventService,
     EventType,
@@ -12,6 +12,7 @@ import { ActivityType, ActivityTypeLabels } from '../../services/teamService';
 import { teacherService, type Teacher } from '../../services/teacherService';
 import { getTranslatedActivityType } from '../../utils/activityTypeTranslations';
 import { getTranslatedEventType } from '../../utils/eventTypeTranslations';
+import { useAuth } from '../../hooks/useAuth';
 
 interface AddEventModalProps {
     onClose: () => void;
@@ -20,10 +21,15 @@ interface AddEventModalProps {
 
 const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
     const { t } = useTranslation();
+    const { user } = useAuth();
     const [loading, setLoading] = useState(false);
     const [teachers, setTeachers] = useState<Teacher[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
+
+    // Track if the current user is a teacher and their teacherID
+    const [currentUserTeacherId, setCurrentUserTeacherId] = useState<number | null>(null);
+    const isTeacherRole = user?.userRole === 'Teacher';
 
     const [formData, setFormData] = useState<EventCreateDto>({
         eventName: '',
@@ -60,6 +66,22 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
         try {
             const teachersData = await teacherService.getAllTeachers(true);
             setTeachers(teachersData);
+
+            // If user is a Teacher, find their teacherID and auto-select
+            if (isTeacherRole && user?.userId) {
+                const currentTeacher = teachersData.find(
+                    (teacher) => teacher.userID === user.userId
+                );
+
+                if (currentTeacher) {
+                    setCurrentUserTeacherId(currentTeacher.teacherID);
+                    // Auto-set the leadingTeacherID in form data
+                    setFormData(prev => ({
+                        ...prev,
+                        leadingTeacherID: currentTeacher.teacherID
+                    }));
+                }
+            }
         } catch (error) {
             console.error('Error loading data:', error);
         }
@@ -110,6 +132,15 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
 
     const handleChange = <K extends keyof EventCreateDto>(field: K, value: EventCreateDto[K]) => {
         setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    // Get the current teacher's name for display when locked
+    const getCurrentTeacherName = (): string => {
+        if (currentUserTeacherId) {
+            const teacher = teachers.find(t => t.teacherID === currentUserTeacherId);
+            return teacher?.fullName || '';
+        }
+        return '';
     };
 
     return (
@@ -227,24 +258,45 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
                             </select>
                         </div>
 
+                        {/* Leading Teacher - Auto-selected and locked for Teacher role */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 {t('events.addModal.fields.leadingTeacher')} *
+                                {isTeacherRole && currentUserTeacherId && (
+                                    <Lock className="w-4 h-4 inline ml-2 text-gray-400" /*title={t('events.addModal.messages.teacherLocked')}*/ />
+                                )}
                             </label>
-                            <select
-                                value={formData.leadingTeacherID || ''}
-                                onChange={(e) => handleChange('leadingTeacherID', e.target.value ? Number(e.target.value) : undefined)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                required
-                                disabled={loading || success}
-                            >
-                                <option value="">{t('events.addModal.placeholders.selectTeacher')}</option>
-                                {teachers.map(teacher => (
-                                    <option key={teacher.teacherID} value={teacher.teacherID}>
-                                        {teacher.fullName}
-                                    </option>
-                                ))}
-                            </select>
+
+                            {/* Show locked input for Teacher role, dropdown for others */}
+                            {isTeacherRole && currentUserTeacherId ? (
+                                // Locked display for Teacher role
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        value={getCurrentTeacherName()}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed"
+                                        disabled
+                                        readOnly
+                                    />
+                                    <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                </div>
+                            ) : (
+                                // Dropdown for Admin/SuperAdmin
+                                <select
+                                    value={formData.leadingTeacherID || ''}
+                                    onChange={(e) => handleChange('leadingTeacherID', e.target.value ? Number(e.target.value) : undefined)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required
+                                    disabled={loading || success}
+                                >
+                                    <option value="">{t('events.addModal.placeholders.selectTeacher')}</option>
+                                    {teachers.map(teacher => (
+                                        <option key={teacher.teacherID} value={teacher.teacherID}>
+                                            {teacher.fullName}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
                         </div>
 
                         {/* Date & Time */}

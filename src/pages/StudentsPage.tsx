@@ -11,6 +11,7 @@ interface Student {
     schoolID: number;
     studentCode: string;
     fullName: string;
+    otherName: string;
     email: string;
     phoneNumber: string;
     parentContact: string;
@@ -93,6 +94,7 @@ const StudentsPage = () => {
             schoolID: schoolID,
             studentCode: '',
             fullName: '',
+            otherName: '',
             email: '',
             phoneNumber: '',
             parentContact: '',
@@ -122,6 +124,7 @@ const StudentsPage = () => {
 
     const [editFormData, setEditFormData] = useState({
         fullName: '',
+        otherName: '',
         email: '',
         phoneNumber: '',
         parentContact: '',
@@ -239,6 +242,7 @@ const StudentsPage = () => {
                     schoolID: formData.student.schoolID,
                     studentCode: formData.student.studentCode.trim(),
                     fullName: formData.student.fullName.trim(),
+                    otherName: formData.student.otherName || null,
                     // Convert empty strings to null for optional fields
                     email: formData.student.email?.trim() || null,
                     phoneNumber: formData.student.phoneNumber?.trim() || null,
@@ -402,6 +406,7 @@ const StudentsPage = () => {
         setSelectedStudent(student);
         setEditFormData({
             fullName: student.fullName,
+            otherName: student.otherName || '',
             email: student.email || '',
             phoneNumber: student.phoneNumber || '',
             parentContact: student.parentContact || '',
@@ -456,6 +461,7 @@ const StudentsPage = () => {
                 schoolID: schoolID,
                 studentCode: '',
                 fullName: '',
+                otherName: '',
                 email: '',
                 phoneNumber: '',
                 parentContact: '',
@@ -608,6 +614,9 @@ const StudentsPage = () => {
                                     {t('students.table.name')}
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    {t('students.table.otherName')}
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     {t('students.academicYear')}
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -642,6 +651,11 @@ const StudentsPage = () => {
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">{student.fullName}</div>
                                             <div className="text-sm text-gray-500">{student.gender}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-600">
+                                                {student.otherName || '-'}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-900">{student.academicYear || '-'}</div>
@@ -766,6 +780,21 @@ const StudentsPage = () => {
                                             }))}
                                             className={`w-full px-3 py-2 border rounded-lg ${formErrors.fullName ? 'border-red-500' : 'border-gray-300'}`}
                                         />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            {t('students.createModal.otherName')}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={formData.student.otherName}
+                                            onChange={(e) => setFormData(prev => ({
+                                                ...prev,
+                                                student: { ...prev.student, otherName: e.target.value }
+                                            }))}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                        />
+                                        <p className="mt-1 text-xs text-gray-500">{t('students.otherNameHint')}</p>
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1067,6 +1096,21 @@ const StudentsPage = () => {
                                     <input type="text" value={editFormData.fullName}
                                         onChange={(e) => setEditFormData(prev => ({ ...prev, fullName: e.target.value }))}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg" required />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        {t('students.createModal.otherName')}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={editFormData.otherName}
+                                        onChange={(e) => setEditFormData(prev => ({
+                                            ...prev,
+                                            otherName: e.target.value
+                                        }))}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                    />
+                                    <p className="mt-1 text-xs text-gray-500">{t('students.otherNameHint')}</p>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('students.createModal.dateOfBirth')} *</label>

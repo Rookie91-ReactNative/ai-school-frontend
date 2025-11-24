@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Calendar, Clock, MapPin, AlertCircle, CheckCircle } from 'lucide-react';
+import { X, Calendar, Clock, MapPin, AlertCircle, CheckCircle, Lock } from 'lucide-react';
 import {
     eventService,
     EventType,
@@ -14,6 +14,7 @@ import { ActivityType, ActivityTypeLabels } from '../../services/teamService';
 import { teacherService, type Teacher } from '../../services/teacherService';
 import { getTranslatedActivityType } from '../../utils/activityTypeTranslations';
 import { getTranslatedEventType } from '../../utils/eventTypeTranslations';
+import { useAuth } from '../../hooks/useAuth';
 
 interface EditEventModalProps {
     event: ActivityEvent;
@@ -33,10 +34,16 @@ const formatTimeForInput = (time: string | undefined): string => {
 
 const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
     const { t } = useTranslation();
+    const { user } = useAuth();
     const [loading, setLoading] = useState(false);
     const [teachers, setTeachers] = useState<Teacher[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
+
+    // Track if the current user is a teacher and if they are the leading teacher
+    const [currentUserTeacherId, setCurrentUserTeacherId] = useState<number | null>(null);
+    const [isLeadingTeacherLocked, setIsLeadingTeacherLocked] = useState(false);
+    const isTeacherRole = user?.userRole === 'Teacher';
 
     // Format times properly for HTML time inputs
     const [formData, setFormData] = useState<EventUpdateDto>({
@@ -76,8 +83,24 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
         try {
             const teachersData = await teacherService.getAllTeachers(true);
             setTeachers(teachersData);
+
+            // If user is a Teacher, find their teacherID
+            if (isTeacherRole && user?.userId) {
+                const currentTeacher = teachersData.find(
+                    (teacher) => teacher.userID === user.userId
+                );
+
+                if (currentTeacher) {
+                    setCurrentUserTeacherId(currentTeacher.teacherID);
+
+                    // Lock the field if the current user is the leading teacher of this event
+                    if (event.leadingTeacherID === currentTeacher.teacherID) {
+                        setIsLeadingTeacherLocked(true);
+                    }
+                }
+            }
         } catch (error) {
-            console.error('Error loading data:', error);
+            console.error('Error loading data:', error + " " + currentUserTeacherId);
         }
     };
 
@@ -125,6 +148,15 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
     const handleChange = <K extends keyof EventUpdateDto>(field: K, value: EventUpdateDto[K]) => {
         setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    // Get the leading teacher's name for display when locked
+    const getLeadingTeacherName = (): string => {
+        if (formData.leadingTeacherID) {
+            const teacher = teachers.find(t => t.teacherID === formData.leadingTeacherID);
+            return teacher?.fullName || '';
+        }
+        return '';
     };
 
     return (
@@ -244,25 +276,45 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                             </select>
                         </div>
 
-                        {/* Leading Teacher */}
+                        {/* Leading Teacher - Locked for Teacher role if they are the leading teacher */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 {t('events.editModal.fields.leadingTeacher')} *
+                                {isLeadingTeacherLocked && (
+                                    <Lock className="w-4 h-4 inline ml-2 text-gray-400" /*title={t('events.editModal.messages.teacherLocked')}*/ />
+                                )}
                             </label>
-                            <select
-                                value={formData.leadingTeacherID || ''}
-                                onChange={(e) => handleChange('leadingTeacherID', e.target.value ? Number(e.target.value) : undefined)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                required
-                                disabled={loading || success}
-                            >
-                                <option value="">{t('events.editModal.placeholders.selectTeacher')}</option>
-                                {teachers.map(teacher => (
-                                    <option key={teacher.teacherID} value={teacher.teacherID}>
-                                        {teacher.fullName}
-                                    </option>
-                                ))}
-                            </select>
+
+                            {/* Show locked input for Teacher role when they are the leading teacher, dropdown for others */}
+                            {isLeadingTeacherLocked ? (
+                                // Locked display for Teacher role
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        value={getLeadingTeacherName()}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed"
+                                        disabled
+                                        readOnly
+                                    />
+                                    <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                </div>
+                            ) : (
+                                // Dropdown for Admin/SuperAdmin or Teacher editing someone else's event
+                                <select
+                                    value={formData.leadingTeacherID || ''}
+                                    onChange={(e) => handleChange('leadingTeacherID', e.target.value ? Number(e.target.value) : undefined)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required
+                                    disabled={loading || success}
+                                >
+                                    <option value="">{t('events.editModal.placeholders.selectTeacher')}</option>
+                                    {teachers.map(teacher => (
+                                        <option key={teacher.teacherID} value={teacher.teacherID}>
+                                            {teacher.fullName}
+                                        </option>
+                                    ))}
+                                </select>
+                            )}
                         </div>
 
                         {/* Date & Time */}
