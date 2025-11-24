@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Calendar, Clock, MapPin, AlertCircle, CheckCircle } from 'lucide-react';
 import {
     eventService,
@@ -9,6 +10,8 @@ import {
 } from '../../services/eventService';
 import { ActivityType, ActivityTypeLabels } from '../../services/teamService';
 import { teacherService, type Teacher } from '../../services/teacherService';
+import { getTranslatedActivityType } from '../../utils/activityTypeTranslations';
+import { getTranslatedEventType } from '../../utils/eventTypeTranslations';
 
 interface AddEventModalProps {
     onClose: () => void;
@@ -16,6 +19,7 @@ interface AddEventModalProps {
 }
 
 const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [teachers, setTeachers] = useState<Teacher[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -32,7 +36,7 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
         venue: '',
         requiresParentConsent: false,
         result: '',
-        awardsReceived: '', // ✅ NEW FIELD
+        awardsReceived: '',
         remarks: ''
     });
 
@@ -40,19 +44,13 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
         loadData();
     }, []);
 
-    // ✅ useEffect to handle success state and auto-close
     useEffect(() => {
         if (success) {
-            //console.log('✅ Success alert is now visible in header!');
-            //console.log('⏰ Starting 2-second timer before closing...');
-
             const timer = setTimeout(() => {
-                //console.log('🚪 Timer finished, closing modal now');
                 onSuccess();
             }, 2000);
 
             return () => {
-                //console.log('🧹 Cleaning up timer');
                 clearTimeout(timer);
             };
         }
@@ -73,35 +71,29 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
 
         // Validation
         if (!formData.eventName.trim()) {
-            setError('Event name is required');
+            setError(t('events.addModal.validation.eventNameRequired'));
             return;
         }
 
         if (!formData.eventCode.trim()) {
-            setError('Event code is required');
+            setError(t('events.addModal.validation.eventCodeRequired'));
             return;
         }
 
         if (!formData.venue.trim()) {
-            setError('Venue is required');
+            setError(t('events.addModal.validation.venueRequired'));
             return;
         }
 
         try {
             setLoading(true);
-
-            //console.log('🚀 Creating event...');
             await eventService.createEvent(formData);
-            //console.log('✅ Event created successfully!');
-
             setLoading(false);
-
-            //console.log('📢 Setting success to true');
             setSuccess(true);
 
         } catch (error) {
             setLoading(false);
-            console.error('❌ Error creating event:', error);
+            console.error('Error creating event:', error);
 
             if (error && typeof error === 'object' && 'response' in error) {
                 const axiosError = error as { response?: { data?: unknown; status?: number } };
@@ -111,8 +103,8 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
 
             const errorMessage = error instanceof Error && 'response' in error
                 ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
-                : 'Failed to create event';
-            setError(errorMessage || 'Failed to create event');
+                : t('events.addModal.messages.errorCreating');
+            setError(errorMessage || t('events.addModal.messages.errorCreating'));
         }
     };
 
@@ -123,18 +115,18 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-                {/* ✅ Header with Success Alert */}
+                {/* Header with Success Alert */}
                 <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10 shadow-sm">
                     <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <h2 className="text-xl font-bold text-gray-900 flex-shrink-0">Add New Event</h2>
+                        <h2 className="text-xl font-bold text-gray-900 flex-shrink-0">{t('events.addModal.title')}</h2>
 
-                        {/* ✅ Success Alert in Header - Always Visible */}
+                        {/* Success Alert in Header */}
                         {success && (
                             <div className="flex items-center gap-2 px-4 py-2 bg-green-50 border-2 border-green-500 rounded-lg shadow-lg">
                                 <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-green-900 whitespace-nowrap">Event created successfully!</p>
-                                    <p className="text-xs text-green-700 whitespace-nowrap">Closing in 2 seconds...</p>
+                                    <p className="text-sm font-semibold text-green-900 whitespace-nowrap">{t('events.addModal.messages.successCreated')}</p>
+                                    <p className="text-xs text-green-700 whitespace-nowrap">{t('events.addModal.messages.closingIn')}</p>
                                 </div>
                             </div>
                         )}
@@ -162,19 +154,19 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Basic Information */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('events.addModal.sections.basicInfo')}</h3>
                         </div>
 
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Event Name *
+                                {t('events.addModal.fields.eventName')} *
                             </label>
                             <input
                                 type="text"
                                 value={formData.eventName}
                                 onChange={(e) => handleChange('eventName', e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., Inter-School Football Championship"
+                                placeholder={t('events.addModal.placeholders.eventName')}
                                 required
                                 disabled={loading || success}
                             />
@@ -182,22 +174,23 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Event Code *
+                                {t('events.addModal.fields.eventCode')} *
                             </label>
                             <input
                                 type="text"
                                 value={formData.eventCode}
                                 onChange={(e) => handleChange('eventCode', e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., COMP-2024-001"
+                                placeholder={t('events.addModal.placeholders.eventCode')}
                                 required
                                 disabled={loading || success}
                             />
                         </div>
 
+                        {/* ✅ Event Type - Now Translated */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Event Type *
+                                {t('events.addModal.fields.eventType')} *
                             </label>
                             <select
                                 value={formData.eventType}
@@ -207,14 +200,17 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
                                 disabled={loading || success}
                             >
                                 {Object.entries(EventTypeLabels).map(([key, label]) => (
-                                    <option key={key} value={key}>{label}</option>
+                                    <option key={key} value={key}>
+                                        {getTranslatedEventType(label, t)}
+                                    </option>
                                 ))}
                             </select>
                         </div>
 
+                        {/* ✅ Activity Type - Now Translated */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Activity Type *
+                                {t('events.addModal.fields.activityType')} *
                             </label>
                             <select
                                 value={formData.activityType}
@@ -224,14 +220,16 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
                                 disabled={loading || success}
                             >
                                 {Object.entries(ActivityTypeLabels).map(([key, label]) => (
-                                    <option key={key} value={key}>{label}</option>
+                                    <option key={key} value={key}>
+                                        {getTranslatedActivityType(label, t)}
+                                    </option>
                                 ))}
                             </select>
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Leading Teacher *
+                                {t('events.addModal.fields.leadingTeacher')} *
                             </label>
                             <select
                                 value={formData.leadingTeacherID || ''}
@@ -240,7 +238,7 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
                                 required
                                 disabled={loading || success}
                             >
-                                <option value="">Select a teacher</option>
+                                <option value="">{t('events.addModal.placeholders.selectTeacher')}</option>
                                 {teachers.map(teacher => (
                                     <option key={teacher.teacherID} value={teacher.teacherID}>
                                         {teacher.fullName}
@@ -251,13 +249,13 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
 
                         {/* Date & Time */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">Date & Time</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">{t('events.addModal.sections.dateTime')}</h3>
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 <Calendar className="w-4 h-4 inline mr-2" />
-                                Event Date *
+                                {t('events.addModal.fields.eventDate')} *
                             </label>
                             <input
                                 type="date"
@@ -272,7 +270,7 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 <Clock className="w-4 h-4 inline mr-2" />
-                                Start Time *
+                                {t('events.addModal.fields.startTime')} *
                             </label>
                             <input
                                 type="time"
@@ -287,7 +285,7 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 <Clock className="w-4 h-4 inline mr-2" />
-                                End Time (Optional)
+                                {t('events.addModal.fields.endTime')}
                             </label>
                             <input
                                 type="time"
@@ -300,20 +298,20 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
 
                         {/* Location */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">Location</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">{t('events.addModal.sections.location')}</h3>
                         </div>
 
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 <MapPin className="w-4 h-4 inline mr-2" />
-                                Venue *
+                                {t('events.addModal.fields.venue')} *
                             </label>
                             <input
                                 type="text"
                                 value={formData.venue}
                                 onChange={(e) => handleChange('venue', e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., School Main Hall, Stadium Nasional"
+                                placeholder={t('events.addModal.placeholders.venue')}
                                 required
                                 disabled={loading || success}
                             />
@@ -321,136 +319,49 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
 
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Venue Address (Optional)
+                                {t('events.addModal.fields.venueAddress')}
                             </label>
                             <input
                                 type="text"
                                 value={formData.venueAddress || ''}
                                 onChange={(e) => handleChange('venueAddress', e.target.value || undefined)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Full address with postcode"
+                                placeholder={t('events.addModal.placeholders.venueAddress')}
                                 disabled={loading || success}
                             />
                         </div>
 
                         {/* Additional Information */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">Additional Information</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">{t('events.addModal.sections.additionalInfo')}</h3>
                         </div>
-
-                        {/* ❌ HIDDEN - Organizer (Optional) */}
-                        {/* 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Organizer (Optional)
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.organizer || ''}
-                                onChange={(e) => handleChange('organizer', e.target.value || undefined)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., Ministry of Education"
-                                disabled={loading || success}
-                            />
-                        </div>
-                        */}
-
-                        {/* ❌ HIDDEN - Opponent School (Optional) */}
-                        {/*
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Opponent School (Optional)
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.opponentSchool || ''}
-                                onChange={(e) => handleChange('opponentSchool', e.target.value || undefined)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="For competitions"
-                                disabled={loading || success}
-                            />
-                        </div>
-                        */}
-
-                        {/* ❌ HIDDEN - Requires Parent Consent */}
-                        {/*
-                        <div className="md:col-span-2">
-                            <div className="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    id="requiresParentConsent"
-                                    checked={formData.requiresParentConsent}
-                                    onChange={(e) => handleChange('requiresParentConsent', e.target.checked)}
-                                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                    disabled={loading || success}
-                                />
-                                <label htmlFor="requiresParentConsent" className="ml-2 text-sm text-gray-700">
-                                    Requires Parent Consent
-                                </label>
-                            </div>
-                        </div>
-                        */}
-
-                        {/* ❌ HIDDEN - Transportation Details (Optional) */}
-                        {/*
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Transportation Details (Optional)
-                            </label>
-                            <textarea
-                                value={formData.transportationDetails || ''}
-                                onChange={(e) => handleChange('transportationDetails', e.target.value || undefined)}
-                                rows={2}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Bus departure time, pickup location, etc."
-                                disabled={loading || success}
-                            />
-                        </div>
-                        */}
-
-                        {/* ❌ HIDDEN - Uniform Requirements (Optional) */}
-                        {/*
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Uniform Requirements (Optional)
-                            </label>
-                            <textarea
-                                value={formData.uniformRequirements || ''}
-                                onChange={(e) => handleChange('uniformRequirements', e.target.value || undefined)}
-                                rows={2}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Sports attire, team jersey, etc."
-                                disabled={loading || success}
-                            />
-                        </div>
-                        */}
 
                         {/* Result */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Result (Optional)
+                                {t('events.addModal.fields.result')}
                             </label>
                             <input
                                 type="text"
                                 value={formData.result || ''}
                                 onChange={(e) => handleChange('result', e.target.value || undefined)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., Won 3-1, 2nd Place"
+                                placeholder={t('events.addModal.placeholders.result')}
                                 disabled={loading || success}
                             />
                         </div>
 
-                        {/* ✅ NEW FIELD - Awards Received */}
+                        {/* Awards Received */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Awards Received (Optional)
+                                {t('events.addModal.fields.awardsReceived')}
                             </label>
                             <textarea
                                 value={formData.awardsReceived || ''}
                                 onChange={(e) => handleChange('awardsReceived', e.target.value || undefined)}
                                 rows={3}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., 1st Place - District Level, Best Team Award, Champion Trophy"
+                                placeholder={t('events.addModal.placeholders.awardsReceived')}
                                 disabled={loading || success}
                             />
                         </div>
@@ -458,14 +369,14 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
                         {/* Remarks / Suggestions */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Remarks / Suggestions (Optional)
+                                {t('events.addModal.fields.remarks')}
                             </label>
                             <textarea
                                 value={formData.remarks || ''}
                                 onChange={(e) => handleChange('remarks', e.target.value || undefined)}
                                 rows={3}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Suggestions for improvement, lessons learned, recommendations..."
+                                placeholder={t('events.addModal.placeholders.remarks')}
                                 disabled={loading || success}
                             />
                         </div>
@@ -479,14 +390,14 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
                             className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                             disabled={loading || success}
                         >
-                            Cancel
+                            {t('events.addModal.buttons.cancel')}
                         </button>
                         <button
                             type="submit"
                             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
                             disabled={loading || success}
                         >
-                            {loading ? 'Creating...' : success ? '✓ Created!' : 'Create Event'}
+                            {loading ? t('events.addModal.buttons.creating') : success ? t('events.addModal.buttons.created') : t('events.addModal.buttons.create')}
                         </button>
                     </div>
                 </form>

@@ -1,7 +1,8 @@
 ﻿import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     X, Calendar, /*Clock,*/ MapPin, Users, User, Mail, Phone,
-    Edit, Trash2, /*Plus,*/ CheckCircle, /*XCircle,*/ Award, /*AlertCircle,*/ Bell
+    Edit, Trash2, /*Plus, CheckCircle, XCircle,*/ Award, /*AlertCircle,*/ Bell
 } from 'lucide-react';
 import {
     eventService,
@@ -9,12 +10,12 @@ import {
     EventStatusLabels,
     EventStatusColors,
     type EventWithDetails
-    // ❌ Removed: type EventParticipant
 } from '../../services/eventService';
 import { ActivityTypeLabels, ActivityType } from '../../services/teamService';
-// ❌ Removed: import { studentService } from '../../services/studentService';
 import LoadingSpinner from '../Common/LoadingSpinner';
 import ManageParticipantsModal from './ManageParticipantsModal';
+import { getTranslatedActivityType } from '../../utils/activityTypeTranslations';
+import { getTranslatedEventType } from '../../utils/eventTypeTranslations';
 
 interface EventDetailsModalProps {
     eventId: number;
@@ -23,6 +24,7 @@ interface EventDetailsModalProps {
 }
 
 const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps) => {
+    const { t } = useTranslation();
     const [event, setEvent] = useState<EventWithDetails | null>(null);
     const [loading, setLoading] = useState(true);
     const [isManageParticipantsOpen, setIsManageParticipantsOpen] = useState(false);
@@ -36,14 +38,6 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
         try {
             setLoading(true);
             const data = await eventService.getEventById(eventId);
-
-            // 🔍 ADD THIS DEBUG CODE:
-            console.log('Event Type Value:', data.eventType);
-            console.log('Event Type Label:', EventTypeLabels[data.eventType]);
-            console.log('Activity Type Value:', data.activityType);
-            console.log('Activity Type Label:', ActivityTypeLabels[data.activityType as ActivityType]);
-            console.log('All Activity Labels:', Object.keys(ActivityTypeLabels));
-
             setEvent(data);
         } catch (error) {
             console.error('Error loading event details:', error);
@@ -53,30 +47,30 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
     };
 
     const handleRemoveParticipant = async (participantId: number) => {
-        if (!confirm('Are you sure you want to remove this participant?')) return;
+        if (!confirm(t('events.detailsModal.messages.confirmRemoveParticipant'))) return;
 
         try {
             await eventService.removeParticipant(participantId);
             await loadEventDetails();
         } catch (error) {
             console.error('Error removing participant:', error);
-            alert('Failed to remove participant');
+            alert(t('events.detailsModal.messages.errorRemovingParticipant'));
         }
     };
 
     const handleSendNotifications = async () => {
         if (!event) return;
 
-        if (!confirm(`Send parent notifications to all ${event.totalParticipants} participants?`)) return;
+        if (!confirm(t('events.detailsModal.messages.confirmSendNotifications', { count: event.totalParticipants }))) return;
 
         try {
             setSendingNotification(true);
             await eventService.sendParentNotifications(eventId);
-            alert('Notifications sent successfully!');
+            alert(t('events.detailsModal.messages.notificationsSent'));
             await loadEventDetails();
         } catch (error) {
             console.error('Error sending notifications:', error);
-            alert('Failed to send notifications');
+            alert(t('events.detailsModal.messages.errorSendingNotifications'));
         } finally {
             setSendingNotification(false);
         }
@@ -110,7 +104,7 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div className="bg-white rounded-lg p-8">
-                    <p className="text-gray-600">Event not found</p>
+                    <p className="text-gray-600">{t('events.detailsModal.eventNotFound')}</p>
                 </div>
             </div>
         );
@@ -142,14 +136,14 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
                             >
                                 <Edit className="w-4 h-4" />
-                                Edit Event
+                                {t('events.detailsModal.buttons.editEvent')}
                             </button>
                             <button
                                 onClick={() => setIsManageParticipantsOpen(true)}
                                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2"
                             >
                                 <Users className="w-4 h-4" />
-                                Manage Participants
+                                {t('events.detailsModal.buttons.manageParticipants')}
                             </button>
                             {event.requiresParentConsent && !event.parentNotificationSent && (
                                 <button
@@ -158,7 +152,7 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                                     className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 flex items-center gap-2 disabled:bg-orange-300"
                                 >
                                     <Bell className="w-4 h-4" />
-                                    {sendingNotification ? 'Sending...' : 'Send Parent Notifications'}
+                                    {sendingNotification ? t('events.detailsModal.buttons.sending') : t('events.detailsModal.buttons.sendNotifications')}
                                 </button>
                             )}
                         </div>
@@ -178,22 +172,22 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                             {/* Left Column */}
                             <div className="space-y-4">
                                 <div>
-                                    <h3 className="text-sm font-medium text-gray-500 mb-2">Event Type</h3>
+                                    <h3 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.eventType')}</h3>
                                     <p className="text-gray-900">
-                                        {EventTypeLabels[event.eventType] || `Unknown (${event.eventType})`}
+                                        {getTranslatedEventType(EventTypeLabels[event.eventType], t) || `Unknown (${event.eventType})`}
                                     </p>
                                 </div>
 
                                 <div>
-                                    <h3 className="text-sm font-medium text-gray-500 mb-2">Activity Type</h3>
+                                    <h3 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.activityType')}</h3>
                                     <p className="text-gray-900">
-                                        {ActivityTypeLabels[event.activityType as ActivityType] || `Unknown Activity (${event.activityType})`}
+                                        {getTranslatedActivityType(ActivityTypeLabels[event.activityType as ActivityType], t) || `Unknown Activity (${event.activityType})`}
                                     </p>
                                 </div>
 
                                 {event.team && (
                                     <div>
-                                        <h3 className="text-sm font-medium text-gray-500 mb-2">Team</h3>
+                                        <h3 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.team')}</h3>
                                         <p className="text-gray-900">{event.team.teamName}</p>
                                     </div>
                                 )}
@@ -201,7 +195,7 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                                 <div>
                                     <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
                                         <Calendar className="w-4 h-4" />
-                                        Date & Time
+                                        {t('events.detailsModal.labels.dateTime')}
                                     </h3>
                                     <p className="text-gray-900">{formatDate(event.eventDate)}</p>
                                     <p className="text-gray-600 text-sm">
@@ -213,7 +207,7 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                                 <div>
                                     <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
                                         <MapPin className="w-4 h-4" />
-                                        Venue
+                                        {t('events.detailsModal.labels.venue')}
                                     </h3>
                                     <p className="text-gray-900">{event.venue}</p>
                                     {event.venueAddress && (
@@ -226,14 +220,14 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                             <div className="space-y-4">
                                 {event.opponentSchool && (
                                     <div>
-                                        <h3 className="text-sm font-medium text-gray-500 mb-2">Opponent School</h3>
+                                        <h3 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.opponentSchool')}</h3>
                                         <p className="text-gray-900">{event.opponentSchool}</p>
                                     </div>
                                 )}
 
                                 {event.organizer && (
                                     <div>
-                                        <h3 className="text-sm font-medium text-gray-500 mb-2">Organizer</h3>
+                                        <h3 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.organizer')}</h3>
                                         <p className="text-gray-900">{event.organizer}</p>
                                     </div>
                                 )}
@@ -242,7 +236,7 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                                     <div>
                                         <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
                                             <User className="w-4 h-4" />
-                                            Leading Teacher
+                                            {t('events.detailsModal.labels.leadingTeacher')}
                                         </h3>
                                         <p className="text-gray-900">{event.leadingTeacher.fullName}</p>
                                         <div className="flex flex-col gap-1 mt-1">
@@ -260,11 +254,11 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
 
                                 {event.requiresParentConsent && (
                                     <div>
-                                        <h3 className="text-sm font-medium text-gray-500 mb-2">Parent Consent</h3>
-                                        <p className="text-gray-900">Required</p>
+                                        <h3 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.parentConsent')}</h3>
+                                        <p className="text-gray-900">{t('events.detailsModal.labels.required')}</p>
                                         {event.parentNotificationSent && (
                                             <p className="text-green-600 text-sm mt-1">
-                                                ✓ Notifications sent on {new Date(event.notificationSentDate!).toLocaleDateString()}
+                                                ✓ {t('events.detailsModal.labels.notificationsSentOn', { date: new Date(event.notificationSentDate!).toLocaleDateString() })}
                                             </p>
                                         )}
                                     </div>
@@ -275,32 +269,32 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                         {/* Additional Information */}
                         {(event.description || event.specialInstructions || event.transportationDetails || event.uniformRequirements) && (
                             <div className="border-t border-gray-200 pt-6 mb-8">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('events.detailsModal.sections.additionalInfo')}</h3>
                                 <div className="space-y-4">
                                     {event.description && (
                                         <div>
-                                            <h4 className="text-sm font-medium text-gray-500 mb-2">Description</h4>
+                                            <h4 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.description')}</h4>
                                             <p className="text-gray-700 whitespace-pre-wrap">{event.description}</p>
                                         </div>
                                     )}
 
                                     {event.specialInstructions && (
                                         <div>
-                                            <h4 className="text-sm font-medium text-gray-500 mb-2">Special Instructions</h4>
+                                            <h4 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.specialInstructions')}</h4>
                                             <p className="text-gray-700 whitespace-pre-wrap">{event.specialInstructions}</p>
                                         </div>
                                     )}
 
                                     {event.transportationDetails && (
                                         <div>
-                                            <h4 className="text-sm font-medium text-gray-500 mb-2">Transportation</h4>
+                                            <h4 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.transportation')}</h4>
                                             <p className="text-gray-700 whitespace-pre-wrap">{event.transportationDetails}</p>
                                         </div>
                                     )}
 
                                     {event.uniformRequirements && (
                                         <div>
-                                            <h4 className="text-sm font-medium text-gray-500 mb-2">Uniform Requirements</h4>
+                                            <h4 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.uniformRequirements')}</h4>
                                             <p className="text-gray-700 whitespace-pre-wrap">{event.uniformRequirements}</p>
                                         </div>
                                     )}
@@ -313,19 +307,19 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                             <div className="border-t border-gray-200 pt-6 mb-8">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                                     <Award className="w-5 h-5 text-yellow-500" />
-                                    Results
+                                    {t('events.detailsModal.sections.results')}
                                 </h3>
                                 <div className="space-y-4">
                                     {event.result && (
                                         <div>
-                                            <h4 className="text-sm font-medium text-gray-500 mb-2">Result</h4>
+                                            <h4 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.result')}</h4>
                                             <p className="text-gray-900 font-medium">{event.result}</p>
                                         </div>
                                     )}
 
                                     {event.awardsReceived && (
                                         <div>
-                                            <h4 className="text-sm font-medium text-gray-500 mb-2">Awards Received</h4>
+                                            <h4 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.awardsReceived')}</h4>
                                             <p className="text-gray-900">{event.awardsReceived}</p>
                                         </div>
                                     )}
@@ -337,17 +331,17 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                         <div className="border-t border-gray-200 pt-6">
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="text-lg font-semibold text-gray-900">
-                                    Participants ({event.totalParticipants})
+                                    {t('events.detailsModal.sections.participants')} ({event.totalParticipants})
                                 </h3>
                                 <div className="flex gap-4 text-sm">
-                                    <span className="text-green-600">
-                                        <CheckCircle className="w-4 h-4 inline mr-1" />
-                                        Attended: {event.attendedParticipants}
-                                    </span>
-                                    <span className="text-blue-600">
-                                        <CheckCircle className="w-4 h-4 inline mr-1" />
-                                        Confirmed: {event.confirmedParticipants}
-                                    </span>
+                                    {/*<span className="text-green-600">*/}
+                                    {/*    <CheckCircle className="w-4 h-4 inline mr-1" />*/}
+                                    {/*    {t('events.detailsModal.participantStats.attended')}: {event.attendedParticipants}*/}
+                                    {/*</span>*/}
+                                    {/*<span className="text-blue-600">*/}
+                                    {/*    <CheckCircle className="w-4 h-4 inline mr-1" />*/}
+                                    {/*    {t('events.detailsModal.participantStats.confirmed')}: {event.confirmedParticipants}*/}
+                                    {/*</span>*/}
                                 </div>
                             </div>
 
@@ -356,11 +350,11 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                                     <table className="min-w-full divide-y divide-gray-200">
                                         <thead className="bg-gray-50">
                                             <tr>
-                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Performance</th>
-                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('events.detailsModal.table.student')}</th>
+                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{/*{t('events.detailsModal.table.role')}*/}</th>
+                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{/*{t('events.detailsModal.table.status')}*/}</th>
+                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{/*{t('events.detailsModal.table.performance')}*/}</th>
+                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('events.detailsModal.table.actions')}</th>
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
@@ -374,48 +368,48 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                                                             </div>
                                                             {participant.isFromTeam && (
                                                                 <div className="text-xs text-blue-600 mt-1">
-                                                                    Team: {participant.teamName}
+                                                                    {t('events.detailsModal.table.team')}: {participant.teamName}
                                                                 </div>
                                                             )}
                                                         </div>
                                                     </td>
                                                     <td className="px-4 py-3">
-                                                        <div>
-                                                            <div className="text-sm text-gray-900">{participant.role}</div>
-                                                            {participant.position && (
-                                                                <div className="text-xs text-gray-500">{participant.position}</div>
-                                                            )}
-                                                        </div>
+                                                        {/*<div>*/}
+                                                        {/*    <div className="text-sm text-gray-900">{participant.role}</div>*/}
+                                                        {/*    {participant.position && (*/}
+                                                        {/*        <div className="text-xs text-gray-500">{participant.position}</div>*/}
+                                                        {/*    )}*/}
+                                                        {/*</div>*/}
                                                     </td>
                                                     <td className="px-4 py-3">
                                                         <div className="flex flex-col gap-1">
-                                                            {participant.attendanceConfirmed ? (
-                                                                <span className="text-xs text-blue-600">✓ Confirmed</span>
-                                                            ) : (
-                                                                <span className="text-xs text-gray-400">○ Pending</span>
-                                                            )}
-                                                            {participant.parentConsentReceived ? (
-                                                                <span className="text-xs text-green-600">✓ Consent</span>
-                                                            ) : event.requiresParentConsent ? (
-                                                                <span className="text-xs text-orange-500">○ No Consent</span>
-                                                            ) : null}
-                                                            {participant.attended && (
-                                                                <span className="text-xs text-green-600 font-medium">✓ Attended</span>
-                                                            )}
+                                                            {/*{participant.attendanceConfirmed ? (*/}
+                                                            {/*    <span className="text-xs text-blue-600">✓ {t('events.detailsModal.status.confirmed')}</span>*/}
+                                                            {/*) : (*/}
+                                                            {/*    <span className="text-xs text-gray-400">○ {t('events.detailsModal.status.pending')}</span>*/}
+                                                            {/*)}*/}
+                                                            {/*{participant.parentConsentReceived ? (*/}
+                                                            {/*    <span className="text-xs text-green-600">✓ {t('events.detailsModal.status.consent')}</span>*/}
+                                                            {/*) : event.requiresParentConsent ? (*/}
+                                                            {/*    <span className="text-xs text-orange-500">○ {t('events.detailsModal.status.noConsent')}</span>*/}
+                                                            {/*) : null}*/}
+                                                            {/*{participant.attended && (*/}
+                                                            {/*    <span className="text-xs text-green-600 font-medium">✓ {t('events.detailsModal.status.attended')}</span>*/}
+                                                            {/*)}*/}
                                                         </div>
                                                     </td>
                                                     <td className="px-4 py-3">
-                                                        {participant.performance ? (
-                                                            <p className="text-sm text-gray-700">{participant.performance}</p>
-                                                        ) : (
-                                                            <span className="text-sm text-gray-400">-</span>
-                                                        )}
+                                                        {/*{participant.performance ? (*/}
+                                                        {/*    <p className="text-sm text-gray-700">{participant.performance}</p>*/}
+                                                        {/*) : (*/}
+                                                        {/*    <span className="text-sm text-gray-400">-</span>*/}
+                                                        {/*)}*/}
                                                     </td>
                                                     <td className="px-4 py-3">
                                                         <button
                                                             onClick={() => handleRemoveParticipant(participant.participantID)}
                                                             className="text-red-600 hover:text-red-900"
-                                                            title="Remove"
+                                                            title={t('events.detailsModal.actions.remove')}
                                                         >
                                                             <Trash2 className="w-4 h-4" />
                                                         </button>
@@ -428,12 +422,12 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                             ) : (
                                 <div className="text-center py-8 text-gray-500">
                                     <Users className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-                                    <p>No participants added yet</p>
+                                    <p>{t('events.detailsModal.noParticipants')}</p>
                                     <button
                                         onClick={() => setIsManageParticipantsOpen(true)}
                                         className="mt-4 text-blue-600 hover:text-blue-800"
                                     >
-                                        Add Participants
+                                        {t('events.detailsModal.buttons.addParticipants')}
                                     </button>
                                 </div>
                             )}

@@ -951,6 +951,367 @@
     "libraryClub": "图书馆学会",
     "environmentalClub": "环保学会",
     "other": "其他"
-  }
+  },
+  "eventTypes": {
+    "trainingSession": "训练课程",
+    "schoolCompetition": "校内比赛",
+    "districtCompetition": "区级比赛",
+    "stateCompetition": "州级比赛",
+    "nationalCompetition": "全国比赛",
+    "internationalCompetition": "国际比赛",
+    "friendlyMatch": "友谊赛",
+    "performance": "表演",
+    "workshop": "工作坊",
+    "camp": "营地活动",
+    "other": "其他"
+  },
+  "events": {
+    "title": "活动与赛事",
+    "subtitle": "管理比赛、训练和各类活动",
+    "addEvent": "添加活动",
 
+    "searchPlaceholder": "搜索活动...",
+
+    "filters": {
+      "allEventTypes": "所有活动类型",
+      "allStatuses": "所有状态"
+    },
+
+    "viewMode": {
+      "list": "列表",
+      "calendar": "日历"
+    },
+
+    "stats": {
+      "totalEvents": "活动总数",
+      "upcoming": "即将举行",
+      "confirmed": "已确认",
+      "completed": "已完成"
+    },
+
+    "table": {
+      "event": "活动",
+      "type": "类型",
+      "dateTime": "日期和时间",
+      "venue": "地点",
+      "status": "状态",
+      "actions": "操作"
+    },
+
+    "actions": {
+      "viewDetails": "查看详情",
+      "edit": "编辑",
+      "delete": "删除"
+    },
+
+    "noEventsFound": "未找到活动",
+    "noEventsHint": "尝试调整筛选条件或创建新活动",
+
+    "messages": {
+      "confirmDelete": "确定要删除此活动吗？",
+      "errorDeleting": "删除活动失败",
+      "errorLoadingDetails": "加载活动详情失败，请重试。"
+    },
+
+    "addModal": {
+      "title": "添加新活动",
+
+      "sections": {
+        "basicInfo": "基本信息",
+        "dateTime": "日期和时间",
+        "location": "地点",
+        "additionalInfo": "附加信息"
+      },
+
+      "fields": {
+        "eventName": "活动名称",
+        "eventCode": "活动代码",
+        "eventType": "活动类型",
+        "activityType": "运动类型",
+        "leadingTeacher": "负责教师",
+        "eventDate": "活动日期",
+        "startTime": "开始时间",
+        "endTime": "结束时间（可选）",
+        "venue": "场地",
+        "venueAddress": "场地地址（可选）",
+        "result": "成绩（可选）",
+        "awardsReceived": "所获奖项（可选）",
+        "remarks": "备注/建议（可选）"
+      },
+
+      "placeholders": {
+        "eventName": "例如：校际足球锦标赛",
+        "eventCode": "例如：COMP-2024-001",
+        "selectTeacher": "选择教师",
+        "venue": "例如：学校大礼堂、国家体育场",
+        "venueAddress": "完整地址及邮编",
+        "result": "例如：3-1获胜、第二名",
+        "awardsReceived": "例如：区级第一名、最佳团队奖、冠军奖杯",
+        "remarks": "改进建议、经验教训、推荐..."
+      },
+
+      "validation": {
+        "eventNameRequired": "活动名称为必填项",
+        "eventCodeRequired": "活动代码为必填项",
+        "venueRequired": "场地为必填项"
+      },
+
+      "messages": {
+        "successCreated": "活动创建成功！",
+        "closingIn": "2秒后自动关闭...",
+        "errorCreating": "创建活动失败"
+      },
+
+      "buttons": {
+        "cancel": "取消",
+        "create": "创建活动",
+        "creating": "创建中...",
+        "created": "✓ 已创建！"
+      }
+    },
+
+    "editModal": {
+      "title": "编辑活动",
+
+      "sections": {
+        "basicInfo": "基本信息",
+        "dateTime": "日期和时间",
+        "location": "地点",
+        "additionalInfo": "附加信息"
+      },
+
+      "fields": {
+        "eventName": "活动名称",
+        "eventCode": "活动代码",
+        "eventType": "活动类型",
+        "activityType": "运动类型",
+        "leadingTeacher": "负责教师",
+        "eventDate": "活动日期",
+        "startTime": "开始时间",
+        "endTime": "结束时间（可选）",
+        "venue": "场地",
+        "venueAddress": "场地地址（可选）",
+        "result": "成绩（可选）",
+        "awardsReceived": "所获奖项（可选）",
+        "remarks": "备注/建议（可选）"
+      },
+
+      "placeholders": {
+        "eventName": "例如：校际足球锦标赛",
+        "eventCode": "例如：COMP-2024-001",
+        "selectTeacher": "选择教师",
+        "venue": "例如：学校大礼堂、国家体育场",
+        "venueAddress": "完整地址及邮编",
+        "result": "例如：3-1获胜、第二名",
+        "awardsReceived": "例如：区级第一名、最佳团队奖、冠军奖杯",
+        "remarks": "改进建议、经验教训、推荐..."
+      },
+
+      "validation": {
+        "eventNameRequired": "活动名称为必填项",
+        "eventCodeRequired": "活动代码为必填项",
+        "venueRequired": "场地为必填项"
+      },
+
+      "messages": {
+        "successUpdated": "活动更新成功！",
+        "closingIn": "2秒后自动关闭...",
+        "errorUpdating": "更新活动失败"
+      },
+
+      "buttons": {
+        "cancel": "取消",
+        "update": "更新活动",
+        "updating": "更新中...",
+        "updated": "✓ 已更新！"
+      }
+    },
+
+    "detailsModal": {
+      "eventNotFound": "未找到活动",
+
+      "buttons": {
+        "editEvent": "编辑活动",
+        "manageParticipants": "管理参与者",
+        "sendNotifications": "发送家长通知",
+        "sending": "发送中...",
+        "addParticipants": "添加参与者"
+      },
+
+      "labels": {
+        "eventType": "活动类型",
+        "activityType": "运动类型",
+        "team": "团队",
+        "dateTime": "日期和时间",
+        "venue": "场地",
+        "opponentSchool": "对手学校",
+        "organizer": "主办方",
+        "leadingTeacher": "负责教师",
+        "parentConsent": "家长同意",
+        "required": "必需",
+        "notificationsSentOn": "通知发送于 {{date}}",
+        "description": "描述",
+        "specialInstructions": "特别说明",
+        "transportation": "交通安排",
+        "uniformRequirements": "服装要求",
+        "result": "成绩",
+        "awardsReceived": "所获奖项"
+      },
+
+      "sections": {
+        "additionalInfo": "附加信息",
+        "results": "成绩结果",
+        "participants": "参与者"
+      },
+
+      "participantStats": {
+        "attended": "已出席",
+        "confirmed": "已确认"
+      },
+
+      "table": {
+        "student": "学生",
+        "role": "角色",
+        "status": "状态",
+        "performance": "表现",
+        "actions": "操作",
+        "team": "团队"
+      },
+
+      "status": {
+        "confirmed": "已确认",
+        "pending": "待定",
+        "consent": "已同意",
+        "noConsent": "未同意",
+        "attended": "已出席"
+      },
+
+      "actions": {
+        "remove": "移除"
+      },
+
+      "noParticipants": "尚未添加参与者",
+
+      "messages": {
+        "confirmRemoveParticipant": "确定要移除此参与者吗？",
+        "errorRemovingParticipant": "移除参与者失败",
+        "confirmSendNotifications": "向所有 {{count}} 位参与者发送家长通知吗？",
+        "notificationsSent": "通知发送成功！",
+        "errorSendingNotifications": "发送通知失败"
+      }
+    },
+
+    "participantsModal": {
+      "title": "管理参与者",
+
+      "labels": {
+        "selectTeam": "选择团队（可选）",
+        "noTeam": "无团队 - 仅添加个人学生",
+        "members": "成员",
+        "fromTeam": "来自团队",
+        "individualStudents": "个人学生",
+        "filterByClass": "按班级筛选",
+        "allClasses": "所有班级"
+      },
+
+      "sections": {
+        "selectedParticipants": "已选参与者",
+        "addIndividualStudents": "添加个人学生"
+      },
+
+      "placeholders": {
+        "searchStudents": "按姓名、学号、年级或班级搜索学生..."
+      },
+
+      "buttons": {
+        "showList": "显示学生列表",
+        "hideList": "隐藏学生列表",
+        "add": "添加",
+        "cancel": "取消",
+        "adding": "添加中...",
+        "addParticipants": "添加 {{count}} 位参与者"
+      },
+
+      "actions": {
+        "removeFromSelection": "从选择中移除"
+      },
+
+      "footer": {
+        "selectedCount": "已选择 {{count}} 位参与者"
+      },
+
+      "validation": {
+        "selectAtLeastOne": "请至少选择一位参与者"
+      },
+
+      "messages": {
+        "errorLoadingTeam": "加载团队成员失败，请重试。",
+        "noSchoolInfo": "无法加载学生：未找到学校信息",
+        "errorLoadingData": "加载数据失败，请重试。",
+        "noTeamsAvailable": "此活动类型没有可用的团队。您可以单独添加学生。",
+        "errorAddingParticipants": "添加参与者失败",
+        "noStudentsFound": "未找到匹配的学生",
+        "allStudentsSelected": "所有学生已被选中或已参与"
+      }
+    }
+  },
+
+  "eventReport": {
+    "title": "活动报告",
+    "subtitle": "查看和导出活动详情及参与者信息",
+
+    "buttons": {
+      "showFilters": "显示筛选",
+      "hideFilters": "隐藏筛选",
+      "exportExcel": "导出Excel",
+      "print": "打印",
+      "clearFilters": "清除筛选"
+    },
+
+    "filters": {
+      "startDate": "开始日期",
+      "endDate": "结束日期",
+      "eventType": "活动类型",
+      "status": "状态",
+      "allTypes": "所有类型",
+      "allStatus": "所有状态"
+    },
+
+    "summary": {
+      "totalEvents": "活动总数",
+      "totalParticipants": "参与者总数",
+      "dateRange": "日期范围",
+      "allDates": "所有日期"
+    },
+
+    "table": {
+      "leadingTeacher": "负责教师",
+      "students": "学生",
+      "gender": "性别",
+      "className": "班级名称",
+      "eventName": "活动名称",
+      "eventType": "活动类型",
+      "remarks": "备注/建议",
+      "results": "成绩",
+      "achievement": "成就",
+      "eventDate": "活动日期"
+    },
+
+    "excel": {
+      "sheetName": "活动报告",
+      "filename": "活动报告",
+      "leadingTeacher": "负责教师",
+      "students": "学生",
+      "gender": "性别",
+      "className": "班级名称",
+      "eventName": "活动名称",
+      "eventType": "活动类型",
+      "remarks": "备注/建议",
+      "results": "成绩",
+      "achievement": "成就",
+      "eventDate": "活动日期"
+    },
+
+    "noEventsFound": "未找到活动"
+  }
 }

@@ -951,5 +951,366 @@
     "libraryClub": "Library Club",
     "environmentalClub": "Environmental Club",
     "other": "Other"
+  },
+  "eventTypes": {
+    "trainingSession": "Training Session",
+    "schoolCompetition": "School Competition",
+    "districtCompetition": "District Competition",
+    "stateCompetition": "State Competition",
+    "nationalCompetition": "National Competition",
+    "internationalCompetition": "International Competition",
+    "friendlyMatch": "Friendly Match",
+    "performance": "Performance",
+    "workshop": "Workshop",
+    "camp": "Camp",
+    "other": "Other"
+  },
+  "events": {
+    "title": "Events & Activities",
+    "subtitle": "Manage competitions, training sessions, and activities",
+    "addEvent": "Add Event",
+
+    "searchPlaceholder": "Search events...",
+
+    "filters": {
+      "allEventTypes": "All Event Types",
+      "allStatuses": "All Statuses"
+    },
+
+    "viewMode": {
+      "list": "List",
+      "calendar": "Calendar"
+    },
+
+    "stats": {
+      "totalEvents": "Total Events",
+      "upcoming": "Upcoming",
+      "confirmed": "Confirmed",
+      "completed": "Completed"
+    },
+
+    "table": {
+      "event": "Event",
+      "type": "Type",
+      "dateTime": "Date & Time",
+      "venue": "Venue",
+      "status": "Status",
+      "actions": "Actions"
+    },
+
+    "actions": {
+      "viewDetails": "View Details",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+
+    "noEventsFound": "No events found",
+    "noEventsHint": "Try adjusting your filters or create a new event",
+
+    "messages": {
+      "confirmDelete": "Are you sure you want to delete this event?",
+      "errorDeleting": "Failed to delete event",
+      "errorLoadingDetails": "Failed to load event details. Please try again."
+    },
+
+    "addModal": {
+      "title": "Add New Event",
+
+      "sections": {
+        "basicInfo": "Basic Information",
+        "dateTime": "Date & Time",
+        "location": "Location",
+        "additionalInfo": "Additional Information"
+      },
+
+      "fields": {
+        "eventName": "Event Name",
+        "eventCode": "Event Code",
+        "eventType": "Event Type",
+        "activityType": "Activity Type",
+        "leadingTeacher": "Leading Teacher",
+        "eventDate": "Event Date",
+        "startTime": "Start Time",
+        "endTime": "End Time (Optional)",
+        "venue": "Venue",
+        "venueAddress": "Venue Address (Optional)",
+        "result": "Result (Optional)",
+        "awardsReceived": "Awards Received (Optional)",
+        "remarks": "Remarks / Suggestions (Optional)"
+      },
+
+      "placeholders": {
+        "eventName": "e.g., Inter-School Football Championship",
+        "eventCode": "e.g., COMP-2024-001",
+        "selectTeacher": "Select a teacher",
+        "venue": "e.g., School Main Hall, Stadium Nasional",
+        "venueAddress": "Full address with postcode",
+        "result": "e.g., Won 3-1, 2nd Place",
+        "awardsReceived": "e.g., 1st Place - District Level, Best Team Award, Champion Trophy",
+        "remarks": "Suggestions for improvement, lessons learned, recommendations..."
+      },
+
+      "validation": {
+        "eventNameRequired": "Event name is required",
+        "eventCodeRequired": "Event code is required",
+        "venueRequired": "Venue is required"
+      },
+
+      "messages": {
+        "successCreated": "Event created successfully!",
+        "closingIn": "Closing in 2 seconds...",
+        "errorCreating": "Failed to create event"
+      },
+
+      "buttons": {
+        "cancel": "Cancel",
+        "create": "Create Event",
+        "creating": "Creating...",
+        "created": "✓ Created!"
+      }
+    },
+    "editModal": {
+      "title": "Edit Event",
+
+      "sections": {
+        "basicInfo": "Basic Information",
+        "dateTime": "Date & Time",
+        "location": "Location",
+        "additionalInfo": "Additional Information"
+      },
+
+      "fields": {
+        "eventName": "Event Name",
+        "eventCode": "Event Code",
+        "eventType": "Event Type",
+        "activityType": "Activity Type",
+        "leadingTeacher": "Leading Teacher",
+        "eventDate": "Event Date",
+        "startTime": "Start Time",
+        "endTime": "End Time (Optional)",
+        "venue": "Venue",
+        "venueAddress": "Venue Address (Optional)",
+        "result": "Result (Optional)",
+        "awardsReceived": "Awards Received (Optional)",
+        "remarks": "Remarks / Suggestions (Optional)"
+      },
+
+      "placeholders": {
+        "eventName": "e.g., Inter-School Football Championship",
+        "eventCode": "e.g., COMP-2024-001",
+        "selectTeacher": "Select a teacher",
+        "venue": "e.g., School Main Hall, Stadium Nasional",
+        "venueAddress": "Full address with postcode",
+        "result": "e.g., Won 3-1, 2nd Place",
+        "awardsReceived": "e.g., 1st Place - District Level, Best Team Award, Champion Trophy",
+        "remarks": "Suggestions for improvement, lessons learned, recommendations..."
+      },
+
+      "validation": {
+        "eventNameRequired": "Event name is required",
+        "eventCodeRequired": "Event code is required",
+        "venueRequired": "Venue is required"
+      },
+
+      "messages": {
+        "successUpdated": "Event updated successfully!",
+        "closingIn": "Closing in 2 seconds...",
+        "errorUpdating": "Failed to update event"
+      },
+
+      "buttons": {
+        "cancel": "Cancel",
+        "update": "Update Event",
+        "updating": "Updating...",
+        "updated": "✓ Updated!"
+      }
+    },
+
+    "detailsModal": {
+      "eventNotFound": "Event not found",
+
+      "buttons": {
+        "editEvent": "Edit Event",
+        "manageParticipants": "Manage Participants",
+        "sendNotifications": "Send Parent Notifications",
+        "sending": "Sending...",
+        "addParticipants": "Add Participants"
+      },
+
+      "labels": {
+        "eventType": "Event Type",
+        "activityType": "Activity Type",
+        "team": "Team",
+        "dateTime": "Date & Time",
+        "venue": "Venue",
+        "opponentSchool": "Opponent School",
+        "organizer": "Organizer",
+        "leadingTeacher": "Leading Teacher",
+        "parentConsent": "Parent Consent",
+        "required": "Required",
+        "notificationsSentOn": "Notifications sent on {{date}}",
+        "description": "Description",
+        "specialInstructions": "Special Instructions",
+        "transportation": "Transportation",
+        "uniformRequirements": "Uniform Requirements",
+        "result": "Result",
+        "awardsReceived": "Awards Received"
+      },
+
+      "sections": {
+        "additionalInfo": "Additional Information",
+        "results": "Results",
+        "participants": "Participants"
+      },
+
+      "participantStats": {
+        "attended": "Attended",
+        "confirmed": "Confirmed"
+      },
+
+      "table": {
+        "student": "Student",
+        "role": "Role",
+        "status": "Status",
+        "performance": "Performance",
+        "actions": "Actions",
+        "team": "Team"
+      },
+
+      "status": {
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "consent": "Consent",
+        "noConsent": "No Consent",
+        "attended": "Attended"
+      },
+
+      "actions": {
+        "remove": "Remove"
+      },
+
+      "noParticipants": "No participants added yet",
+
+      "messages": {
+        "confirmRemoveParticipant": "Are you sure you want to remove this participant?",
+        "errorRemovingParticipant": "Failed to remove participant",
+        "confirmSendNotifications": "Send parent notifications to all {{count}} participants?",
+        "notificationsSent": "Notifications sent successfully!",
+        "errorSendingNotifications": "Failed to send notifications"
+      }
+    },
+
+    "participantsModal": {
+      "title": "Manage Participants",
+
+      "labels": {
+        "selectTeam": "Select Team (Optional)",
+        "noTeam": "No team - Add individual students only",
+        "members": "members",
+        "fromTeam": "From Team",
+        "individualStudents": "Individual Students",
+        "filterByClass": "Filter by Class",
+        "allClasses": "All Classes"
+      },
+
+      "sections": {
+        "selectedParticipants": "Selected Participants",
+        "addIndividualStudents": "Add Individual Students"
+      },
+
+      "placeholders": {
+        "searchStudents": "Search students by name, code, grade, or class..."
+      },
+
+      "buttons": {
+        "showList": "Show Student List",
+        "hideList": "Hide Student List",
+        "add": "Add",
+        "cancel": "Cancel",
+        "adding": "Adding...",
+        "addParticipants": "Add {{count}} Participant(s)"
+      },
+
+      "actions": {
+        "removeFromSelection": "Remove from selection"
+      },
+
+      "footer": {
+        "selectedCount": "{{count}} participant(s) selected"
+      },
+
+      "validation": {
+        "selectAtLeastOne": "Please select at least one participant"
+      },
+
+      "messages": {
+        "errorLoadingTeam": "Failed to load team members. Please try again.",
+        "noSchoolInfo": "Unable to load students: School information not found",
+        "errorLoadingData": "Failed to load data. Please try again.",
+        "noTeamsAvailable": "No teams available for this activity type. You can add students individually.",
+        "errorAddingParticipants": "Failed to add participants",
+        "noStudentsFound": "No students found matching your search",
+        "allStudentsSelected": "All students are either already selected or participating"
+      }
+    }
+  },
+
+  "eventReport": {
+    "title": "Event Report",
+    "subtitle": "View and export event details with participants",
+
+    "buttons": {
+      "showFilters": "Show Filters",
+      "hideFilters": "Hide Filters",
+      "exportExcel": "Export to Excel",
+      "print": "Print",
+      "clearFilters": "Clear Filters"
+    },
+
+    "filters": {
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "eventType": "Event Type",
+      "status": "Status",
+      "allTypes": "All Types",
+      "allStatus": "All Status"
+    },
+
+    "summary": {
+      "totalEvents": "Total Events",
+      "totalParticipants": "Total Participants",
+      "dateRange": "Date Range",
+      "allDates": "All Dates"
+    },
+
+    "table": {
+      "leadingTeacher": "Leading Teacher",
+      "students": "Students",
+      "gender": "Gender",
+      "className": "Class Name",
+      "eventName": "Event Name",
+      "eventType": "Event Type",
+      "remarks": "Remarks/Suggestion",
+      "results": "Results",
+      "achievement": "Achievement",
+      "eventDate": "Event Date"
+    },
+
+    "excel": {
+      "sheetName": "Event Report",
+      "filename": "Event_Report",
+      "leadingTeacher": "Leading Teacher",
+      "students": "Students",
+      "gender": "Gender",
+      "className": "Class Name",
+      "eventName": "Event Name",
+      "eventType": "Event Type",
+      "remarks": "Remarks/Suggestion",
+      "results": "Results",
+      "achievement": "Achievement",
+      "eventDate": "Event Date"
+    },
+
+    "noEventsFound": "No events found"
   }
 }

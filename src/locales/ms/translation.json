@@ -951,5 +951,367 @@
     "libraryClub": "Kelab Perpustakaan",
     "environmentalClub": "Kelab Alam Sekitar",
     "other": "Lain-lain"
+  },
+  "eventTypes": {
+    "trainingSession": "Sesi Latihan",
+    "schoolCompetition": "Pertandingan Sekolah",
+    "districtCompetition": "Pertandingan Daerah",
+    "stateCompetition": "Pertandingan Negeri",
+    "nationalCompetition": "Pertandingan Kebangsaan",
+    "internationalCompetition": "Pertandingan Antarabangsa",
+    "friendlyMatch": "Perlawanan Persahabatan",
+    "performance": "Persembahan",
+    "workshop": "Bengkel",
+    "camp": "Perkhemahan",
+    "other": "Lain-lain"
+  },
+  "events": {
+    "title": "Acara & Aktiviti",
+    "subtitle": "Urus pertandingan, sesi latihan, dan aktiviti",
+    "addEvent": "Tambah Acara",
+
+    "searchPlaceholder": "Cari acara...",
+
+    "filters": {
+      "allEventTypes": "Semua Jenis Acara",
+      "allStatuses": "Semua Status"
+    },
+
+    "viewMode": {
+      "list": "Senarai",
+      "calendar": "Kalendar"
+    },
+
+    "stats": {
+      "totalEvents": "Jumlah Acara",
+      "upcoming": "Akan Datang",
+      "confirmed": "Disahkan",
+      "completed": "Selesai"
+    },
+
+    "table": {
+      "event": "Acara",
+      "type": "Jenis",
+      "dateTime": "Tarikh & Masa",
+      "venue": "Tempat",
+      "status": "Status",
+      "actions": "Tindakan"
+    },
+
+    "actions": {
+      "viewDetails": "Lihat Butiran",
+      "edit": "Edit",
+      "delete": "Padam"
+    },
+
+    "noEventsFound": "Tiada acara dijumpai",
+    "noEventsHint": "Cuba laraskan penapis anda atau buat acara baharu",
+
+    "messages": {
+      "confirmDelete": "Adakah anda pasti mahu memadamkan acara ini?",
+      "errorDeleting": "Gagal memadamkan acara",
+      "errorLoadingDetails": "Gagal memuatkan butiran acara. Sila cuba lagi."
+    },
+
+    "addModal": {
+      "title": "Tambah Acara Baharu",
+
+      "sections": {
+        "basicInfo": "Maklumat Asas",
+        "dateTime": "Tarikh & Masa",
+        "location": "Lokasi",
+        "additionalInfo": "Maklumat Tambahan"
+      },
+
+      "fields": {
+        "eventName": "Nama Acara",
+        "eventCode": "Kod Acara",
+        "eventType": "Jenis Acara",
+        "activityType": "Jenis Aktiviti",
+        "leadingTeacher": "Guru Pengiring",
+        "eventDate": "Tarikh Acara",
+        "startTime": "Masa Mula",
+        "endTime": "Masa Tamat (Pilihan)",
+        "venue": "Tempat",
+        "venueAddress": "Alamat Tempat (Pilihan)",
+        "result": "Keputusan (Pilihan)",
+        "awardsReceived": "Anugerah Diterima (Pilihan)",
+        "remarks": "Catatan / Cadangan (Pilihan)"
+      },
+
+      "placeholders": {
+        "eventName": "cth: Kejohanan Bola Sepak Antara Sekolah",
+        "eventCode": "cth: COMP-2024-001",
+        "selectTeacher": "Pilih guru",
+        "venue": "cth: Dewan Utama Sekolah, Stadium Nasional",
+        "venueAddress": "Alamat penuh dengan poskod",
+        "result": "cth: Menang 3-1, Tempat Ke-2",
+        "awardsReceived": "cth: Tempat Pertama - Peringkat Daerah, Anugerah Pasukan Terbaik",
+        "remarks": "Cadangan penambahbaikan, pengajaran, syor..."
+      },
+
+      "validation": {
+        "eventNameRequired": "Nama acara diperlukan",
+        "eventCodeRequired": "Kod acara diperlukan",
+        "venueRequired": "Tempat diperlukan"
+      },
+
+      "messages": {
+        "successCreated": "Acara berjaya dicipta!",
+        "closingIn": "Menutup dalam 2 saat...",
+        "errorCreating": "Gagal mencipta acara"
+      },
+
+      "buttons": {
+        "cancel": "Batal",
+        "create": "Cipta Acara",
+        "creating": "Mencipta...",
+        "created": "✓ Dicipta!"
+      }
+    },
+
+    "editModal": {
+      "title": "Edit Acara",
+
+      "sections": {
+        "basicInfo": "Maklumat Asas",
+        "dateTime": "Tarikh & Masa",
+        "location": "Lokasi",
+        "additionalInfo": "Maklumat Tambahan"
+      },
+
+      "fields": {
+        "eventName": "Nama Acara",
+        "eventCode": "Kod Acara",
+        "eventType": "Jenis Acara",
+        "activityType": "Jenis Aktiviti",
+        "leadingTeacher": "Guru Pengiring",
+        "eventDate": "Tarikh Acara",
+        "startTime": "Masa Mula",
+        "endTime": "Masa Tamat (Pilihan)",
+        "venue": "Tempat",
+        "venueAddress": "Alamat Tempat (Pilihan)",
+        "result": "Keputusan (Pilihan)",
+        "awardsReceived": "Anugerah Diterima (Pilihan)",
+        "remarks": "Catatan / Cadangan (Pilihan)"
+      },
+
+      "placeholders": {
+        "eventName": "cth: Kejohanan Bola Sepak Antara Sekolah",
+        "eventCode": "cth: COMP-2024-001",
+        "selectTeacher": "Pilih guru",
+        "venue": "cth: Dewan Utama Sekolah, Stadium Nasional",
+        "venueAddress": "Alamat penuh dengan poskod",
+        "result": "cth: Menang 3-1, Tempat Ke-2",
+        "awardsReceived": "cth: Tempat Pertama - Peringkat Daerah, Anugerah Pasukan Terbaik",
+        "remarks": "Cadangan penambahbaikan, pengajaran, syor..."
+      },
+
+      "validation": {
+        "eventNameRequired": "Nama acara diperlukan",
+        "eventCodeRequired": "Kod acara diperlukan",
+        "venueRequired": "Tempat diperlukan"
+      },
+
+      "messages": {
+        "successUpdated": "Acara berjaya dikemaskini!",
+        "closingIn": "Menutup dalam 2 saat...",
+        "errorUpdating": "Gagal mengemaskini acara"
+      },
+
+      "buttons": {
+        "cancel": "Batal",
+        "update": "Kemaskini Acara",
+        "updating": "Mengemaskini...",
+        "updated": "✓ Dikemaskini!"
+      }
+    },
+
+    "detailsModal": {
+      "eventNotFound": "Acara tidak dijumpai",
+
+      "buttons": {
+        "editEvent": "Edit Acara",
+        "manageParticipants": "Urus Peserta",
+        "sendNotifications": "Hantar Notifikasi Ibu Bapa",
+        "sending": "Menghantar...",
+        "addParticipants": "Tambah Peserta"
+      },
+
+      "labels": {
+        "eventType": "Jenis Acara",
+        "activityType": "Jenis Aktiviti",
+        "team": "Pasukan",
+        "dateTime": "Tarikh & Masa",
+        "venue": "Tempat",
+        "opponentSchool": "Sekolah Lawan",
+        "organizer": "Penganjur",
+        "leadingTeacher": "Guru Pengiring",
+        "parentConsent": "Kebenaran Ibu Bapa",
+        "required": "Diperlukan",
+        "notificationsSentOn": "Notifikasi dihantar pada {{date}}",
+        "description": "Penerangan",
+        "specialInstructions": "Arahan Khas",
+        "transportation": "Pengangkutan",
+        "uniformRequirements": "Keperluan Pakaian Seragam",
+        "result": "Keputusan",
+        "awardsReceived": "Anugerah Diterima"
+      },
+
+      "sections": {
+        "additionalInfo": "Maklumat Tambahan",
+        "results": "Keputusan",
+        "participants": "Peserta"
+      },
+
+      "participantStats": {
+        "attended": "Hadir",
+        "confirmed": "Disahkan"
+      },
+
+      "table": {
+        "student": "Pelajar",
+        "role": "Peranan",
+        "status": "Status",
+        "performance": "Prestasi",
+        "actions": "Tindakan",
+        "team": "Pasukan"
+      },
+
+      "status": {
+        "confirmed": "Disahkan",
+        "pending": "Menunggu",
+        "consent": "Kebenaran",
+        "noConsent": "Tiada Kebenaran",
+        "attended": "Hadir"
+      },
+
+      "actions": {
+        "remove": "Buang"
+      },
+
+      "noParticipants": "Tiada peserta ditambah lagi",
+
+      "messages": {
+        "confirmRemoveParticipant": "Adakah anda pasti mahu membuang peserta ini?",
+        "errorRemovingParticipant": "Gagal membuang peserta",
+        "confirmSendNotifications": "Hantar notifikasi ibu bapa kepada semua {{count}} peserta?",
+        "notificationsSent": "Notifikasi berjaya dihantar!",
+        "errorSendingNotifications": "Gagal menghantar notifikasi"
+      }
+    },
+
+    "participantsModal": {
+      "title": "Urus Peserta",
+
+      "labels": {
+        "selectTeam": "Pilih Pasukan (Pilihan)",
+        "noTeam": "Tiada pasukan - Tambah pelajar individu sahaja",
+        "members": "ahli",
+        "fromTeam": "Dari Pasukan",
+        "individualStudents": "Pelajar Individu",
+        "filterByClass": "Tapis mengikut Kelas",
+        "allClasses": "Semua Kelas"
+      },
+
+      "sections": {
+        "selectedParticipants": "Peserta Dipilih",
+        "addIndividualStudents": "Tambah Pelajar Individu"
+      },
+
+      "placeholders": {
+        "searchStudents": "Cari pelajar mengikut nama, kod, gred, atau kelas..."
+      },
+
+      "buttons": {
+        "showList": "Tunjuk Senarai Pelajar",
+        "hideList": "Sembunyikan Senarai Pelajar",
+        "add": "Tambah",
+        "cancel": "Batal",
+        "adding": "Menambah...",
+        "addParticipants": "Tambah {{count}} Peserta"
+      },
+
+      "actions": {
+        "removeFromSelection": "Buang dari pilihan"
+      },
+
+      "footer": {
+        "selectedCount": "{{count}} peserta dipilih"
+      },
+
+      "validation": {
+        "selectAtLeastOne": "Sila pilih sekurang-kurangnya seorang peserta"
+      },
+
+      "messages": {
+        "errorLoadingTeam": "Gagal memuatkan ahli pasukan. Sila cuba lagi.",
+        "noSchoolInfo": "Tidak dapat memuatkan pelajar: Maklumat sekolah tidak dijumpai",
+        "errorLoadingData": "Gagal memuatkan data. Sila cuba lagi.",
+        "noTeamsAvailable": "Tiada pasukan tersedia untuk jenis aktiviti ini. Anda boleh menambah pelajar secara individu.",
+        "errorAddingParticipants": "Gagal menambah peserta",
+        "noStudentsFound": "Tiada pelajar dijumpai yang sepadan dengan carian anda",
+        "allStudentsSelected": "Semua pelajar sudah dipilih atau sedang menyertai"
+      }
+    }
+  },
+
+  "eventReport": {
+    "title": "Laporan Acara",
+    "subtitle": "Lihat dan eksport butiran acara dengan peserta",
+
+    "buttons": {
+      "showFilters": "Tunjuk Penapis",
+      "hideFilters": "Sembunyikan Penapis",
+      "exportExcel": "Eksport ke Excel",
+      "print": "Cetak",
+      "clearFilters": "Kosongkan Penapis"
+    },
+
+    "filters": {
+      "startDate": "Tarikh Mula",
+      "endDate": "Tarikh Tamat",
+      "eventType": "Jenis Acara",
+      "status": "Status",
+      "allTypes": "Semua Jenis",
+      "allStatus": "Semua Status"
+    },
+
+    "summary": {
+      "totalEvents": "Jumlah Acara",
+      "totalParticipants": "Jumlah Peserta",
+      "dateRange": "Julat Tarikh",
+      "allDates": "Semua Tarikh"
+    },
+
+    "table": {
+      "leadingTeacher": "Guru Pengiring",
+      "students": "Pelajar",
+      "gender": "Jantina",
+      "className": "Nama Kelas",
+      "eventName": "Nama Acara",
+      "eventType": "Jenis Acara",
+      "remarks": "Catatan/Cadangan",
+      "results": "Keputusan",
+      "achievement": "Pencapaian",
+      "eventDate": "Tarikh Acara"
+    },
+
+    "excel": {
+      "sheetName": "Laporan Acara",
+      "filename": "Laporan_Acara",
+      "leadingTeacher": "Guru Pengiring",
+      "students": "Pelajar",
+      "gender": "Jantina",
+      "className": "Nama Kelas",
+      "eventName": "Nama Acara",
+      "eventType": "Jenis Acara",
+      "remarks": "Catatan/Cadangan",
+      "results": "Keputusan",
+      "achievement": "Pencapaian",
+      "eventDate": "Tarikh Acara"
+    },
+
+    "noEventsFound": "Tiada acara dijumpai"
   }
 }

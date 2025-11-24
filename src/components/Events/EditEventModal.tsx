@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Calendar, Clock, MapPin, AlertCircle, CheckCircle } from 'lucide-react';
 import {
     eventService,
@@ -11,6 +12,8 @@ import {
 } from '../../services/eventService';
 import { ActivityType, ActivityTypeLabels } from '../../services/teamService';
 import { teacherService, type Teacher } from '../../services/teacherService';
+import { getTranslatedActivityType } from '../../utils/activityTypeTranslations';
+import { getTranslatedEventType } from '../../utils/eventTypeTranslations';
 
 interface EditEventModalProps {
     event: ActivityEvent;
@@ -18,7 +21,7 @@ interface EditEventModalProps {
     onSuccess: () => void;
 }
 
-// ✅ Helper function to format time from "HH:MM:SS" to "HH:MM"
+// Helper function to format time from "HH:MM:SS" to "HH:MM"
 const formatTimeForInput = (time: string | undefined): string => {
     if (!time) return '';
     // If time is already in HH:MM format, return as is
@@ -29,12 +32,13 @@ const formatTimeForInput = (time: string | undefined): string => {
 };
 
 const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [teachers, setTeachers] = useState<Teacher[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
-    // ✅ FIXED: Format times properly for HTML time inputs
+    // Format times properly for HTML time inputs
     const [formData, setFormData] = useState<EventUpdateDto>({
         eventName: event.eventName,
         eventCode: event.eventCode,
@@ -42,8 +46,8 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
         activityType: event.activityType,
         status: event.status,
         eventDate: event.eventDate.split('T')[0],
-        startTime: formatTimeForInput(event.startTime),  // ✅ Format time
-        endTime: formatTimeForInput(event.endTime),      // ✅ Format time
+        startTime: formatTimeForInput(event.startTime),
+        endTime: formatTimeForInput(event.endTime),
         venue: event.venue,
         venueAddress: event.venueAddress,
         leadingTeacherID: event.leadingTeacherID,
@@ -56,7 +60,6 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
         loadData();
     }, []);
 
-    // ✅ useEffect to handle success state and auto-close
     useEffect(() => {
         if (success) {
             const timer = setTimeout(() => {
@@ -84,17 +87,17 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
         // Validation
         if (!formData.eventName?.trim()) {
-            setError('Event name is required');
+            setError(t('events.editModal.validation.eventNameRequired'));
             return;
         }
 
         if (!formData.eventCode?.trim()) {
-            setError('Event code is required');
+            setError(t('events.editModal.validation.eventCodeRequired'));
             return;
         }
 
         if (!formData.venue?.trim()) {
-            setError('Venue is required');
+            setError(t('events.editModal.validation.venueRequired'));
             return;
         }
 
@@ -115,8 +118,8 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
             const errorMessage = error instanceof Error && 'response' in error
                 ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
-                : 'Failed to update event';
-            setError(errorMessage || 'Failed to update event');
+                : t('events.editModal.messages.errorUpdating');
+            setError(errorMessage || t('events.editModal.messages.errorUpdating'));
         }
     };
 
@@ -127,18 +130,18 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-                {/* ✅ Header with Success Alert */}
+                {/* Header with Success Alert */}
                 <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10 shadow-sm">
                     <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <h2 className="text-xl font-bold text-gray-900 flex-shrink-0">Edit Event</h2>
+                        <h2 className="text-xl font-bold text-gray-900 flex-shrink-0">{t('events.editModal.title')}</h2>
 
-                        {/* ✅ Success Alert in Header - Always Visible */}
+                        {/* Success Alert in Header */}
                         {success && (
                             <div className="flex items-center gap-2 px-4 py-2 bg-green-50 border-2 border-green-500 rounded-lg shadow-lg">
                                 <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-green-900 whitespace-nowrap">Event updated successfully!</p>
-                                    <p className="text-xs text-green-700 whitespace-nowrap">Closing in 2 seconds...</p>
+                                    <p className="text-sm font-semibold text-green-900 whitespace-nowrap">{t('events.editModal.messages.successUpdated')}</p>
+                                    <p className="text-xs text-green-700 whitespace-nowrap">{t('events.editModal.messages.closingIn')}</p>
                                 </div>
                             </div>
                         )}
@@ -166,20 +169,20 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Basic Information */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('events.editModal.sections.basicInfo')}</h3>
                         </div>
 
                         {/* Event Name */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Event Name *
+                                {t('events.editModal.fields.eventName')} *
                             </label>
                             <input
                                 type="text"
                                 value={formData.eventName || ''}
                                 onChange={(e) => handleChange('eventName', e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., Inter-School Football Championship"
+                                placeholder={t('events.editModal.placeholders.eventName')}
                                 required
                                 disabled={loading || success}
                             />
@@ -188,23 +191,23 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                         {/* Event Code */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Event Code *
+                                {t('events.editModal.fields.eventCode')} *
                             </label>
                             <input
                                 type="text"
                                 value={formData.eventCode || ''}
                                 onChange={(e) => handleChange('eventCode', e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., COMP-2024-001"
+                                placeholder={t('events.editModal.placeholders.eventCode')}
                                 required
                                 disabled={loading || success}
                             />
                         </div>
 
-                        {/* Event Type */}
+                        {/* Event Type - Now Translated */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Event Type *
+                                {t('events.editModal.fields.eventType')} *
                             </label>
                             <select
                                 value={formData.eventType ?? EventType.Training}
@@ -215,16 +218,16 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                             >
                                 {Object.entries(EventTypeLabels).map(([key, label]) => (
                                     <option key={key} value={key}>
-                                        {label}
+                                        {getTranslatedEventType(label, t)}
                                     </option>
                                 ))}
                             </select>
                         </div>
 
-                        {/* Activity Type */}
+                        {/* Activity Type - Now Translated */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Activity Type *
+                                {t('events.editModal.fields.activityType')} *
                             </label>
                             <select
                                 value={formData.activityType ?? ActivityType.Football}
@@ -235,7 +238,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                             >
                                 {Object.entries(ActivityTypeLabels).map(([key, label]) => (
                                     <option key={key} value={key}>
-                                        {label}
+                                        {getTranslatedActivityType(label, t)}
                                     </option>
                                 ))}
                             </select>
@@ -244,7 +247,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                         {/* Leading Teacher */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Leading Teacher *
+                                {t('events.editModal.fields.leadingTeacher')} *
                             </label>
                             <select
                                 value={formData.leadingTeacherID || ''}
@@ -253,7 +256,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                                 required
                                 disabled={loading || success}
                             >
-                                <option value="">Select a teacher</option>
+                                <option value="">{t('events.editModal.placeholders.selectTeacher')}</option>
                                 {teachers.map(teacher => (
                                     <option key={teacher.teacherID} value={teacher.teacherID}>
                                         {teacher.fullName}
@@ -264,13 +267,13 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* Date & Time */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">Date & Time</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">{t('events.editModal.sections.dateTime')}</h3>
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                                 <Calendar className="w-4 h-4 text-gray-500" />
-                                Event Date *
+                                {t('events.editModal.fields.eventDate')} *
                             </label>
                             <input
                                 type="date"
@@ -286,7 +289,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                                 <Clock className="w-4 h-4 text-gray-500" />
-                                Start Time *
+                                {t('events.editModal.fields.startTime')} *
                             </label>
                             <input
                                 type="time"
@@ -302,7 +305,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                                 <Clock className="w-4 h-4 text-gray-500" />
-                                End Time (Optional)
+                                {t('events.editModal.fields.endTime')}
                             </label>
                             <input
                                 type="time"
@@ -315,21 +318,21 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* Location */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">Location</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">{t('events.editModal.sections.location')}</h3>
                         </div>
 
                         {/* Venue */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                                 <MapPin className="w-4 h-4 text-gray-500" />
-                                Venue *
+                                {t('events.editModal.fields.venue')} *
                             </label>
                             <input
                                 type="text"
                                 value={formData.venue || ''}
                                 onChange={(e) => handleChange('venue', e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., School Sports Complex"
+                                placeholder={t('events.editModal.placeholders.venue')}
                                 required
                                 disabled={loading || success}
                             />
@@ -338,34 +341,34 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                         {/* Venue Address */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Venue Address (Optional)
+                                {t('events.editModal.fields.venueAddress')}
                             </label>
                             <input
                                 type="text"
                                 value={formData.venueAddress || ''}
                                 onChange={(e) => handleChange('venueAddress', e.target.value || undefined)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Full address of the venue"
+                                placeholder={t('events.editModal.placeholders.venueAddress')}
                                 disabled={loading || success}
                             />
                         </div>
 
                         {/* Additional Information */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">Additional Information</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">{t('events.editModal.sections.additionalInfo')}</h3>
                         </div>
 
                         {/* Result */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Result (Optional)
+                                {t('events.editModal.fields.result')}
                             </label>
                             <input
                                 type="text"
                                 value={formData.result || ''}
                                 onChange={(e) => handleChange('result', e.target.value || undefined)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., Won 3-1, 2nd Place"
+                                placeholder={t('events.editModal.placeholders.result')}
                                 disabled={loading || success}
                             />
                         </div>
@@ -373,14 +376,14 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                         {/* Awards Received */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Awards Received (Optional)
+                                {t('events.editModal.fields.awardsReceived')}
                             </label>
                             <textarea
                                 value={formData.awardsReceived || ''}
                                 onChange={(e) => handleChange('awardsReceived', e.target.value || undefined)}
                                 rows={3}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="e.g., 1st Place - District Level, Best Team Award, Champion Trophy"
+                                placeholder={t('events.editModal.placeholders.awardsReceived')}
                                 disabled={loading || success}
                             />
                         </div>
@@ -388,14 +391,14 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                         {/* Remarks / Suggestions */}
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Remarks / Suggestions (Optional)
+                                {t('events.editModal.fields.remarks')}
                             </label>
                             <textarea
                                 value={formData.remarks || ''}
                                 onChange={(e) => handleChange('remarks', e.target.value || undefined)}
                                 rows={3}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Suggestions for improvement, lessons learned, recommendations..."
+                                placeholder={t('events.editModal.placeholders.remarks')}
                                 disabled={loading || success}
                             />
                         </div>
@@ -409,14 +412,14 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                             className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                             disabled={loading || success}
                         >
-                            Cancel
+                            {t('events.editModal.buttons.cancel')}
                         </button>
                         <button
                             type="submit"
                             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
                             disabled={loading || success}
                         >
-                            {loading ? 'Updating...' : success ? '✓ Updated!' : 'Update Event'}
+                            {loading ? t('events.editModal.buttons.updating') : success ? t('events.editModal.buttons.updated') : t('events.editModal.buttons.update')}
                         </button>
                     </div>
                 </form>

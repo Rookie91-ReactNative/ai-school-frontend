@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     Calendar, Plus, Search, Filter, Eye, Edit, Trash2,
     MapPin, AlertCircle, /*Clock, Trophy, CheckCircle*/
@@ -18,8 +19,12 @@ import Pagination from '../components/Common/Pagination';
 import AddEventModal from '../components/Events/AddEventModal';
 import EditEventModal from '../components/Events/EditEventModal';
 import EventDetailsModal from '../components/Events/EventDetailsModal';
+// ✅ Import translation utilities
+import { getTranslatedActivityType } from '../utils/activityTypeTranslations';
+import { getTranslatedEventType } from '../utils/eventTypeTranslations';
 
 const EventsPage = () => {
+    const { t } = useTranslation();
     const [events, setEvents] = useState<ActivityEvent[]>([]);
     const [filteredEvents, setFilteredEvents] = useState<ActivityEvent[]>([]);
     const [loading, setLoading] = useState(true);
@@ -89,14 +94,14 @@ const EventsPage = () => {
     };
 
     const handleDeleteEvent = async (eventId: number) => {
-        if (!confirm('Are you sure you want to delete this event?')) return;
+        if (!confirm(t('events.messages.confirmDelete'))) return;
 
         try {
             await eventService.deleteEvent(eventId);
             await loadEvents();
         } catch (error) {
             console.error('Error deleting event:', error);
-            alert('Failed to delete event');
+            alert(t('events.messages.errorDeleting'));
         }
     };
 
@@ -110,7 +115,7 @@ const EventsPage = () => {
             setIsEditModalOpen(true);
         } catch (error) {
             console.error('Error loading event details:', error);
-            alert('Failed to load event details. Please try again.');
+            alert(t('events.messages.errorLoadingDetails'));
         }
     };
 
@@ -150,57 +155,17 @@ const EventsPage = () => {
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Events & Activities</h1>
-                    <p className="text-gray-600 mt-1">Manage competitions, training sessions, and activities</p>
+                    <h1 className="text-2xl font-bold text-gray-900">{t('events.title')}</h1>
+                    <p className="text-gray-600 mt-1">{t('events.subtitle')}</p>
                 </div>
                 <button
                     onClick={() => setIsAddModalOpen(true)}
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
                 >
                     <Plus className="w-5 h-5" />
-                    Add Event
+                    {t('events.addEvent')}
                 </button>
             </div>
-
-            {/* Statistics Cards */}
-            {/*<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">*/}
-            {/*    <div className="bg-white rounded-lg shadow p-4">*/}
-            {/*        <div className="flex items-center justify-between">*/}
-            {/*            <div>*/}
-            {/*                <p className="text-sm text-gray-600">Total Events</p>*/}
-            {/*                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>*/}
-            {/*            </div>*/}
-            {/*            <Calendar className="w-8 h-8 text-blue-500" />*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*    <div className="bg-white rounded-lg shadow p-4">*/}
-            {/*        <div className="flex items-center justify-between">*/}
-            {/*            <div>*/}
-            {/*                <p className="text-sm text-gray-600">Upcoming</p>*/}
-            {/*                <p className="text-2xl font-bold text-orange-600">{stats.upcoming}</p>*/}
-            {/*            </div>*/}
-            {/*            <Clock className="w-8 h-8 text-orange-500" />*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*    <div className="bg-white rounded-lg shadow p-4">*/}
-            {/*        <div className="flex items-center justify-between">*/}
-            {/*            <div>*/}
-            {/*                <p className="text-sm text-gray-600">Confirmed</p>*/}
-            {/*                <p className="text-2xl font-bold text-blue-600">{stats.confirmed}</p>*/}
-            {/*            </div>*/}
-            {/*            <CheckCircle className="w-8 h-8 text-blue-500" />*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*    <div className="bg-white rounded-lg shadow p-4">*/}
-            {/*        <div className="flex items-center justify-between">*/}
-            {/*            <div>*/}
-            {/*                <p className="text-sm text-gray-600">Completed</p>*/}
-            {/*                <p className="text-2xl font-bold text-green-600">{stats.completed}</p>*/}
-            {/*            </div>*/}
-            {/*            <Trophy className="w-8 h-8 text-green-500" />*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
 
             {/* Filters */}
             <div className="bg-white rounded-lg shadow mb-6 p-4">
@@ -210,14 +175,14 @@ const EventsPage = () => {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <input
                             type="text"
-                            placeholder="Search events..."
+                            placeholder={t('events.searchPlaceholder')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                     </div>
 
-                    {/* Event Type Filter */}
+                    {/* Event Type Filter - ✅ Now Translated */}
                     <div className="relative">
                         <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <select
@@ -225,27 +190,14 @@ const EventsPage = () => {
                             onChange={(e) => setSelectedEventType(e.target.value === 'All' ? 'All' : Number(e.target.value) as EventType)}
                             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
                         >
-                            <option value="All">All Event Types</option>
+                            <option value="All">{t('events.filters.allEventTypes')}</option>
                             {Object.entries(EventTypeLabels).map(([key, label]) => (
-                                <option key={key} value={key}>{label}</option>
+                                <option key={key} value={key}>
+                                    {getTranslatedEventType(label, t)}
+                                </option>
                             ))}
                         </select>
                     </div>
-
-                    {/* Status Filter */}
-                    {/*<div className="relative">*/}
-                    {/*    <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />*/}
-                    {/*    <select*/}
-                    {/*        value={selectedStatus}*/}
-                    {/*        onChange={(e) => setSelectedStatus(e.target.value === 'All' ? 'All' : Number(e.target.value) as EventStatus)}*/}
-                    {/*        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"*/}
-                    {/*    >*/}
-                    {/*        <option value="All">All Statuses</option>*/}
-                    {/*        {Object.entries(EventStatusLabels).map(([key, label]) => (*/}
-                    {/*            <option key={key} value={key}>{label}</option>*/}
-                    {/*        ))}*/}
-                    {/*    </select>*/}
-                    {/*</div>*/}
 
                     {/* View Mode Toggle */}
                     <div className="flex gap-2">
@@ -256,7 +208,7 @@ const EventsPage = () => {
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
-                            List
+                            {t('events.viewMode.list')}
                         </button>
                         <button
                             onClick={() => setViewMode('calendar')}
@@ -265,7 +217,7 @@ const EventsPage = () => {
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
-                            Calendar
+                            {t('events.viewMode.calendar')}
                         </button>
                     </div>
                 </div>
@@ -279,8 +231,8 @@ const EventsPage = () => {
                     {filteredEvents.length === 0 ? (
                         <div className="bg-white rounded-lg shadow p-12 text-center">
                             <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">No events found</h3>
-                            <p className="text-gray-600">Try adjusting your filters or create a new event</p>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('events.noEventsFound')}</h3>
+                            <p className="text-gray-600">{t('events.noEventsHint')}</p>
                         </div>
                     ) : (
                         <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -289,22 +241,19 @@ const EventsPage = () => {
                                     <thead className="bg-gray-50">
                                         <tr>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Event
+                                                {t('events.table.event')}
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Type
+                                                {t('events.table.type')}
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Date & Time
+                                                {t('events.table.dateTime')}
                                             </th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Venue
+                                                {t('events.table.venue')}
                                             </th>
-                                            {/*<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">*/}
-                                            {/*    Status*/}
-                                            {/*</th>*/}
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Actions
+                                                {t('events.table.actions')}
                                             </th>
                                         </tr>
                                     </thead>
@@ -324,11 +273,13 @@ const EventsPage = () => {
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div>
+                                                        {/* ✅ Event Type - Now Translated */}
                                                         <div className="text-sm font-medium text-gray-900">
-                                                            {EventTypeLabels[event.eventType]}
+                                                            {getTranslatedEventType(EventTypeLabels[event.eventType], t)}
                                                         </div>
+                                                        {/* ✅ Activity Type - Now Translated */}
                                                         <div className="text-sm text-gray-500">
-                                                            {ActivityTypeLabels[event.activityType as ActivityType]}
+                                                            {getTranslatedActivityType(ActivityTypeLabels[event.activityType as ActivityType], t)}
                                                         </div>
                                                     </div>
                                                 </td>
@@ -355,31 +306,26 @@ const EventsPage = () => {
                                                         </div>
                                                     </div>
                                                 </td>
-                                                {/*<td className="px-6 py-4">*/}
-                                                {/*    <span className={`px-2 py-1 text-xs font-medium rounded-full ${EventStatusColors[event.status]}`}>*/}
-                                                {/*        {EventStatusLabels[event.status]}*/}
-                                                {/*    </span>*/}
-                                                {/*</td>*/}
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-2">
                                                         <button
                                                             onClick={() => setViewEventId(event.eventID)}
                                                             className="text-blue-600 hover:text-blue-900"
-                                                            title="View Details"
+                                                            title={t('events.actions.viewDetails')}
                                                         >
                                                             <Eye className="w-5 h-5" />
                                                         </button>
                                                         <button
                                                             onClick={() => handleEditEvent(event)}
                                                             className="text-yellow-600 hover:text-yellow-900"
-                                                            title="Edit"
+                                                            title={t('events.actions.edit')}
                                                         >
                                                             <Edit className="w-5 h-5" />
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteEvent(event.eventID)}
                                                             className="text-red-600 hover:text-red-900"
-                                                            title="Delete"
+                                                            title={t('events.actions.delete')}
                                                         >
                                                             <Trash2 className="w-5 h-5" />
                                                         </button>

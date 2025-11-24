@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
-import { FileDown, Printer, Calendar, Filter, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { FileDown, /*Printer,*/ Calendar, Filter, X } from 'lucide-react';
 import {
     eventService,
     EventTypeLabels,
@@ -8,11 +9,11 @@ import {
     type EventType,
     type EventStatus
 } from '../services/eventService';
-//import { ActivityTypeLabels, ActivityType } from '../services/teamService';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import * as XLSX from 'xlsx';
+import { getTranslatedEventType } from '../utils/eventTypeTranslations';
 
-// Extended participant type to include gender (which should be added to backend)
+// Extended participant type to include gender
 interface ParticipantWithGender {
     participantID: number;
     eventID: number;
@@ -34,6 +35,7 @@ interface ParticipantWithGender {
 }
 
 const EventReportPage = () => {
+    const { t } = useTranslation();
     const [events, setEvents] = useState<EventWithDetails[]>([]);
     const [filteredEvents, setFilteredEvents] = useState<EventWithDetails[]>([]);
     const [loading, setLoading] = useState(true);
@@ -62,22 +64,11 @@ const EventReportPage = () => {
     const loadEvents = async () => {
         try {
             setLoading(true);
-            // Load completed events by default
             const data = await eventService.getAllEvents();
 
-            // Load full details for each event
             const eventsWithDetails = await Promise.all(
                 data.map(event => eventService.getEventById(event.eventID))
             );
-
-            // Debug: Log the first event to check data structure
-            if (eventsWithDetails.length > 0) {
-                console.log('First event data:', eventsWithDetails[0]);
-                console.log('Leading Teacher:', eventsWithDetails[0].leadingTeacher);
-                if (eventsWithDetails[0].participants.length > 0) {
-                    console.log('First participant:', eventsWithDetails[0].participants[0]);
-                }
-            }
 
             setEvents(eventsWithDetails);
         } catch (error) {
@@ -118,7 +109,6 @@ const EventReportPage = () => {
 
     const handleSort = (field: SortField) => {
         if (sortField === field) {
-            // Toggle direction: asc -> desc -> null
             if (sortDirection === 'asc') {
                 setSortDirection('desc');
             } else if (sortDirection === 'desc') {
@@ -140,7 +130,6 @@ const EventReportPage = () => {
             let aValue: string | number;
             let bValue: string | number;
 
-            // For participant-specific fields, we'll sort by the first participant
             switch (sortField) {
                 case 'leadingTeacher':
                     aValue = a.leadingTeacher?.fullName || '';
@@ -200,40 +189,43 @@ const EventReportPage = () => {
     };
 
     const exportToExcel = () => {
-        // Prepare data for Excel
         interface ExcelRow {
-            'Leading Teacher': string;
-            'Students': string;
-            'Gender': string;
-            'Class Name': string;
-            'Event Name': string;
-            'Event Type': string;
-            'Remarks/Suggestion': string;
-            'Results': string;
-            'Achievement': string;
-            'Event Date': string;
+            [key: string]: string;
         }
         const excelData: ExcelRow[] = [];
+
+        // Use translated headers
+        const headers = {
+            leadingTeacher: t('eventReport.excel.leadingTeacher'),
+            students: t('eventReport.excel.students'),
+            gender: t('eventReport.excel.gender'),
+            className: t('eventReport.excel.className'),
+            eventName: t('eventReport.excel.eventName'),
+            eventType: t('eventReport.excel.eventType'),
+            remarks: t('eventReport.excel.remarks'),
+            results: t('eventReport.excel.results'),
+            achievement: t('eventReport.excel.achievement'),
+            eventDate: t('eventReport.excel.eventDate')
+        };
 
         filteredEvents.forEach(event => {
             event.participants.forEach((participant) => {
                 const participantWithGender = participant as ParticipantWithGender;
-                excelData.push({
-                    'Leading Teacher': event.leadingTeacher?.fullName || '-',
-                    'Students': participant.studentName,
-                    'Gender': participantWithGender.gender || '-',
-                    'Class Name': participant.class,
-                    'Event Name': event.eventName,
-                    'Event Type': EventTypeLabels[event.eventType],
-                    'Remarks/Suggestion': event.remarks || '',
-                    'Results': event.result || '',
-                    'Achievement': event.awardsReceived || '',
-                    'Event Date': new Date(event.eventDate).toLocaleDateString()
-                });
+                const row: ExcelRow = {};
+                row[headers.leadingTeacher] = event.leadingTeacher?.fullName || '-';
+                row[headers.students] = participant.studentName;
+                row[headers.gender] = participantWithGender.gender || '-';
+                row[headers.className] = participant.class;
+                row[headers.eventName] = event.eventName;
+                row[headers.eventType] = getTranslatedEventType(EventTypeLabels[event.eventType], t);
+                row[headers.remarks] = event.remarks || '-';
+                row[headers.results] = event.result || '-';
+                row[headers.achievement] = event.awardsReceived || '-';
+                row[headers.eventDate] = new Date(event.eventDate).toLocaleDateString();
+                excelData.push(row);
             });
         });
 
-        // Create worksheet
         const ws = XLSX.utils.json_to_sheet(excelData);
 
         // Set column widths
@@ -241,29 +233,28 @@ const EventReportPage = () => {
             { wch: 20 }, // Leading Teacher
             { wch: 25 }, // Students
             { wch: 10 }, // Gender
-            { wch: 12 }, // Class Name
+            { wch: 15 }, // Class Name
             { wch: 30 }, // Event Name
             { wch: 20 }, // Event Type
             { wch: 30 }, // Remarks
             { wch: 20 }, // Results
             { wch: 25 }, // Achievement
-            { wch: 15 }  // Event Date
+            { wch: 15 }, // Event Date
         ];
 
-        // Create workbook
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Event Report');
+        XLSX.utils.book_append_sheet(wb, ws, t('eventReport.excel.sheetName'));
 
         // Generate filename with date
-        const filename = `Event_Report_${new Date().toISOString().split('T')[0]}.xlsx`;
+        const dateStr = new Date().toISOString().split('T')[0];
+        const filename = `${t('eventReport.excel.filename')}_${dateStr}.xlsx`;
 
-        // Save file
         XLSX.writeFile(wb, filename);
     };
 
-    const handlePrint = () => {
-        window.print();
-    };
+    //const handlePrint = () => {
+    //    window.print();
+    //};
 
     if (loading) {
         return (
@@ -278,9 +269,9 @@ const EventReportPage = () => {
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Event Report</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">{t('eventReport.title')}</h1>
                     <p className="text-gray-600 mt-1">
-                        View and export event details with participants
+                        {t('eventReport.subtitle')}
                     </p>
                 </div>
                 <div className="flex gap-2">
@@ -289,22 +280,22 @@ const EventReportPage = () => {
                         className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
                     >
                         <Filter className="w-4 h-4" />
-                        {showFilters ? 'Hide' : 'Show'} Filters
+                        {showFilters ? t('eventReport.buttons.hideFilters') : t('eventReport.buttons.showFilters')}
                     </button>
                     <button
                         onClick={exportToExcel}
                         className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                     >
                         <FileDown className="w-4 h-4" />
-                        Export to Excel
+                        {t('eventReport.buttons.exportExcel')}
                     </button>
-                    <button
-                        onClick={handlePrint}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 print:hidden"
-                    >
-                        <Printer className="w-4 h-4" />
-                        Print
-                    </button>
+                    {/*<button*/}
+                    {/*    onClick={handlePrint}*/}
+                    {/*    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 print:hidden"*/}
+                    {/*>*/}
+                    {/*    <Printer className="w-4 h-4" />*/}
+                    {/*    {t('eventReport.buttons.print')}*/}
+                    {/*</button>*/}
                 </div>
             </div>
 
@@ -314,7 +305,7 @@ const EventReportPage = () => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Start Date
+                                {t('eventReport.filters.startDate')}
                             </label>
                             <input
                                 type="date"
@@ -325,7 +316,7 @@ const EventReportPage = () => {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                End Date
+                                {t('eventReport.filters.endDate')}
                             </label>
                             <input
                                 type="date"
@@ -336,31 +327,31 @@ const EventReportPage = () => {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Event Type
+                                {t('eventReport.filters.eventType')}
                             </label>
                             <select
                                 value={selectedEventType}
                                 onChange={(e) => setSelectedEventType(e.target.value === '' ? '' : Number(e.target.value) as EventType)}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             >
-                                <option value="">All Types</option>
+                                <option value="">{t('eventReport.filters.allTypes')}</option>
                                 {Object.entries(EventTypeLabels).map(([value, label]) => (
                                     <option key={value} value={value}>
-                                        {label}
+                                        {getTranslatedEventType(label, t)}
                                     </option>
                                 ))}
                             </select>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Status
+                                {t('eventReport.filters.status')}
                             </label>
                             <select
                                 value={selectedStatus}
                                 onChange={(e) => setSelectedStatus(e.target.value === '' ? '' : Number(e.target.value) as EventStatus)}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             >
-                                <option value="">All Status</option>
+                                <option value="">{t('eventReport.filters.allStatus')}</option>
                                 {Object.entries(EventStatusLabels).map(([value, label]) => (
                                     <option key={value} value={value}>
                                         {label}
@@ -375,7 +366,7 @@ const EventReportPage = () => {
                             className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
                         >
                             <X className="w-4 h-4" />
-                            Clear Filters
+                            {t('eventReport.buttons.clearFilters')}
                         </button>
                     </div>
                 </div>
@@ -385,21 +376,21 @@ const EventReportPage = () => {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6 print:hidden">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <p className="text-sm text-gray-600">Total Events</p>
+                        <p className="text-sm text-gray-600">{t('eventReport.summary.totalEvents')}</p>
                         <p className="text-2xl font-bold text-gray-900">{filteredEvents.length}</p>
                     </div>
                     <div>
-                        <p className="text-sm text-gray-600">Total Participants</p>
+                        <p className="text-sm text-gray-600">{t('eventReport.summary.totalParticipants')}</p>
                         <p className="text-2xl font-bold text-gray-900">
                             {filteredEvents.reduce((sum, e) => sum + e.totalParticipants, 0)}
                         </p>
                     </div>
                     <div>
-                        <p className="text-sm text-gray-600">Date Range</p>
+                        <p className="text-sm text-gray-600">{t('eventReport.summary.dateRange')}</p>
                         <p className="text-sm font-medium text-gray-900">
                             {startDate && endDate
                                 ? `${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`
-                                : 'All Dates'}
+                                : t('eventReport.summary.allDates')}
                         </p>
                     </div>
                 </div>
@@ -416,7 +407,7 @@ const EventReportPage = () => {
                                     onClick={() => handleSort('leadingTeacher')}
                                 >
                                     <div className="flex items-center gap-2">
-                                        Leading Teacher {getSortIcon('leadingTeacher')}
+                                        {t('eventReport.table.leadingTeacher')} {getSortIcon('leadingTeacher')}
                                     </div>
                                 </th>
                                 <th
@@ -424,7 +415,7 @@ const EventReportPage = () => {
                                     onClick={() => handleSort('studentName')}
                                 >
                                     <div className="flex items-center gap-2">
-                                        Students {getSortIcon('studentName')}
+                                        {t('eventReport.table.students')} {getSortIcon('studentName')}
                                     </div>
                                 </th>
                                 <th
@@ -432,7 +423,7 @@ const EventReportPage = () => {
                                     onClick={() => handleSort('gender')}
                                 >
                                     <div className="flex items-center gap-2">
-                                        Gender {getSortIcon('gender')}
+                                        {t('eventReport.table.gender')} {getSortIcon('gender')}
                                     </div>
                                 </th>
                                 <th
@@ -440,7 +431,7 @@ const EventReportPage = () => {
                                     onClick={() => handleSort('class')}
                                 >
                                     <div className="flex items-center gap-2">
-                                        Class Name {getSortIcon('class')}
+                                        {t('eventReport.table.className')} {getSortIcon('class')}
                                     </div>
                                 </th>
                                 <th
@@ -448,7 +439,7 @@ const EventReportPage = () => {
                                     onClick={() => handleSort('eventName')}
                                 >
                                     <div className="flex items-center gap-2">
-                                        Event Name {getSortIcon('eventName')}
+                                        {t('eventReport.table.eventName')} {getSortIcon('eventName')}
                                     </div>
                                 </th>
                                 <th
@@ -456,7 +447,7 @@ const EventReportPage = () => {
                                     onClick={() => handleSort('eventType')}
                                 >
                                     <div className="flex items-center gap-2">
-                                        Event Type {getSortIcon('eventType')}
+                                        {t('eventReport.table.eventType')} {getSortIcon('eventType')}
                                     </div>
                                 </th>
                                 <th
@@ -464,7 +455,7 @@ const EventReportPage = () => {
                                     onClick={() => handleSort('remarks')}
                                 >
                                     <div className="flex items-center gap-2">
-                                        Remarks/Suggestion {getSortIcon('remarks')}
+                                        {t('eventReport.table.remarks')} {getSortIcon('remarks')}
                                     </div>
                                 </th>
                                 <th
@@ -472,7 +463,7 @@ const EventReportPage = () => {
                                     onClick={() => handleSort('result')}
                                 >
                                     <div className="flex items-center gap-2">
-                                        Results {getSortIcon('result')}
+                                        {t('eventReport.table.results')} {getSortIcon('result')}
                                     </div>
                                 </th>
                                 <th
@@ -480,7 +471,7 @@ const EventReportPage = () => {
                                     onClick={() => handleSort('achievement')}
                                 >
                                     <div className="flex items-center gap-2">
-                                        Achievement {getSortIcon('achievement')}
+                                        {t('eventReport.table.achievement')} {getSortIcon('achievement')}
                                     </div>
                                 </th>
                                 <th
@@ -488,7 +479,7 @@ const EventReportPage = () => {
                                     onClick={() => handleSort('eventDate')}
                                 >
                                     <div className="flex items-center gap-2">
-                                        Event Date {getSortIcon('eventDate')}
+                                        {t('eventReport.table.eventDate')} {getSortIcon('eventDate')}
                                     </div>
                                 </th>
                             </tr>
@@ -498,7 +489,7 @@ const EventReportPage = () => {
                                 <tr>
                                     <td colSpan={10} className="px-4 py-8 text-center text-gray-500">
                                         <Calendar className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-                                        <p>No events found</p>
+                                        <p>{t('eventReport.noEventsFound')}</p>
                                     </td>
                                 </tr>
                             ) : (
@@ -514,7 +505,6 @@ const EventReportPage = () => {
                                                     {participant.studentName}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm text-gray-900">
-                                                    {/* Gender data needs to be added to backend EventParticipantDto */}
                                                     {participantWithGender.gender || '-'}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm text-gray-900">
@@ -524,7 +514,7 @@ const EventReportPage = () => {
                                                     {event.eventName}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm text-gray-900">
-                                                    {EventTypeLabels[event.eventType]}
+                                                    {getTranslatedEventType(EventTypeLabels[event.eventType], t)}
                                                 </td>
                                                 <td className="px-4 py-3 text-sm text-gray-600">
                                                     {event.remarks || '-'}

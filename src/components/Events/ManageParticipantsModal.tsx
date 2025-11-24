@@ -1,9 +1,9 @@
 ﻿import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Users, Search, Plus, AlertCircle, Trash2, UserMinus, UserPlus } from 'lucide-react';
 import {
     eventService,
     type EventWithDetails
-    /*type AddEventParticipantsRequest*/
 } from '../../services/eventService';
 import { studentService, type StudentWithAcademic } from '../../services/studentService';
 import { teamService, type TeamWithDetails } from '../../services/teamService';
@@ -25,6 +25,7 @@ interface SelectedParticipant {
 }
 
 const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipantsModalProps) => {
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [teams, setTeams] = useState<TeamWithDetails[]>([]);
     const [students, setStudents] = useState<StudentWithAcademic[]>([]);
@@ -40,7 +41,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
 
     // Individual selection
     const [showIndividualAdd, setShowIndividualAdd] = useState(false);
-    const [classFilter, setClassFilter] = useState<string>(''); // Filter by class
+    const [classFilter, setClassFilter] = useState<string>('');
 
     const [error, setError] = useState<string | null>(null);
 
@@ -56,12 +57,10 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
         const loadTeamDetails = async () => {
             if (selectedTeamId) {
                 try {
-                    // Fetch full team details with members
                     const teamDetails = await teamService.getTeamById(selectedTeamId);
                     setSelectedTeam(teamDetails);
 
                     if (teamDetails && teamDetails.members && teamDetails.members.length > 0) {
-                        // Add all team members as selected participants
                         const teamParticipants: SelectedParticipant[] = teamDetails.members.map(member => ({
                             studentID: member.studentID,
                             studentCode: member.studentCode,
@@ -72,7 +71,6 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                             teamID: teamDetails.teamID
                         }));
 
-                        // Keep existing individual participants and add team members
                         setSelectedParticipants(prev => {
                             const individualParticipants = prev.filter(p => !p.isFromTeam);
                             return [...teamParticipants, ...individualParticipants];
@@ -80,62 +78,49 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                     }
                 } catch (error) {
                     console.error('Error loading team details:', error);
-                    setError('Failed to load team members. Please try again.');
+                    setError(t('events.participantsModal.messages.errorLoadingTeam'));
                 }
             } else {
                 setSelectedTeam(null);
-                // Remove all team participants when team is deselected
                 setSelectedParticipants(prev => prev.filter(p => !p.isFromTeam));
             }
         };
 
         loadTeamDetails();
-    }, [selectedTeamId]);
+    }, [selectedTeamId, t]);
 
     const loadData = async () => {
         try {
-            // Get school ID from localStorage
             const userStr = localStorage.getItem('user');
             const schoolId = userStr ? JSON.parse(userStr).schoolID : null;
 
             if (!schoolId) {
                 console.error('No school ID found');
-                setError('Unable to load students: School information not found');
+                setError(t('events.participantsModal.messages.noSchoolInfo'));
                 return;
             }
 
             const [teamsData, studentsData] = await Promise.all([
                 teamService.getAllTeams(true),
-                // Use the proper service method
                 studentService.getStudentsBySchool(schoolId)
             ]);
 
-            // Filter teams by activity type
             const filteredTeams = teamsData.filter(t => t.activityType === event.activityType);
             setTeams(filteredTeams);
             setStudents(studentsData);
 
-            // Debug: Check if students have className and gradeName
-            console.log('Students loaded:', studentsData.length);
-            if (studentsData.length > 0) {
-                console.log('Sample student:', studentsData[0]);
-                /*console.log('Classes available:', Array.from(new Set(studentsData.map((s: any) => s.className).filter(Boolean))));*/
-            }
-
-            // Pre-select event's team if exists
             if (event.teamID) {
                 setSelectedTeamId(event.teamID);
             }
         } catch (error) {
             console.error('Error loading data:', error);
-            setError('Failed to load data. Please try again.');
+            setError(t('events.participantsModal.messages.errorLoadingData'));
         }
     };
 
     const filterStudents = () => {
         let filtered = [...students];
 
-        // Filter by class if selected
         if (classFilter) {
             filtered = filtered.filter(s => s.className === classFilter);
         }
@@ -150,11 +135,9 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
             );
         }
 
-        // Filter out students already selected
         const selectedStudentIds = selectedParticipants.map(p => p.studentID);
         filtered = filtered.filter(s => !selectedStudentIds.includes(s.studentID));
 
-        // Filter out students already in the event
         const participantStudentIds = event.participants?.map(p => p.studentID) || [];
         filtered = filtered.filter(s => !participantStudentIds.includes(s.studentID));
 
@@ -180,7 +163,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
 
     const handleSubmit = async () => {
         if (selectedParticipants.length === 0) {
-            setError('Please select at least one participant');
+            setError(t('events.participantsModal.validation.selectAtLeastOne'));
             return;
         }
 
@@ -191,9 +174,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
             const teamParticipants = selectedParticipants.filter(p => p.isFromTeam);
             const individualParticipants = selectedParticipants.filter(p => !p.isFromTeam);
 
-            // Add team participants (if team is selected)
             if (selectedTeamId && teamParticipants.length > 0) {
-                console.log('Adding team participants:', teamParticipants.length);
                 await eventService.addParticipants(event.eventID, {
                     teamID: selectedTeamId,
                     studentIDs: teamParticipants.map(p => p.studentID),
@@ -201,9 +182,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                 });
             }
 
-            // Add individual participants (if any)
             if (individualParticipants.length > 0) {
-                console.log('Adding individual participants:', individualParticipants.length);
                 await eventService.addParticipants(event.eventID, {
                     studentIDs: individualParticipants.map(p => p.studentID),
                     isFromTeam: false
@@ -215,8 +194,8 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
             console.error('Error adding participants:', error);
             const errorMessage = error instanceof Error && 'response' in error
                 ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
-                : 'Failed to add participants';
-            setError(errorMessage || 'Failed to add participants');
+                : t('events.participantsModal.messages.errorAddingParticipants');
+            setError(errorMessage || t('events.participantsModal.messages.errorAddingParticipants'));
         } finally {
             setLoading(false);
         }
@@ -230,7 +209,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
             <div className="bg-white rounded-lg shadow-xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
                 {/* Header */}
                 <div className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-gray-900">Manage Participants</h2>
+                    <h2 className="text-xl font-bold text-gray-900">{t('events.participantsModal.title')}</h2>
                     <button
                         onClick={onClose}
                         className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -251,7 +230,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                     {/* Team Selection */}
                     <div className="mb-6">
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Select Team (Optional)
+                            {t('events.participantsModal.labels.selectTeam')}
                         </label>
                         {teams.length > 0 ? (
                             <select
@@ -259,17 +238,17 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                                 onChange={(e) => setSelectedTeamId(e.target.value ? Number(e.target.value) : null)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             >
-                                <option value="">No team - Add individual students only</option>
+                                <option value="">{t('events.participantsModal.labels.noTeam')}</option>
                                 {teams.map(team => (
                                     <option key={team.teamID} value={team.teamID}>
-                                        {team.teamName} ({team.currentMemberCount || 0} members)
+                                        {team.teamName} ({team.currentMemberCount || 0} {t('events.participantsModal.labels.members')})
                                     </option>
                                 ))}
                             </select>
                         ) : (
                             <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                                 <p className="text-sm text-yellow-800">
-                                    No teams available for this activity type. You can add students individually.
+                                    {t('events.participantsModal.messages.noTeamsAvailable')}
                                 </p>
                             </div>
                         )}
@@ -281,7 +260,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                                     <Users className="w-5 h-5" />
-                                    Selected Participants ({selectedParticipants.length})
+                                    {t('events.participantsModal.sections.selectedParticipants')} ({selectedParticipants.length})
                                 </h3>
                             </div>
 
@@ -290,7 +269,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                                 <div className="mb-4">
                                     <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                                         <Users className="w-4 h-4" />
-                                        From Team: {selectedTeam?.teamName} ({teamParticipants.length})
+                                        {t('events.participantsModal.labels.fromTeam')}: {selectedTeam?.teamName} ({teamParticipants.length})
                                     </h4>
                                     <div className="space-y-2">
                                         {teamParticipants.map(participant => (
@@ -307,7 +286,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                                                 <button
                                                     onClick={() => handleRemoveParticipant(participant.studentID)}
                                                     className="p-1.5 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                                                    title="Remove from selection"
+                                                    title={t('events.participantsModal.actions.removeFromSelection')}
                                                 >
                                                     <UserMinus className="w-4 h-4" />
                                                 </button>
@@ -322,7 +301,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                                 <div>
                                     <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                                         <UserPlus className="w-4 h-4" />
-                                        Individual Students ({individualParticipants.length})
+                                        {t('events.participantsModal.labels.individualStudents')} ({individualParticipants.length})
                                     </h4>
                                     <div className="space-y-2">
                                         {individualParticipants.map(participant => (
@@ -339,7 +318,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                                                 <button
                                                     onClick={() => handleRemoveParticipant(participant.studentID)}
                                                     className="p-1.5 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                                                    title="Remove from selection"
+                                                    title={t('events.participantsModal.actions.removeFromSelection')}
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -355,14 +334,14 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                     <div className="border border-gray-200 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold text-gray-900">
-                                Add Individual Students
+                                {t('events.participantsModal.sections.addIndividualStudents')}
                             </h3>
                             <button
                                 onClick={() => setShowIndividualAdd(!showIndividualAdd)}
                                 className="flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                             >
                                 <Plus className="w-4 h-4" />
-                                {showIndividualAdd ? 'Hide' : 'Show'} Student List
+                                {showIndividualAdd ? t('events.participantsModal.buttons.hideList') : t('events.participantsModal.buttons.showList')}
                             </button>
                         </div>
 
@@ -371,14 +350,14 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                                 {/* Class Filter */}
                                 <div className="mb-4">
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Filter by Class
+                                        {t('events.participantsModal.labels.filterByClass')}
                                     </label>
                                     <select
                                         value={classFilter}
                                         onChange={(e) => setClassFilter(e.target.value)}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                                     >
-                                        <option value="">All Classes</option>
+                                        <option value="">{t('events.participantsModal.labels.allClasses')}</option>
                                         {Array.from(new Set(students.map(s => s.className).filter(Boolean)))
                                             .sort()
                                             .map(className => (
@@ -395,7 +374,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                                         <input
                                             type="text"
-                                            placeholder="Search students by name, code, grade, or class..."
+                                            placeholder={t('events.participantsModal.placeholders.searchStudents')}
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -422,7 +401,7 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                                                     className="flex items-center gap-2 px-3 py-1.5 text-sm bg-green-600 text-white hover:bg-green-700 rounded-lg transition-colors"
                                                 >
                                                     <Plus className="w-4 h-4" />
-                                                    Add
+                                                    {t('events.participantsModal.buttons.add')}
                                                 </button>
                                             </div>
                                         ))}
@@ -432,8 +411,8 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                                         <Users className="w-12 h-12 mx-auto mb-2 text-gray-400" />
                                         <p>
                                             {searchTerm
-                                                ? 'No students found matching your search'
-                                                : 'All students are either already selected or participating'}
+                                                ? t('events.participantsModal.messages.noStudentsFound')
+                                                : t('events.participantsModal.messages.allStudentsSelected')}
                                         </p>
                                     </div>
                                 )}
@@ -445,21 +424,23 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
                 {/* Footer */}
                 <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-t border-gray-200">
                     <p className="text-sm text-gray-600">
-                        {selectedParticipants.length} participant{selectedParticipants.length !== 1 ? 's' : ''} selected
+                        {t('events.participantsModal.footer.selectedCount', { count: selectedParticipants.length })}
                     </p>
                     <div className="flex gap-3">
                         <button
                             onClick={onClose}
                             className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
                         >
-                            Cancel
+                            {t('events.participantsModal.buttons.cancel')}
                         </button>
                         <button
                             onClick={handleSubmit}
                             disabled={loading || selectedParticipants.length === 0}
                             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                         >
-                            {loading ? 'Adding...' : `Add ${selectedParticipants.length} Participant${selectedParticipants.length !== 1 ? 's' : ''}`}
+                            {loading
+                                ? t('events.participantsModal.buttons.adding')
+                                : t('events.participantsModal.buttons.addParticipants', { count: selectedParticipants.length })}
                         </button>
                     </div>
                 </div>
