@@ -552,6 +552,18 @@
       "female": "女"
     },
 
+    "pagination": {
+      "itemsPerPage": "每页项目数",
+      "showing": "显示中",
+      "of": "的",
+      "students": "学生",
+      "first": "第一",
+      "last": "最后",
+      "previous": "上一页",
+      "next": "下一页",
+      "page": "页"
+    },
+
     "actions": {
       "edit": "编辑学生",
       "delete": "删除学生",

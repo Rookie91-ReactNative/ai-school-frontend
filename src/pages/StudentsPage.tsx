@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Users, Plus, Edit, Trash2, X, Upload, Filter, GraduationCap, BookOpen, RefreshCw, Image as ImageIcon } from 'lucide-react';
+import { Users, Plus, Edit, Trash2, X, Upload, Filter, GraduationCap, BookOpen, RefreshCw, Image as ImageIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../services/api';
 import axios from 'axios';
 import PhotoManagementModal from '../components/Students/PhotoManagementModal';
@@ -74,9 +74,24 @@ const StudentsPage = () => {
     const [filterGradeId, setFilterGradeId] = useState<number | null>(null);
     const [filterClassId, setFilterClassId] = useState<number | null>(null);
 
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(20);
+
     const userStr = localStorage.getItem('user');
     const user = userStr ? JSON.parse(userStr) : null;
     const schoolID = user?.schoolID || 1;
+
+    // Pagination computed values
+    const totalPages = Math.ceil(students.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedStudents = students.slice(startIndex, endIndex);
+
+    // Reset to page 1 when filters or itemsPerPage change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filterAcademicYearId, filterGradeId, filterClassId, itemsPerPage]);
 
     // Photo Management Modal State
     const [photoManagementModal, setPhotoManagementModal] = useState<{
@@ -223,7 +238,7 @@ const StudentsPage = () => {
 
         if (!student.studentCode.trim()) errors.studentCode = t('students.validation.studentCodeRequired');
         if (!student.fullName.trim()) errors.fullName = t('students.validation.fullNameRequired');
-        if (!student.dateOfBirth) errors.dateOfBirth = t('students.validation.dateOfBirthRequired');
+        // DateOfBirth is now optional - removed validation
 
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
@@ -249,7 +264,7 @@ const StudentsPage = () => {
                     parentContact: formData.student.parentContact?.trim() || null,
                     parentEmail: formData.student.parentEmail?.trim() || null,
                     parentName: formData.student.parentName?.trim() || null,
-                    dateOfBirth: formData.student.dateOfBirth,
+                    dateOfBirth: formData.student.dateOfBirth || null,
                     gender: formData.student.gender || 'Male',
                     address: formData.student.address?.trim() || null,
                     enrollmentDate: formData.student.enrollmentDate
@@ -589,15 +604,29 @@ const StudentsPage = () => {
                     </div>
                 </div>
 
-                <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
-                    <Users className="w-4 h-4" />
-                    <span>{t('students.totalStudents')}: <strong className="text-gray-900">{students.length}</strong></span>
-                </div>
-                <div className="flex items-end">
-                    <button onClick={() => { setFilterAcademicYearId(null); setFilterGradeId(null); setFilterClassId(null); }}
-                        className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2">
-                        <RefreshCw className="w-4 h-4" />{t('students.clearFilters')}
-                    </button>
+                <div className="mt-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Users className="w-4 h-4" />
+                        <span>{t('students.totalStudents')}: <strong className="text-gray-900">{students.length}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            <label className="text-sm text-gray-600">{t('students.pagination.itemsPerPage')}:</label>
+                            <select
+                                value={itemsPerPage}
+                                onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value={20}>20</option>
+                                <option value={50}>50</option>
+                                <option value={100}>100</option>
+                            </select>
+                        </div>
+                        <button onClick={() => { setFilterAcademicYearId(null); setFilterGradeId(null); setFilterClassId(null); }}
+                            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+                            <RefreshCw className="w-4 h-4" />{t('students.clearFilters')}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -634,7 +663,7 @@ const StudentsPage = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {students.length === 0 ? (
+                            {paginatedStudents.length === 0 ? (
                                 <tr>
                                     <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
                                         <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
@@ -643,7 +672,7 @@ const StudentsPage = () => {
                                     </td>
                                 </tr>
                             ) : (
-                                students.map((student) => (
+                                paginatedStudents.map((student) => (
                                     <tr key={student.studentID} className="hover:bg-gray-50">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">{student.studentCode}</div>
@@ -731,6 +760,74 @@ const StudentsPage = () => {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination Controls */}
+                {students.length > 0 && (
+                    <div className="px-6 py-4 bg-gray-50 border-t flex items-center justify-between">
+                        <div className="text-sm text-gray-600">
+                            {t('students.pagination.showing')} <strong>{startIndex + 1}</strong> - <strong>{Math.min(endIndex, students.length)}</strong> {t('students.pagination.of')} <strong>{students.length}</strong> {t('students.pagination.students')}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setCurrentPage(1)}
+                                disabled={currentPage === 1}
+                                className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {t('students.pagination.first')}
+                            </button>
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
+                                className="p-1.5 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <ChevronLeft className="w-5 h-5" />
+                            </button>
+
+                            {/* Page numbers */}
+                            <div className="flex items-center gap-1">
+                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                    let pageNum;
+                                    if (totalPages <= 5) {
+                                        pageNum = i + 1;
+                                    } else if (currentPage <= 3) {
+                                        pageNum = i + 1;
+                                    } else if (currentPage >= totalPages - 2) {
+                                        pageNum = totalPages - 4 + i;
+                                    } else {
+                                        pageNum = currentPage - 2 + i;
+                                    }
+                                    return (
+                                        <button
+                                            key={pageNum}
+                                            onClick={() => setCurrentPage(pageNum)}
+                                            className={`px-3 py-1.5 text-sm border rounded-lg ${currentPage === pageNum
+                                                    ? 'bg-blue-600 text-white border-blue-600'
+                                                    : 'border-gray-300 hover:bg-gray-100'
+                                                }`}
+                                        >
+                                            {pageNum}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                disabled={currentPage === totalPages}
+                                className="p-1.5 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <ChevronRight className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={() => setCurrentPage(totalPages)}
+                                disabled={currentPage === totalPages}
+                                className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {t('students.pagination.last')}
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Create Student Modal */}
@@ -798,7 +895,7 @@ const StudentsPage = () => {
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            {t('students.createModal.dateOfBirth')} * {formErrors.dateOfBirth && <span className="text-red-500 text-xs">({formErrors.dateOfBirth})</span>}
+                                            {t('students.createModal.dateOfBirth')} {formErrors.dateOfBirth && <span className="text-red-500 text-xs">({formErrors.dateOfBirth})</span>}
                                         </label>
                                         <input
                                             type="date"
@@ -1095,7 +1192,7 @@ const StudentsPage = () => {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('students.createModal.fullName')} *</label>
                                     <input type="text" value={editFormData.fullName}
                                         onChange={(e) => setEditFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg" required />
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1113,10 +1210,10 @@ const StudentsPage = () => {
                                     <p className="mt-1 text-xs text-gray-500">{t('students.otherNameHint')}</p>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('students.createModal.dateOfBirth')} *</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('students.createModal.dateOfBirth')}</label>
                                     <input type="date" value={editFormData.dateOfBirth}
                                         onChange={(e) => setEditFormData(prev => ({ ...prev, dateOfBirth: e.target.value }))}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg" required />
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('students.table.gender')}</label>

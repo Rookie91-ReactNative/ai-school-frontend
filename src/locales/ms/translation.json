@@ -552,6 +552,18 @@
       "female": "Perempuan"
     },
 
+    "pagination": {
+      "itemsPerPage": "Item setiap halaman",
+      "showing": "Menunjukkan",
+      "of": "daripada",
+      "students": "pelajar",
+      "first": "Pertama",
+      "last": "Terakhir",
+      "previous": "Sebelumnya",
+      "next": "Seterusnya",
+      "page": "Muka surat"
+    },
+
     "actions": {
       "edit": "Edit Pelajar",
       "delete": "Padam Pelajar",

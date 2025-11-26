@@ -552,6 +552,18 @@
       "female": "Female"
     },
 
+    "pagination": {
+      "itemsPerPage": "Items per page",
+      "showing": "Showing",
+      "of": "of",
+      "students": "students",
+      "first": "First",
+      "last": "Last",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page"
+    },
+
     "actions": {
       "edit": "Edit Student",
       "delete": "Delete Student",

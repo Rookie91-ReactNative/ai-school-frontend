@@ -82,7 +82,7 @@ const ImportStudentsPage = () => {
         { key: 'className', label: t('import.columns.class'), required: true },
         { key: 'fullName', label: t('import.columns.fullName'), required: true },
         { key: 'otherName', label: t('import.columns.otherName'), required: false },
-        { key: 'dateOfBirth', label: t('import.columns.dateOfBirth'), required: true },
+        { key: 'dateOfBirth', label: t('import.columns.dateOfBirth'), required: false },
         { key: 'gender', label: t('import.columns.gender'), required: true },
         { key: 'email', label: t('import.columns.email'), required: false },
         { key: 'phoneNumber', label: t('import.columns.phoneNumber'), required: false },
@@ -167,10 +167,8 @@ const ImportStudentsPage = () => {
         if (!row.fullName?.trim()) {
             errors.push(t('import.validation.fullNameRequired'));
         }
-        if (!row.dateOfBirth?.trim()) {
-            errors.push(t('import.validation.dateOfBirthRequired'));
-        } else {
-            // Validate date format
+        // DateOfBirth is optional - only validate format if provided
+        if (row.dateOfBirth?.trim()) {
             const date = new Date(row.dateOfBirth);
             if (isNaN(date.getTime())) {
                 errors.push(t('import.validation.invalidDateFormat'));
@@ -418,12 +416,13 @@ const ImportStudentsPage = () => {
         setError(null);
 
         try {
-            const response = await api.post('/student/import', {
+            // Build the payload
+            const payload = {
                 students: validRows.map(row => ({
                     studentCode: row.studentCode,
                     fullName: row.fullName,
                     otherName: row.otherName || null,
-                    dateOfBirth: row.dateOfBirth,
+                    dateOfBirth: row.dateOfBirth || null,
                     gender: row.gender,
                     academicYear: row.academicYear,
                     className: row.className,
@@ -434,14 +433,65 @@ const ImportStudentsPage = () => {
                     parentEmail: row.parentEmail || null,
                     address: row.address || null
                 }))
-            });
+            };
+
+            // Log the payload for debugging
+            //console.log('📤 Import payload:', JSON.stringify(payload, null, 2));
+
+            const response = await api.post('/student/import', payload);
 
             setImportResult(response.data.data);
             setStep('result');
         } catch (err: unknown) {
-            console.error('Import error:', err);
-            const axiosError = err as { response?: { data?: { message?: string } } };
-            setError(axiosError.response?.data?.message || t('import.errors.importFailed'));
+            console.error('❌ Import error:', err);
+
+            // Enhanced error handling to show detailed error
+            const axiosError = err as {
+                response?: {
+                    data?: {
+                        message?: string;
+                        errors?: Record<string, string[]>;
+                        title?: string;
+                    };
+                    status?: number;
+                }
+            };
+
+            // Log full error details
+            console.error('📋 Error details:', {
+                status: axiosError.response?.status,
+                data: axiosError.response?.data,
+                errors: axiosError.response?.data?.errors,
+                title: axiosError.response?.data?.title
+            });
+
+            // Build error message
+            let errorMessage = t('import.errors.importFailed');
+
+            if (axiosError.response?.data) {
+                const data = axiosError.response.data;
+
+                if (data.message) {
+                    errorMessage = data.message;
+                } else if (data.title) {
+                    errorMessage = data.title;
+                }
+
+                // If there are validation errors, show them
+                if (data.errors) {
+                    const errorDetails = Object.entries(data.errors)
+                        .map(([field, messages]) => {
+                            const messageText = Array.isArray(messages)
+                                ? messages.join(', ')
+                                : String(messages);
+                            return `${field}: ${messageText}`;
+                        })
+                        .join('; ');
+                    errorMessage = `${errorMessage}: ${errorDetails}`;
+                }
+            }
+
+            setError(errorMessage);
         } finally {
             setImporting(false);
         }
