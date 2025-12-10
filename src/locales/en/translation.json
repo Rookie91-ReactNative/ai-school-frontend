@@ -1109,7 +1109,8 @@
         "successCreated": "Event created successfully!",
         "closingIn": "Closing in 2 seconds...",
         "errorCreating": "Failed to create event",
-        "teachersSelected": "Selected teacher"
+        "teachersSelected": "Selected teacher",
+        "noTeachers": "No teachers"
       },
 
       "buttons": {
@@ -1173,7 +1174,8 @@
         "successUpdated": "Event updated successfully!",
         "closingIn": "Closing in 2 seconds...",
         "errorUpdating": "Failed to update event",
-        "teachersSelected": "Selected teacher"
+        "teachersSelected": "Selected teacher",
+        "loadingTeachers": "Loading Teachers"
       },
 
       "buttons": {

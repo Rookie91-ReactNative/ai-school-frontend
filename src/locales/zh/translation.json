@@ -1109,7 +1109,8 @@
         "successCreated": "活动创建成功！",
         "closingIn": "2秒后自动关闭...",
         "errorCreating": "创建活动失败",
-        "teachersSelected": "选定的老师"
+        "teachersSelected": "选定的老师",
+        "noTeachers": "没有老师"
       },
 
       "buttons": {
@@ -1173,7 +1174,8 @@
         "successUpdated": "活动更新成功！",
         "closingIn": "2秒后自动关闭...",
         "errorUpdating": "更新活动失败",
-        "teachersSelected": "选定的老师"
+        "teachersSelected": "选定的老师",
+        "loadingTeachers": "Cikgu sedang memuatkan"
       },
 
       "buttons": {

@@ -1109,7 +1109,8 @@
         "successCreated": "Acara berjaya dicipta!",
         "closingIn": "Menutup dalam 2 saat...",
         "errorCreating": "Gagal mencipta acara",
-        "teachersSelected": "Guru terpilih"
+        "teachersSelected": "Guru terpilih",
+        "noTeachers": "Tiada guru"
       },
 
       "buttons": {
@@ -1174,7 +1175,8 @@
         "successUpdated": "Acara berjaya dikemaskini!",
         "closingIn": "Menutup dalam 2 saat...",
         "errorUpdating": "Gagal mengemaskini acara",
-        "teachersSelected": "Guru terpilih"
+        "teachersSelected": "Guru terpilih",
+        "loadingTeachers": "Loading Teachers"
       },
 
       "buttons": {
