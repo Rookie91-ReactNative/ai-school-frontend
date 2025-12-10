@@ -91,8 +91,9 @@ const ManageParticipantsModal = ({ event, onClose, onSuccess }: ManageParticipan
 
     const loadData = async () => {
         try {
-            const userStr = localStorage.getItem('user');
-            const schoolId = userStr ? JSON.parse(userStr).schoolID : null;
+            // ✅ FIXED: Use schoolID from event prop instead of localStorage
+            const schoolId = event.schoolID;
+            console.log("Loading data for schoolID:", schoolId);
 
             if (!schoolId) {
                 console.error('No school ID found');
