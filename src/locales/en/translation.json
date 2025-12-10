@@ -473,6 +473,8 @@
     "online": "Online",
     "offline": "Offline",
     "totalCameras": "Total Cameras",
+    "noCameras": "No Cameras Configured",
+    "noCamerasDesc": "Add cameras to start monitoring student attendance",
     "noCamerasTitle": "No Cameras Configured",
     "noCamerasMessage": "Add cameras to start monitoring student attendance",
     "cameraName": "Camera Name",
@@ -482,6 +484,7 @@
     "ip": "IP",
     "status": "Status",
     "frames": "Frames",
+    "framesProcessed": "frames",
     "deactivateCamera": "Deactivate Camera",
     "activateCamera": "Activate Camera",
     "startCameraError": "Failed to start camera. Make sure the face recognition model is trained.",
@@ -498,10 +501,11 @@
     "confirmActivateMessage": "The camera will be available for use.",
     "addCameraModalTitle": "Add New Camera",
     "addCameraModalSubtitle": "Configure a new camera for monitoring",
-    "cameraNameRequired": "Camera name and RTSP URL are required",
+    "cameraNameRequired": "Camera name is required",
     "unableToGetSchool": "Unable to determine school. Please log in again.",
     "addCameraError": "Failed to add camera. Please try again.",
     "addCameraSuccess": "Camera added successfully!",
+    "addFirstCamera": "Add First Camera",
     "locationPlaceholder": "e.g., School Main Entrance",
     "cameraNamePlaceholder": "e.g., Main Gate Camera",
     "rtspUrlPlaceholder": "rtsp://admin:password@192.168.1.100:554/stream1",
@@ -517,7 +521,34 @@
     "setupTip4": "Camera should have clear view of entry points",
     "cancel": "Cancel",
     "adding": "Adding...",
-    "required": "*"
+    "required": "*",
+
+    "cameraType": "Camera Type",
+    "cameraTypeRTSP": "RTSP Camera",
+    "cameraTypeP6SAI": "P6SAI Camera",
+    "traditionalIPCamera": "Traditional IP Camera",
+    "aiFaceRecognition": "AI Face Recognition",
+    "deviceSerial": "Device Serial Number",
+    "deviceSerialPlaceholder": "e.g., P6SAI-ABC123-001",
+    "deviceSerialHint": "Find this in camera Settings → Device Info → Serial Number",
+    "rtspRequired": "RTSP URL is required for RTSP cameras",
+    "deviceSerialRequired": "Device Serial is required for P6SAI cameras",
+    "optional": "Optional",
+
+    "rtspSetupTitle": "RTSP Camera Setup:",
+    "p6saiSetupTitle": "P6SAI Camera Setup:",
+    "p6saiSetupTip1": "Configure webhook in camera to point to your backend",
+    "p6saiSetupTip2": "Enroll student faces in camera's face library",
+    "p6saiSetupTip3": "Person ID in camera must match StudentCode in database",
+    "p6saiSetupTip4": "Enable snapshot images in camera settings",
+
+    "badgeRTSP": "RTSP",
+    "badgeP6SAI": "P6SAI",
+    "serialLabel": "Serial:",
+    "ipLabel": "IP:",
+    "notConfigured": "Not configured",
+    "aiPoweredRecognition": "AI-Powered Recognition",
+    "aiAutomaticDescription": "Camera sends events automatically when faces are recognized"
   },
   "students": {
     "title": "Students Management",
@@ -1156,7 +1187,7 @@
       "labels": {
         "primary": "Primary",
         "teachers": "Teachers"
-      }    
+      }
     },
 
     "detailsModal": {

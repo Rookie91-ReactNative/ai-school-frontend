@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Camera, Play, Square, Plus, Wifi, WifiOff, Power } from 'lucide-react';
+import { Camera, Play, Square, Plus, Wifi, WifiOff, Video, Brain } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import AddCameraModal from '../components/Cameras/AddCameraModal';
 import { authService } from '../services/authService';
-import axios from 'axios';
 
 interface CameraConfig {
     cameraId: number;
     cameraName: string;
     location: string;
+    cameraType: number; // 1=RTSP, 2=P6SAI
     rtspUrl: string;
     ipAddress: string;
+    deviceSerial?: string; // For P6SAI cameras
     isActive: boolean;
     schoolId?: number;
 }
@@ -36,16 +37,14 @@ const CamerasPage = () => {
     useEffect(() => {
         const initializePage = async () => {
             await fetchUserProfile();
-            // fetchCameras will be called after userSchoolId is set
         };
         initializePage();
 
-        // Poll camera statuses every 5 seconds
+        // Poll camera statuses every 5 seconds (only for RTSP cameras)
         const interval = setInterval(fetchCameraStatuses, 5000);
         return () => clearInterval(interval);
     }, []);
 
-    // Fetch cameras when userSchoolId changes
     useEffect(() => {
         if (userSchoolId !== null) {
             fetchCameras();
@@ -60,7 +59,6 @@ const CamerasPage = () => {
                 console.log('User profile:', currentUser);
                 setUserSchoolId(currentUser.schoolID);
             }
-
         } catch (error) {
             console.error('Error fetching user profile:', error);
             setIsLoading(false);
@@ -70,7 +68,6 @@ const CamerasPage = () => {
     const fetchCameras = async () => {
         try {
             const response = await api.get('/camera');
-            // Filter cameras: only show active cameras that belong to user's school
             const allCameras = response.data.data;
             const filteredCameras = allCameras.filter((camera: CameraConfig) =>
                 camera.isActive === true &&
@@ -98,107 +95,82 @@ const CamerasPage = () => {
         }
     };
 
-    const startCamera = async (cameraId: number) => {
+    const handleStartCamera = async (cameraId: number) => {
         try {
             await api.post(`/camera/${cameraId}/start`);
-            await fetchCameraStatuses();
-        } catch (error) {
+            setTimeout(fetchCameraStatuses, 1000);
+        } catch (error: unknown) {
             console.error('Error starting camera:', error);
-            alert(t('cameras.startCameraError'));
+            const errorMessage = error instanceof Error ? error.message : 'Failed to start camera';
+            alert(errorMessage);
         }
     };
 
-    const stopCamera = async (cameraId: number) => {
+    const handleStopCamera = async (cameraId: number) => {
         try {
             await api.post(`/camera/${cameraId}/stop`);
-            await fetchCameraStatuses();
+            setTimeout(fetchCameraStatuses, 1000);
         } catch (error) {
             console.error('Error stopping camera:', error);
+            alert('Failed to stop camera');
         }
     };
 
-    const startAllCameras = async () => {
-        try {
-            await api.post('/camera/start-all');
-            await fetchCameraStatuses();
-        } catch (error) {
-            console.error('Error starting all cameras:', error);
-            alert(t('cameras.startAllError'));
-        }
-    };
-
-    const stopAllCameras = async () => {
+    const handleStopAllCameras = async () => {
         try {
             await api.post('/camera/stop-all');
-            await fetchCameraStatuses();
+            setTimeout(fetchCameraStatuses, 1000);
         } catch (error) {
             console.error('Error stopping all cameras:', error);
+            alert('Failed to stop all cameras');
         }
     };
 
-    const toggleCameraActive = async (cameraId: number, currentStatus: boolean) => {
-        // Show confirmation dialog
-        const action = currentStatus ? t('cameras.confirmDeactivate') : t('cameras.confirmActivate');
-        const message = currentStatus ? t('cameras.confirmDeactivateMessage') : t('cameras.confirmActivateMessage');
-
-        const confirmed = window.confirm(`${action}\n\n${message}`);
-
-        if (!confirmed) {
-            return; // User cancelled
+    const getCameraTypeBadge = (cameraType: number) => {
+        if (cameraType === 2) {
+            return (
+                <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 rounded-md text-xs font-medium">
+                    <Brain className="w-3 h-3" />
+                    {t('cameras.badgeP6SAI')}
+                </span>
+            );
         }
-
-        try {
-            // If camera is currently running, stop it first
-            const running = isRunning(cameraId);
-            if (running && currentStatus) {
-                await stopCamera(cameraId);
-                // Wait a bit for camera to stop
-                await new Promise(resolve => setTimeout(resolve, 500));
-            }
-
-            // Find the camera to get all its data
-            const camera = cameras.find(c => c.cameraId === cameraId);
-            if (!camera) {
-                alert(t('cameras.cameraNotFound'));
-                return;
-            }
-
-            // Update the active status - send complete camera object
-            const updateData = {
-                cameraName: camera.cameraName,
-                location: camera.location,
-                rtspUrl: camera.rtspUrl,
-                ipAddress: camera.ipAddress,
-                isActive: !currentStatus
-            };
-
-            console.log('Updating camera with data:', updateData);
-
-            const response = await api.put(`/camera/${cameraId}`, updateData);
-
-            console.log('Update response:', response.data);
-
-            // Refresh camera list
-            await fetchCameras();
-
-            const successMessage = !currentStatus ? t('cameras.activatedSuccess') : t('cameras.deactivatedSuccess');
-            alert(`${camera.cameraName} ${successMessage}`);
-        } catch (error: unknown) {
-            console.error('Error updating camera:', error);
-            if (axios.isAxiosError(error)) {
-                const errorMessage = error.response?.data?.message || t('cameras.updateError');
-                alert(errorMessage);
-            }
-        }
+        return (
+            <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-md text-xs font-medium">
+                <Video className="w-3 h-3" />
+                {t('cameras.badgeRTSP')}
+            </span>
+        );
     };
 
-    const getCameraStatus = (cameraId: number): CameraStatus | undefined => {
-        return cameraStatuses[cameraId];
-    };
-
-    const isRunning = (cameraId: number): boolean => {
-        const status = getCameraStatus(cameraId);
-        return status?.isOnline || false;
+    const getCameraConnectionInfo = (camera: CameraConfig) => {
+        if (camera.cameraType === 2) {
+            // P6SAI Camera - show device serial
+            return (
+                <div className="text-xs text-gray-500 space-y-1">
+                    <div className="flex items-center gap-1">
+                        <span className="font-medium">{t('cameras.serialLabel')}</span>
+                        <span className="font-mono">
+                            {camera.deviceSerial || t('cameras.notConfigured')}
+                        </span>
+                    </div>
+                    {camera.ipAddress && (
+                        <div className="flex items-center gap-1">
+                            <span className="font-medium">{t('cameras.ipLabel')}</span>
+                            <span className="font-mono">{camera.ipAddress}</span>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+        // RTSP Camera - show RTSP URL
+        return (
+            <div className="text-xs text-gray-500">
+                <div className="font-mono truncate" title={camera.rtspUrl}>
+                    {camera.rtspUrl}
+                </div>
+            </div>
+        );
     };
 
     if (isLoading) {
@@ -212,7 +184,7 @@ const CamerasPage = () => {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                         <Camera className="w-8 h-8 text-blue-600" />
@@ -222,160 +194,145 @@ const CamerasPage = () => {
                 </div>
                 <div className="flex gap-3">
                     <button
-                        onClick={() => setIsAddModalOpen(true)}
-                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                        onClick={handleStopAllCameras}
+                        className="px-4 py-2 text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors flex items-center gap-2"
                     >
-                        <Plus className="w-5 h-5" />
-                        {t('cameras.addCamera')}
-                    </button>
-                    <button onClick={startAllCameras} className="btn-primary flex items-center gap-2">
-                        <Play className="w-5 h-5" />
-                        {t('cameras.startAll')}
-                    </button>
-                    <button onClick={stopAllCameras} className="btn-secondary flex items-center gap-2">
-                        <Square className="w-5 h-5" />
+                        <Square className="w-4 h-4" />
                         {t('cameras.stopAll')}
                     </button>
-                </div>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="card">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-100 rounded-lg">
-                            <Camera className="w-6 h-6 text-blue-600" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-600">{t('cameras.totalCameras')}</p>
-                            <p className="text-2xl font-bold text-gray-900">{cameras.length}</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="card">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-green-100 rounded-lg">
-                            <Wifi className="w-6 h-6 text-green-600" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-600">{t('cameras.online')}</p>
-                            <p className="text-2xl font-bold text-green-900">
-                                {Object.values(cameraStatuses).filter(s => s.isOnline).length}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div className="card">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-red-100 rounded-lg">
-                            <WifiOff className="w-6 h-6 text-red-600" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-600">{t('cameras.offline')}</p>
-                            <p className="text-2xl font-bold text-red-900">
-                                {cameras.length - Object.values(cameraStatuses).filter(s => s.isOnline).length}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* No Cameras Message */}
-            {cameras.length === 0 && (
-                <div className="card text-center py-12">
-                    <Camera className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('cameras.noCamerasTitle')}</h3>
-                    <p className="text-gray-600 mb-6">
-                        {t('cameras.noCamerasMessage')}
-                    </p>
-                    <button onClick={() => setIsAddModalOpen(true)}
-                        className="btn-primary flex items-center gap-2 mx-auto">
-                        <Plus className="w-5 h-5" />
+                    <button
+                        onClick={() => setIsAddModalOpen(true)}
+                        className="btn-primary flex items-center gap-2"
+                    >
+                        <Plus className="w-4 h-4" />
                         {t('cameras.addCamera')}
                     </button>
                 </div>
-            )}
+            </div>
 
-            {/* Cameras Grid */}
+            {/* Camera Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {cameras.map((camera) => {
-                    const status = getCameraStatus(camera.cameraId);
-                    const running = isRunning(camera.cameraId);
+                    const status = cameraStatuses[camera.cameraId];
+                    const isRunning = status?.isOnline || false;
 
                     return (
-                        <div key={camera.cameraId} className="card">
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="flex items-center gap-3">
-                                    <div className={`p-2 rounded-lg ${running ? 'bg-green-100' : 'bg-gray-100'}`}>
-                                        <Camera className={`w-6 h-6 ${running ? 'text-green-600' : 'text-gray-600'}`} />
+                        <div
+                            key={camera.cameraId}
+                            className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-200 overflow-hidden"
+                        >
+                            {/* Camera Header */}
+                            <div className="p-4 border-b border-gray-100">
+                                <div className="flex items-start justify-between mb-2">
+                                    <div className="flex-1">
+                                        <h3 className="font-semibold text-gray-900 text-lg flex items-center gap-2">
+                                            {camera.cameraName}
+                                        </h3>
+                                        <p className="text-sm text-gray-600 mt-1">{camera.location}</p>
                                     </div>
-                                    <div>
-                                        <h3 className="font-semibold text-gray-900">{camera.cameraName}</h3>
-                                        <p className="text-sm text-gray-500">{camera.location}</p>
-                                    </div>
+                                    {getCameraTypeBadge(camera.cameraType)}
                                 </div>
-                                <span
-                                    className={`px-2 py-1 text-xs font-semibold rounded-full ${running
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-gray-100 text-gray-800'
-                                        }`}
-                                >
-                                    {running ? t('cameras.online') : t('cameras.offline')}
-                                </span>
+                                {getCameraConnectionInfo(camera)}
                             </div>
 
-                            {/* Camera Details */}
-                            <div className="space-y-2 text-sm text-gray-600 mb-4">
-                                <p>
-                                    <span className="font-medium">{t('cameras.ip')}:</span> {camera.ipAddress}
-                                </p>
-                                {status && running && (
-                                    <>
-                                        <p>
-                                            <span className="font-medium">{t('cameras.status')}:</span> {status.statusMessage}
-                                        </p>
-                                        <p>
-                                            <span className="font-medium">{t('cameras.frames')}:</span> {status.framesProcessed}
-                                        </p>
-                                    </>
-                                )}
-                            </div>
+                            {/* Status Section - Only for RTSP cameras */}
+                            {camera.cameraType === 1 && (
+                                <div className="p-4 bg-gray-50">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center gap-2">
+                                            {isRunning ? (
+                                                <>
+                                                    <Wifi className="w-4 h-4 text-green-600" />
+                                                    <span className="text-sm font-medium text-green-600">
+                                                        {t('cameras.online')}
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <WifiOff className="w-4 h-4 text-gray-400" />
+                                                    <span className="text-sm font-medium text-gray-500">
+                                                        {t('cameras.offline')}
+                                                    </span>
+                                                </>
+                                            )}
+                                        </div>
+                                        {status && (
+                                            <span className="text-xs text-gray-500">
+                                                {status.framesProcessed} {t('cameras.framesProcessed')}
+                                            </span>
+                                        )}
+                                    </div>
 
-                            {/* Actions */}
-                            <div className="flex gap-2">
-                                {running ? (
-                                    <button
-                                        onClick={() => stopCamera(camera.cameraId)}
-                                        className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
-                                    >
-                                        <Square className="w-4 h-4" />
-                                        {t('cameras.stop')}
-                                    </button>
-                                ) : (
-                                    <button
-                                        onClick={() => startCamera(camera.cameraId)}
-                                        className="flex-1 btn-primary flex items-center justify-center gap-2"
-                                    >
-                                        <Play className="w-4 h-4" />
-                                        {t('cameras.start')}
-                                    </button>
-                                )}
-                                <button
-                                    onClick={() => toggleCameraActive(camera.cameraId, camera.isActive)}
-                                    className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors flex items-center justify-center gap-2"
-                                    title={t('cameras.deactivateCamera')}
-                                >
-                                    <Power className="w-4 h-4" />
-                                </button>
-                            </div>
+                                    {status?.statusMessage && (
+                                        <p className="text-xs text-gray-600 mb-3">{status.statusMessage}</p>
+                                    )}
+
+                                    {/* Control Button */}
+                                    {isRunning ? (
+                                        <button
+                                            onClick={() => handleStopCamera(camera.cameraId)}
+                                            className="w-full px-4 py-2 text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+                                        >
+                                            <Square className="w-4 h-4" />
+                                            {t('cameras.stop')}
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => handleStartCamera(camera.cameraId)}
+                                            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                                        >
+                                            <Play className="w-4 h-4" />
+                                            {t('cameras.start')}
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* P6SAI Camera Info */}
+                            {camera.cameraType === 2 && (
+                                <div className="p-4 bg-purple-50">
+                                    <div className="flex items-center gap-2 text-purple-700 mb-2">
+                                        <Brain className="w-4 h-4" />
+                                        <span className="text-sm font-medium">
+                                            {t('cameras.aiPoweredRecognition')}
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-purple-600">
+                                        {t('cameras.aiAutomaticDescription')}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     );
                 })}
             </div>
+
+            {/* Empty State */}
+            {cameras.length === 0 && (
+                <div className="text-center py-12">
+                    <Camera className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        {t('cameras.noCameras')}
+                    </h3>
+                    <p className="text-gray-600 mb-4">{t('cameras.noCamerasDesc')}</p>
+                    <button
+                        onClick={() => setIsAddModalOpen(true)}
+                        className="btn-primary inline-flex items-center gap-2"
+                    >
+                        <Plus className="w-4 h-4" />
+                        {t('cameras.addFirstCamera')}
+                    </button>
+                </div>
+            )}
+
+            {/* Add Camera Modal */}
             <AddCameraModal
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
-                onSuccess={fetchCameras}
+                onSuccess={() => {
+                    setIsAddModalOpen(false);
+                    fetchCameras();
+                }}
             />
         </div>
     );
