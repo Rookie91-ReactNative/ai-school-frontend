@@ -232,7 +232,57 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                                     </div>
                                 )}
 
-                                {event.leadingTeacher && (
+                                {/* ✅ UPDATED: Display multiple teachers */}
+                                {event.teachers && event.teachers.length > 0 && (
+                                    <div>
+                                        <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
+                                            <User className="w-4 h-4" />
+                                            {event.teachers.length === 1
+                                                ? t('events.detailsModal.labels.leadingTeacher')
+                                                : `${t('events.detailsModal.labels.leadingTeacher')} (${event.teachers.length})`
+                                            }
+                                        </h3>
+                                        <div className="space-y-3">
+                                            {event.teachers.map((teacher) => (
+                                                <div
+                                                    key={teacher.teacherID}
+                                                    className={`p-3 rounded-lg border ${teacher.isPrimary
+                                                        ? 'bg-yellow-50 border-yellow-200'
+                                                        : 'bg-gray-50 border-gray-200'
+                                                        }`}
+                                                >
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <p className="text-gray-900 font-medium">
+                                                            {teacher.teacherName}
+                                                        </p>
+                                                        {teacher.isPrimary && (
+                                                            <span
+                                                                className="text-xs bg-yellow-500 text-white px-2 py-0.5 rounded-full font-medium"
+                                                                title={t('events.detailsModal.labels.primaryTeacher') || 'Primary Teacher'}
+                                                            >
+                                                                ⭐ {t('events.detailsModal.labels.primary') || 'Primary'}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex flex-col gap-1">
+                                                        {teacher.teacherEmail && (
+                                                            <a
+                                                                href={`mailto:${teacher.teacherEmail}`}
+                                                                className="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1"
+                                                            >
+                                                                <Mail className="w-3 h-3" />
+                                                                {teacher.teacherEmail}
+                                                            </a>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* ✅ FALLBACK: Keep backward compatibility with old leadingTeacher field */}
+                                {!event.teachers && event.leadingTeacher && (
                                     <div>
                                         <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
                                             <User className="w-4 h-4" />
@@ -288,32 +338,32 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                                     {event.transportationDetails && (
                                         <div>
                                             <h4 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.transportation')}</h4>
-                                            <p className="text-gray-700 whitespace-pre-wrap">{event.transportationDetails}</p>
+                                            <p className="text-gray-700">{event.transportationDetails}</p>
                                         </div>
                                     )}
 
                                     {event.uniformRequirements && (
                                         <div>
-                                            <h4 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.uniformRequirements')}</h4>
-                                            <p className="text-gray-700 whitespace-pre-wrap">{event.uniformRequirements}</p>
+                                            <h4 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.uniform')}</h4>
+                                            <p className="text-gray-700">{event.uniformRequirements}</p>
                                         </div>
                                     )}
                                 </div>
                             </div>
                         )}
 
-                        {/* Results (if completed) */}
-                        {(event.result || event.awardsReceived) && (
+                        {/* Results Section - Only show for completed events */}
+                        {event.status === 3 && (event.result || event.awardsReceived) && (
                             <div className="border-t border-gray-200 pt-6 mb-8">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                    <Award className="w-5 h-5 text-yellow-500" />
+                                    <Award className="w-5 h-5" />
                                     {t('events.detailsModal.sections.results')}
                                 </h3>
                                 <div className="space-y-4">
                                     {event.result && (
                                         <div>
                                             <h4 className="text-sm font-medium text-gray-500 mb-2">{t('events.detailsModal.labels.result')}</h4>
-                                            <p className="text-gray-900 font-medium">{event.result}</p>
+                                            <p className="text-gray-900">{event.result}</p>
                                         </div>
                                     )}
 

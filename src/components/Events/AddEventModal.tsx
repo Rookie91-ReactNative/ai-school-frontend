@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Calendar, Clock, MapPin, AlertCircle, CheckCircle, Lock } from 'lucide-react';
+import { X, Calendar, Clock, MapPin, AlertCircle, CheckCircle, Lock, Users, Star } from 'lucide-react';
 import {
     eventService,
     EventType,
@@ -30,6 +30,10 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
     // Track if the current user is a teacher and their teacherID
     const [currentUserTeacherId, setCurrentUserTeacherId] = useState<number | null>(null);
     const isTeacherRole = user?.userRole === 'Teacher';
+
+    // ✅ NEW: State for multiple teachers
+    const [selectedTeacherIds, setSelectedTeacherIds] = useState<number[]>([]);
+    const [primaryTeacherId, setPrimaryTeacherId] = useState<number | null>(null);
 
     const [formData, setFormData] = useState<EventCreateDto>({
         eventName: '',
@@ -67,7 +71,7 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
             const teachersData = await teacherService.getAllTeachers(true);
             setTeachers(teachersData);
 
-            // If user is a Teacher, find their teacherID and auto-select
+            // ✅ UPDATED: If user is a Teacher, auto-select them and mark as primary
             if (isTeacherRole && user?.userId) {
                 const currentTeacher = teachersData.find(
                     (teacher) => teacher.userID === user.userId
@@ -75,11 +79,9 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
 
                 if (currentTeacher) {
                     setCurrentUserTeacherId(currentTeacher.teacherID);
-                    // Auto-set the leadingTeacherID in form data
-                    setFormData(prev => ({
-                        ...prev,
-                        leadingTeacherID: currentTeacher.teacherID
-                    }));
+                    // Auto-select current teacher
+                    setSelectedTeacherIds([currentTeacher.teacherID]);
+                    setPrimaryTeacherId(currentTeacher.teacherID);
                 }
             }
         } catch (error) {
@@ -107,9 +109,23 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
             return;
         }
 
+        // ✅ NEW: Validate at least one teacher is selected
+        if (selectedTeacherIds.length === 0) {
+            setError(t('events.addModal.validation.teacherRequired') || 'Please select at least one teacher');
+            return;
+        }
+
         try {
             setLoading(true);
-            await eventService.createEvent(formData);
+
+            // ✅ NEW: Prepare form data with teacher assignments
+            const submitData: EventCreateDto = {
+                ...formData,
+                teacherIDs: selectedTeacherIds,
+                primaryTeacherID: primaryTeacherId || selectedTeacherIds[0] // Default to first if no primary selected
+            };
+
+            await eventService.createEvent(submitData);
             setLoading(false);
             setSuccess(true);
 
@@ -132,6 +148,41 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
 
     const handleChange = <K extends keyof EventCreateDto>(field: K, value: EventCreateDto[K]) => {
         setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    // ✅ NEW: Toggle teacher selection
+    const toggleTeacherSelection = (teacherId: number) => {
+        if (isTeacherRole && teacherId !== currentUserTeacherId) {
+            // Teacher role cannot deselect themselves or select others
+            return;
+        }
+
+        setSelectedTeacherIds(prev => {
+            if (prev.includes(teacherId)) {
+                // Remove teacher
+                const newSelection = prev.filter(id => id !== teacherId);
+                // If removing the primary teacher, clear primary
+                if (primaryTeacherId === teacherId) {
+                    setPrimaryTeacherId(newSelection.length > 0 ? newSelection[0] : null);
+                }
+                return newSelection;
+            } else {
+                // Add teacher
+                const newSelection = [...prev, teacherId];
+                // If this is the first teacher, make them primary
+                if (newSelection.length === 1) {
+                    setPrimaryTeacherId(teacherId);
+                }
+                return newSelection;
+            }
+        });
+    };
+
+    // ✅ NEW: Set primary teacher
+    const handleSetPrimaryTeacher = (teacherId: number) => {
+        if (selectedTeacherIds.includes(teacherId)) {
+            setPrimaryTeacherId(teacherId);
+        }
     };
 
     // Get the current teacher's name for display when locked
@@ -258,44 +309,106 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
                             </select>
                         </div>
 
-                        {/* Leading Teacher - Auto-selected and locked for Teacher role */}
-                        <div>
+                        {/* ✅ UPDATED: Multiple Teachers Selection */}
+                        <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                {t('events.addModal.fields.leadingTeacher')} *
+                                <Users className="w-4 h-4 inline mr-2" />
+                                {t('events.addModal.fields.leadingTeacher') || 'Assigned Teachers'} *
                                 {isTeacherRole && currentUserTeacherId && (
-                                    <Lock className="w-4 h-4 inline ml-2 text-gray-400" /*title={t('events.addModal.messages.teacherLocked')}*/ />
+                                    <Lock className="w-4 h-4 inline ml-2 text-gray-400" />
                                 )}
                             </label>
 
-                            {/* Show locked input for Teacher role, dropdown for others */}
+                            {/* Show locked display for Teacher role */}
                             {isTeacherRole && currentUserTeacherId ? (
-                                // Locked display for Teacher role
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        value={getCurrentTeacherName()}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed"
-                                        disabled
-                                        readOnly
-                                    />
-                                    <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                <div className="p-4 bg-gray-50 border border-gray-300 rounded-lg">
+                                    <div className="flex items-center gap-2">
+                                        <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                                        <span className="font-medium text-gray-900">{getCurrentTeacherName()}</span>
+                                        <span className="text-xs text-gray-500 ml-2">
+                                            ({t('events.addModal.labels.primaryTeacher') || 'Primary Teacher'})
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-2">
+                                        {t('events.addModal.messages.teacherAutoSelected') || 'You are automatically assigned as the primary teacher'}
+                                    </p>
                                 </div>
                             ) : (
-                                // Dropdown for Admin/SuperAdmin
-                                <select
-                                    value={formData.leadingTeacherID || ''}
-                                    onChange={(e) => handleChange('leadingTeacherID', e.target.value ? Number(e.target.value) : undefined)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                    disabled={loading || success}
-                                >
-                                    <option value="">{t('events.addModal.placeholders.selectTeacher')}</option>
-                                    {teachers.map(teacher => (
-                                        <option key={teacher.teacherID} value={teacher.teacherID}>
-                                            {teacher.fullName}
-                                        </option>
-                                    ))}
-                                </select>
+                                /* Multiple teacher selection for Admin/SuperAdmin */
+                                <div className="border border-gray-300 rounded-lg max-h-64 overflow-y-auto">
+                                    {teachers.length === 0 ? (
+                                        <div className="p-4 text-center text-gray-500">
+                                            {t('events.addModal.messages.noTeachers') || 'No teachers available'}
+                                        </div>
+                                    ) : (
+                                        <div className="divide-y divide-gray-200">
+                                            {teachers.map((teacher) => {
+                                                const isSelected = selectedTeacherIds.includes(teacher.teacherID);
+                                                const isPrimary = primaryTeacherId === teacher.teacherID;
+
+                                                return (
+                                                    <div
+                                                        key={teacher.teacherID}
+                                                        className={`p-3 hover:bg-gray-50 transition-colors ${isSelected ? 'bg-blue-50' : ''
+                                                            }`}
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            {/* Checkbox for selection */}
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={isSelected}
+                                                                onChange={() => toggleTeacherSelection(teacher.teacherID)}
+                                                                disabled={loading || success}
+                                                                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                                                            />
+
+                                                            {/* Teacher info */}
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className={`font-medium ${isSelected ? 'text-blue-900' : 'text-gray-900'
+                                                                        }`}>
+                                                                        {teacher.fullName}
+                                                                    </span>
+                                                                    {isPrimary && (
+                                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
+                                                                            <Star className="w-3 h-3 fill-yellow-500" />
+                                                                            {t('events.addModal.labels.primary') || 'Primary'}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                {teacher.email && (
+                                                                    <p className="text-xs text-gray-500 truncate">
+                                                                        {teacher.email}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+
+                                                            {/* Set as primary button */}
+                                                            {isSelected && !isPrimary && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => handleSetPrimaryTeacher(teacher.teacherID)}
+                                                                    disabled={loading || success}
+                                                                    className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                                                                    title={t('events.addModal.buttons.setPrimary') || 'Set as primary'}
+                                                                >
+                                                                    {t('events.addModal.buttons.setPrimary') || 'Set Primary'}
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Selected teachers summary */}
+                            {!isTeacherRole && selectedTeacherIds.length > 0 && (
+                                <p className="mt-2 text-sm text-gray-600">
+                                    {t('events.addModal.messages.teachersSelected') || 'Selected'}: {selectedTeacherIds.length} {t('events.addModal.labels.teachers') || 'teacher(s)'}
+                                </p>
                             )}
                         </div>
 

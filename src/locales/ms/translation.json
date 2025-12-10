@@ -1052,7 +1052,8 @@
         "venueAddress": "Alamat Tempat (Pilihan)",
         "result": "Keputusan (Pilihan)",
         "awardsReceived": "Anugerah Diterima (Pilihan)",
-        "remarks": "Catatan / Cadangan (Pilihan)"
+        "remarks": "Catatan / Cadangan (Pilihan)",
+        "teachers": "Guru-guru"
       },
 
       "placeholders": {
@@ -1069,20 +1070,28 @@
       "validation": {
         "eventNameRequired": "Nama acara diperlukan",
         "eventCodeRequired": "Kod acara diperlukan",
-        "venueRequired": "Tempat diperlukan"
+        "venueRequired": "Tempat diperlukan",
+        "teacherRequired": "Guru memimpin diperlukan"
       },
 
       "messages": {
         "successCreated": "Acara berjaya dicipta!",
         "closingIn": "Menutup dalam 2 saat...",
-        "errorCreating": "Gagal mencipta acara"
+        "errorCreating": "Gagal mencipta acara",
+        "teachersSelected": "Guru terpilih"
       },
 
       "buttons": {
         "cancel": "Batal",
         "create": "Cipta Acara",
         "creating": "Mencipta...",
-        "created": "✓ Dicipta!"
+        "created": "✓ Dicipta!",
+        "setPrimary": "Tetapkan Utama"
+      },
+
+      "labels": {
+        "primary": "Utama",
+        "teachers": "Guru"
       }
     },
 
@@ -1126,20 +1135,28 @@
       "validation": {
         "eventNameRequired": "Nama acara diperlukan",
         "eventCodeRequired": "Kod acara diperlukan",
-        "venueRequired": "Tempat diperlukan"
+        "venueRequired": "Tempat diperlukan",
+        "teacherRequired": "Guru memimpin diperlukan"
       },
 
       "messages": {
         "successUpdated": "Acara berjaya dikemaskini!",
         "closingIn": "Menutup dalam 2 saat...",
-        "errorUpdating": "Gagal mengemaskini acara"
+        "errorUpdating": "Gagal mengemaskini acara",
+        "teachersSelected": "Guru terpilih"
       },
 
       "buttons": {
         "cancel": "Batal",
         "update": "Kemaskini Acara",
         "updating": "Mengemaskini...",
-        "updated": "✓ Dikemaskini!"
+        "updated": "✓ Dikemaskini!",
+        "setPrimary": "Tetapkan Utama"
+      },
+
+      "labels": {
+        "primary": "Utama",
+        "teachers": "Guru"
       }
     },
 
@@ -1171,7 +1188,8 @@
         "transportation": "Pengangkutan",
         "uniformRequirements": "Keperluan Pakaian Seragam",
         "result": "Keputusan",
-        "awardsReceived": "Anugerah Diterima"
+        "awardsReceived": "Anugerah Diterima",
+        "primary": "Utama"
       },
 
       "sections": {

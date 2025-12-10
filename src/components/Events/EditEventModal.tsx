@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Calendar, Clock, MapPin, AlertCircle, CheckCircle, Lock } from 'lucide-react';
+import { X, Calendar, Clock, MapPin, AlertCircle, CheckCircle, Lock, Users, Star } from 'lucide-react';
 import {
     eventService,
     EventType,
@@ -22,6 +22,20 @@ interface EditEventModalProps {
     onSuccess: () => void;
 }
 
+// ✅ Define proper types for axios error
+interface ApiErrorResponse {
+    message?: string;
+    title?: string;
+    errors?: Record<string, string[]>;
+}
+
+interface AxiosErrorResponse {
+    response?: {
+        data?: ApiErrorResponse;
+        status?: number;
+    };
+}
+
 // Helper function to format time from "HH:MM:SS" to "HH:MM"
 const formatTimeForInput = (time: string | undefined): string => {
     if (!time) return '';
@@ -40,9 +54,13 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
 
-    // Track if the current user is a teacher and if they are the leading teacher
+    // ✅ NEW: State for multiple teachers
+    const [selectedTeacherIds, setSelectedTeacherIds] = useState<number[]>([]);
+    const [primaryTeacherId, setPrimaryTeacherId] = useState<number | null>(null);
+    const [isLoadingEventDetails, setIsLoadingEventDetails] = useState(true);
+
+    // Track if the current user is a teacher
     const [currentUserTeacherId, setCurrentUserTeacherId] = useState<number | null>(null);
-    const [isLeadingTeacherLocked, setIsLeadingTeacherLocked] = useState(false);
     const isTeacherRole = user?.userRole === 'Teacher';
 
     // Format times properly for HTML time inputs
@@ -57,7 +75,14 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
         endTime: formatTimeForInput(event.endTime),
         venue: event.venue,
         venueAddress: event.venueAddress,
-        leadingTeacherID: event.leadingTeacherID,
+        organizer: event.organizer,
+        opponentSchool: event.opponentSchool,
+        transportationDetails: event.transportationDetails,
+        uniformRequirements: event.uniformRequirements,
+        description: event.description,
+        specialInstructions: event.specialInstructions,
+        requiresParentConsent: event.requiresParentConsent,  // ✅ IMPORTANT: Required field!
+        teamID: event.teamID,
         result: event.result,
         awardsReceived: event.awardsReceived,
         remarks: event.remarks
@@ -81,26 +106,53 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
     const loadData = async () => {
         try {
+            setIsLoadingEventDetails(true);
+
+            // ✅ Load teachers list
             const teachersData = await teacherService.getAllTeachers(true);
             setTeachers(teachersData);
 
-            // If user is a Teacher, find their teacherID
+            // ✅ Get current user's teacher ID if they are a teacher
             if (isTeacherRole && user?.userId) {
                 const currentTeacher = teachersData.find(
                     (teacher) => teacher.userID === user.userId
                 );
-
                 if (currentTeacher) {
                     setCurrentUserTeacherId(currentTeacher.teacherID);
-
-                    // Lock the field if the current user is the leading teacher of this event
-                    if (event.leadingTeacherID === currentTeacher.teacherID) {
-                        setIsLeadingTeacherLocked(true);
-                    }
                 }
             }
+
+            // ✅ NEW: Load event details to get assigned teachers
+            const eventDetails = await eventService.getEventById(event.eventID);
+
+            if (eventDetails.teachers && eventDetails.teachers.length > 0) {
+                // Load existing teacher assignments
+                const teacherIds = eventDetails.teachers.map(t => t.teacherID);
+                setSelectedTeacherIds(teacherIds);
+
+                // Find primary teacher
+                const primary = eventDetails.teachers.find(t => t.isPrimary);
+                if (primary) {
+                    setPrimaryTeacherId(primary.teacherID);
+                } else if (teacherIds.length > 0) {
+                    // If no primary marked, use first teacher
+                    setPrimaryTeacherId(teacherIds[0]);
+                }
+            } else if (event.leadingTeacherID) {
+                // ✅ Fallback: Use old leadingTeacherID if no teachers array
+                setSelectedTeacherIds([event.leadingTeacherID]);
+                setPrimaryTeacherId(event.leadingTeacherID);
+            }
+
+            setIsLoadingEventDetails(false);
         } catch (error) {
-            console.error('Error loading data:', error + " " + currentUserTeacherId);
+            console.error('Error loading data:', error);
+            setIsLoadingEventDetails(false);
+            // If loading event details fails, try to use the event prop data
+            if (event.leadingTeacherID) {
+                setSelectedTeacherIds([event.leadingTeacherID]);
+                setPrimaryTeacherId(event.leadingTeacherID);
+            }
         }
     };
 
@@ -124,23 +176,82 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
             return;
         }
 
+        // ✅ NEW: Validate at least one teacher is selected
+        if (selectedTeacherIds.length === 0) {
+            setError(t('events.editModal.validation.teacherRequired') || 'Please select at least one teacher');
+            return;
+        }
+
         try {
             setLoading(true);
-            await eventService.updateEvent(event.eventID, formData);
+
+            // ✅ CRITICAL: Clean empty strings to undefined for optional fields
+            const cleanedFormData = { ...formData };
+
+            // Convert empty strings to undefined for optional time fields
+            if (cleanedFormData.endTime === '') {
+                cleanedFormData.endTime = undefined;
+            }
+
+            // Convert empty strings to undefined for optional text fields
+            if (cleanedFormData.venueAddress === '') cleanedFormData.venueAddress = undefined;
+            if (cleanedFormData.organizer === '') cleanedFormData.organizer = undefined;
+            if (cleanedFormData.opponentSchool === '') cleanedFormData.opponentSchool = undefined;
+            if (cleanedFormData.transportationDetails === '') cleanedFormData.transportationDetails = undefined;
+            if (cleanedFormData.uniformRequirements === '') cleanedFormData.uniformRequirements = undefined;
+            if (cleanedFormData.description === '') cleanedFormData.description = undefined;
+            if (cleanedFormData.specialInstructions === '') cleanedFormData.specialInstructions = undefined;
+            if (cleanedFormData.result === '') cleanedFormData.result = undefined;
+            if (cleanedFormData.awardsReceived === '') cleanedFormData.awardsReceived = undefined;
+            if (cleanedFormData.remarks === '') cleanedFormData.remarks = undefined;
+
+            // ✅ NEW: Include teacher assignments in update
+            const submitData: EventUpdateDto = {
+                ...cleanedFormData,
+                teacherIDs: selectedTeacherIds,
+                primaryTeacherID: primaryTeacherId || selectedTeacherIds[0]
+            };
+
+            // Debug logging
+            console.log('📤 Submitting update:', {
+                eventID: event.eventID,
+                teacherCount: selectedTeacherIds.length,
+                primaryTeacherId: primaryTeacherId,
+                hasRequiresParentConsent: submitData.requiresParentConsent !== undefined,
+                hasEndTime: submitData.endTime !== undefined && submitData.endTime !== ''
+            });
+
+            await eventService.updateEvent(event.eventID, submitData);
             setLoading(false);
             setSuccess(true);
         } catch (error) {
             setLoading(false);
-            console.error('Error updating event:', error);
+            console.error('❌ Error updating event:', error);
 
+            // ✅ FIXED: Proper type casting for axios error
             if (error && typeof error === 'object' && 'response' in error) {
-                const axiosError = error as { response?: { data?: unknown; status?: number } };
-                console.error('Response data:', axiosError.response?.data);
+                const axiosError = error as AxiosErrorResponse;
                 console.error('Response status:', axiosError.response?.status);
+                console.error('Response data:', axiosError.response?.data);
+
+                // Log validation errors if present
+                if (axiosError.response?.data?.errors) {
+                    console.error('Validation errors:', axiosError.response.data.errors);
+
+                    // Show first validation error to user
+                    const errors = axiosError.response.data.errors;
+                    const firstErrorKey = Object.keys(errors)[0];
+                    const firstError = errors[firstErrorKey]?.[0];
+                    if (firstError) {
+                        setError(`Validation error: ${firstError}`);
+                        return;
+                    }
+                }
             }
 
             const errorMessage = error instanceof Error && 'response' in error
-                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
+                ? (error as AxiosErrorResponse).response?.data?.message ||
+                (error as AxiosErrorResponse).response?.data?.title
                 : t('events.editModal.messages.errorUpdating');
             setError(errorMessage || t('events.editModal.messages.errorUpdating'));
         }
@@ -150,13 +261,42 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
-    // Get the leading teacher's name for display when locked
-    const getLeadingTeacherName = (): string => {
-        if (formData.leadingTeacherID) {
-            const teacher = teachers.find(t => t.teacherID === formData.leadingTeacherID);
-            return teacher?.fullName || '';
+    // ✅ NEW: Toggle teacher selection
+    const toggleTeacherSelection = (teacherId: number) => {
+        // ✅ Teacher role logic: If they're assigned, they cannot remove themselves
+        if (isTeacherRole && teacherId === currentUserTeacherId) {
+            // If trying to deselect themselves, don't allow it if they're already assigned
+            if (selectedTeacherIds.includes(teacherId)) {
+                return; // Cannot deselect yourself
+            }
         }
-        return '';
+
+        setSelectedTeacherIds(prev => {
+            if (prev.includes(teacherId)) {
+                // Remove teacher
+                const newSelection = prev.filter(id => id !== teacherId);
+                // If removing the primary teacher, set a new primary
+                if (primaryTeacherId === teacherId) {
+                    setPrimaryTeacherId(newSelection.length > 0 ? newSelection[0] : null);
+                }
+                return newSelection;
+            } else {
+                // Add teacher
+                const newSelection = [...prev, teacherId];
+                // If this is the first teacher, make them primary
+                if (newSelection.length === 1) {
+                    setPrimaryTeacherId(teacherId);
+                }
+                return newSelection;
+            }
+        });
+    };
+
+    // ✅ NEW: Set primary teacher
+    const handleSetPrimaryTeacher = (teacherId: number) => {
+        if (selectedTeacherIds.includes(teacherId)) {
+            setPrimaryTeacherId(teacherId);
+        }
     };
 
     return (
@@ -276,44 +416,108 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                             </select>
                         </div>
 
-                        {/* Leading Teacher - Locked for Teacher role if they are the leading teacher */}
-                        <div>
+                        {/* ✅ UPDATED: Multiple Teachers Selection */}
+                        <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                {t('events.editModal.fields.leadingTeacher')} *
-                                {isLeadingTeacherLocked && (
-                                    <Lock className="w-4 h-4 inline ml-2 text-gray-400" /*title={t('events.editModal.messages.teacherLocked')}*/ />
+                                <Users className="w-4 h-4 inline mr-2" />
+                                {t('events.editModal.fields.leadingTeacher') || 'Assigned Teachers'} *
+                                {isTeacherRole && currentUserTeacherId && selectedTeacherIds.includes(currentUserTeacherId) && (
+                                    <Lock className="w-4 h-4 inline ml-2 text-gray-400" />
                                 )}
                             </label>
 
-                            {/* Show locked input for Teacher role when they are the leading teacher, dropdown for others */}
-                            {isLeadingTeacherLocked ? (
-                                // Locked display for Teacher role
-                                <div className="relative">
-                                    <input
-                                        type="text"
-                                        value={getLeadingTeacherName()}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed"
-                                        disabled
-                                        readOnly
-                                    />
-                                    <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            {isLoadingEventDetails ? (
+                                // Loading state
+                                <div className="p-4 border border-gray-300 rounded-lg bg-gray-50 text-center">
+                                    <p className="text-sm text-gray-500">
+                                        {t('events.editModal.messages.loadingTeachers') || 'Loading teachers...'}
+                                    </p>
                                 </div>
                             ) : (
-                                // Dropdown for Admin/SuperAdmin or Teacher editing someone else's event
-                                <select
-                                    value={formData.leadingTeacherID || ''}
-                                    onChange={(e) => handleChange('leadingTeacherID', e.target.value ? Number(e.target.value) : undefined)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    required
-                                    disabled={loading || success}
-                                >
-                                    <option value="">{t('events.editModal.placeholders.selectTeacher')}</option>
-                                    {teachers.map(teacher => (
-                                        <option key={teacher.teacherID} value={teacher.teacherID}>
-                                            {teacher.fullName}
-                                        </option>
-                                    ))}
-                                </select>
+                                /* Multiple teacher selection */
+                                <div className="border border-gray-300 rounded-lg max-h-64 overflow-y-auto">
+                                    {teachers.length === 0 ? (
+                                        <div className="p-4 text-center text-gray-500">
+                                            {t('events.editModal.messages.noTeachers') || 'No teachers available'}
+                                        </div>
+                                    ) : (
+                                        <div className="divide-y divide-gray-200">
+                                            {teachers.map((teacher) => {
+                                                const isSelected = selectedTeacherIds.includes(teacher.teacherID);
+                                                const isPrimary = primaryTeacherId === teacher.teacherID;
+                                                const isCurrentUser = currentUserTeacherId === teacher.teacherID;
+                                                const isLockedForCurrentUser = isTeacherRole && isCurrentUser && isSelected;
+
+                                                return (
+                                                    <div
+                                                        key={teacher.teacherID}
+                                                        className={`p-3 hover:bg-gray-50 transition-colors ${isSelected ? 'bg-blue-50' : ''
+                                                            }`}
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            {/* Checkbox for selection */}
+                                                            <input
+                                                                type="checkbox"
+                                                                checked={isSelected}
+                                                                onChange={() => toggleTeacherSelection(teacher.teacherID)}
+                                                                disabled={loading || success || isLockedForCurrentUser}
+                                                                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                                                                title={isLockedForCurrentUser ?
+                                                                    (t('events.editModal.messages.cannotRemoveSelf') || 'You cannot remove yourself') :
+                                                                    undefined
+                                                                }
+                                                            />
+
+                                                            {/* Teacher info */}
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className={`font-medium ${isSelected ? 'text-blue-900' : 'text-gray-900'
+                                                                        }`}>
+                                                                        {teacher.fullName}
+                                                                        {isLockedForCurrentUser && (
+                                                                            <Lock className="w-3 h-3 inline ml-1 text-gray-400" />
+                                                                        )}
+                                                                    </span>
+                                                                    {isPrimary && (
+                                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
+                                                                            <Star className="w-3 h-3 fill-yellow-500" />
+                                                                            {t('events.editModal.labels.primary') || 'Primary'}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                {teacher.email && (
+                                                                    <p className="text-xs text-gray-500 truncate">
+                                                                        {teacher.email}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+
+                                                            {/* Set as primary button */}
+                                                            {isSelected && !isPrimary && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => handleSetPrimaryTeacher(teacher.teacherID)}
+                                                                    disabled={loading || success}
+                                                                    className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                                                                    title={t('events.editModal.buttons.setPrimary') || 'Set as primary'}
+                                                                >
+                                                                    {t('events.editModal.buttons.setPrimary') || 'Set Primary'}
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Selected teachers summary */}
+                            {selectedTeacherIds.length > 0 && !isLoadingEventDetails && (
+                                <p className="mt-2 text-sm text-gray-600">
+                                    {t('events.editModal.messages.teachersSelected') || 'Selected'}: {selectedTeacherIds.length} {t('events.editModal.labels.teachers') || 'teacher(s)'}
+                                </p>
                             )}
                         </div>
 

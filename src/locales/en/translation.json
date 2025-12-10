@@ -1052,7 +1052,8 @@
         "venueAddress": "Venue Address (Optional)",
         "result": "Result (Optional)",
         "awardsReceived": "Awards Received (Optional)",
-        "remarks": "Remarks / Suggestions (Optional)"
+        "remarks": "Remarks / Suggestions (Optional)",
+        "teachers": "Teachers"
       },
 
       "placeholders": {
@@ -1069,20 +1070,28 @@
       "validation": {
         "eventNameRequired": "Event name is required",
         "eventCodeRequired": "Event code is required",
-        "venueRequired": "Venue is required"
+        "venueRequired": "Venue is required",
+        "teacherRequired": "Leading teacher is required"
       },
 
       "messages": {
         "successCreated": "Event created successfully!",
         "closingIn": "Closing in 2 seconds...",
-        "errorCreating": "Failed to create event"
+        "errorCreating": "Failed to create event",
+        "teachersSelected": "Selected teacher"
       },
 
       "buttons": {
         "cancel": "Cancel",
         "create": "Create Event",
         "creating": "Creating...",
-        "created": "✓ Created!"
+        "created": "✓ Created!",
+        "setPrimary": "Set Primary"
+      },
+
+      "labels": {
+        "primary": "Primary",
+        "teachers": "Teachers"
       }
     },
     "editModal": {
@@ -1125,21 +1134,29 @@
       "validation": {
         "eventNameRequired": "Event name is required",
         "eventCodeRequired": "Event code is required",
-        "venueRequired": "Venue is required"
+        "venueRequired": "Venue is required",
+        "teacherRequired": "Leading teacher is required"
       },
 
       "messages": {
         "successUpdated": "Event updated successfully!",
         "closingIn": "Closing in 2 seconds...",
-        "errorUpdating": "Failed to update event"
+        "errorUpdating": "Failed to update event",
+        "teachersSelected": "Selected teacher"
       },
 
       "buttons": {
         "cancel": "Cancel",
         "update": "Update Event",
         "updating": "Updating...",
-        "updated": "✓ Updated!"
-      }
+        "updated": "✓ Updated!",
+        "setPrimary": "Set Primary"
+      },
+
+      "labels": {
+        "primary": "Primary",
+        "teachers": "Teachers"
+      }    
     },
 
     "detailsModal": {
@@ -1170,7 +1187,8 @@
         "transportation": "Transportation",
         "uniformRequirements": "Uniform Requirements",
         "result": "Result",
-        "awardsReceived": "Awards Received"
+        "awardsReceived": "Awards Received",
+        "primary": "Primary"
       },
 
       "sections": {

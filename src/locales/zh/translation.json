@@ -1052,7 +1052,8 @@
         "venueAddress": "场地地址（可选）",
         "result": "成绩（可选）",
         "awardsReceived": "所获奖项（可选）",
-        "remarks": "备注/建议（可选）"
+        "remarks": "备注/建议（可选）",
+        "teachers": "教师队伍"
       },
 
       "placeholders": {
@@ -1069,20 +1070,27 @@
       "validation": {
         "eventNameRequired": "活动名称为必填项",
         "eventCodeRequired": "活动代码为必填项",
-        "venueRequired": "场地为必填项"
+        "venueRequired": "场地为必填项",
+        "teacherRequired": "负责教师为必填项"
       },
 
       "messages": {
         "successCreated": "活动创建成功！",
         "closingIn": "2秒后自动关闭...",
-        "errorCreating": "创建活动失败"
+        "errorCreating": "创建活动失败",
+        "teachersSelected": "选定的老师"
       },
 
       "buttons": {
         "cancel": "取消",
         "create": "创建活动",
         "creating": "创建中...",
-        "created": "✓ 已创建！"
+        "created": "✓ 已创建！",
+        "setPrimary": "设置为主要"
+      },
+      "labels": {
+        "primary": "主要",
+        "teachers": "教师"
       }
     },
 
@@ -1126,20 +1134,28 @@
       "validation": {
         "eventNameRequired": "活动名称为必填项",
         "eventCodeRequired": "活动代码为必填项",
-        "venueRequired": "场地为必填项"
+        "venueRequired": "场地为必填项",
+        "teacherRequired": "负责教师为必填项"
       },
 
       "messages": {
         "successUpdated": "活动更新成功！",
         "closingIn": "2秒后自动关闭...",
-        "errorUpdating": "更新活动失败"
+        "errorUpdating": "更新活动失败",
+        "teachersSelected": "选定的老师"
       },
 
       "buttons": {
         "cancel": "取消",
         "update": "更新活动",
         "updating": "更新中...",
-        "updated": "✓ 已更新！"
+        "updated": "✓ 已更新！",
+        "setPrimary": "设置为主要"
+      },
+
+      "labels": {
+        "primary": "主要",
+        "teachers": "教师"
       }
     },
 
@@ -1171,7 +1187,8 @@
         "transportation": "交通安排",
         "uniformRequirements": "服装要求",
         "result": "成绩",
-        "awardsReceived": "所获奖项"
+        "awardsReceived": "所获奖项",
+        "primary": "主要"
       },
 
       "sections": {
