@@ -48,7 +48,7 @@ const AttendancePage = () => {
             console.log('Fetching attendance for date:', selectedDate);
 
             // Use the existing /attendance/today endpoint
-            const response = await api.get('/attendance/today');
+            const response = await api.get(`/attendance/date/${selectedDate}`);
 
             console.log('Attendance response:', response.data);
 

@@ -274,7 +274,10 @@
     "currentlyActive": "Ini adalah tahun akademik yang aktif sekarang",
     "alreadyActive": "Tahun akademik ini sudah aktif.",
     "cannotDeleteActive": "Tidak boleh memadam tahun akademik aktif. Sila aktifkan tahun lain terlebih dahulu.",
-    "cannotDeleteWithStudents": "Tidak boleh memadam tahun ini. Pelajar telah didaftarkan dalam tahun ini."
+    "cannotDeleteWithStudents": "Tidak boleh memadam tahun ini. Pelajar telah didaftarkan dalam tahun ini.",
+    "autoCreateClasses": "Salin struktur kelas dari tahun semasa",
+    "autoCreateClassesHint": "Salin semua kelas secara automatik dari tahun aktif ke tahun baharu. Mengekalkan struktur kelas yang konsisten.",
+    "autoCreateClassesExample": "Contoh: Jika 2024/2025 mempunyai kelas 1A, 1J, 2A, 2J, maka 2025/2026 juga akan mempunyai 1A, 1J, 2A, 2J."
   },
   "grades": {
     "title": "Pengurusan Gred",
@@ -1380,5 +1383,45 @@
     },
 
     "noEventsFound": "Tiada acara dijumpai"
+  },
+
+  "enrollment": {
+    "title": "Pendaftaran Pelajar",
+    "subtitle": "Daftarkan pelajar ke tahun akademik baharu:",
+    "loadingPreview": "Memuatkan pratonton pendaftaran...",
+    "error": "Ralat",
+    "errorFetchPreview": "Gagal mendapatkan pratonton pendaftaran",
+    "errorEnroll": "Gagal mendaftarkan pelajar",
+    "success": "Pendaftaran Berjaya Selesai!",
+    "totalStudents": "Jumlah Pelajar",
+    "toPromote": "Untuk Dinaikkan",
+    "toGraduate": "Untuk Tamat Pengajian",
+    "currentYear": "Tahun Semasa",
+    "newYear": "Tahun Baharu",
+    "gradeDetails": "Butiran Pendaftaran Gred",
+    "students": "pelajar",
+    "graduating": "Tamat Pengajian",
+    "currentClass": "Kelas Semasa",
+    "newClass": "Kelas Baharu",
+    "status": "Status",
+    "noMatch": "Tiada kelas (tentukan kemudian)",
+    "infoTitle": "Maklumat Penting:",
+    "info1": "Pelajar akan dinaikkan secara automatik ke peringkat gred seterusnya",
+    "info2": "Kelas dengan nama yang sepadan (contoh: 1J → 2J) akan ditugaskan secara automatik",
+    "info3": "Pelajar Tahun 6 akan ditandakan sebagai tamat pengajian dan ditetapkan tidak aktif",
+    "confirmMessage": "Adakah anda pasti mahu mendaftarkan semua pelajar? Tindakan ini tidak boleh dibatalkan.",
+    "cancel": "Batal",
+    "confirmEnroll": "Ya, Daftarkan Semua Pelajar",
+    "enrollStudents": "Daftarkan Pelajar",
+    "enrolling": "Mendaftarkan...",
+    "close": "Tutup",
+    "totalProcessed": "Jumlah Diproses",
+    "promoted": "Dinaikkan",
+    "graduated": "Tamat Pengajian",
+    "failed": "Gagal",
+    "enrollButton": "Daftarkan Pelajar ke Tahun Baharu",
+    "enrollButtonSubtitle": "Naikkan pelajar secara automatik ke {{year}}",
+    "alreadyCompleted": "Pendaftaran Telah Selesai",
+    "alreadyCompletedMessage": "Pelajar telah berjaya didaftarkan dari {{from}} ke {{to}}. {{count}} pelajar kini berada dalam tahun akademik baharu."
   }
 }

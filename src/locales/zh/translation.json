@@ -274,7 +274,10 @@
     "currentlyActive": "这是当前活跃的学年",
     "alreadyActive": "此学年已经是活跃状态。",
     "cannotDeleteActive": "无法删除活跃学年。请先激活另一个学年。",
-    "cannotDeleteWithStudents": "无法删除此学年。有学生已注册此学年。"
+    "cannotDeleteWithStudents": "无法删除此学年。有学生已注册此学年。",
+    "autoCreateClasses": "从当前学年复制班级结构",
+    "autoCreateClassesHint": "自动将所有班级从活动年份复制到新学年。保持一致的班级结构。",
+    "autoCreateClassesExample": "示例：如果 2024/2025 有班级 1A、1J、2A、2J，那么 2025/2026 也将有 1A、1J、2A、2J。"
   },
   "grades": {
     "title": "年级管理",
@@ -1379,5 +1382,45 @@
     },
 
     "noEventsFound": "未找到活动"
+  },
+
+  "enrollment": {
+    "title": "学生注册",
+    "subtitle": "将学生注册到新学年：",
+    "loadingPreview": "加载注册预览中...",
+    "error": "错误",
+    "errorFetchPreview": "获取注册预览失败",
+    "errorEnroll": "注册学生失败",
+    "success": "注册成功完成！",
+    "totalStudents": "学生总数",
+    "toPromote": "待升级",
+    "toGraduate": "待毕业",
+    "currentYear": "当前学年",
+    "newYear": "新学年",
+    "gradeDetails": "年级注册详情",
+    "students": "学生",
+    "graduating": "毕业",
+    "currentClass": "当前班级",
+    "newClass": "新班级",
+    "status": "状态",
+    "noMatch": "无班级（稍后分配）",
+    "infoTitle": "重要信息：",
+    "info1": "学生将自动升至下一年级",
+    "info2": "名称匹配的班级（例如：1J → 2J）将自动分配",
+    "info3": "六年级学生将标记为已毕业并设为非活跃状态",
+    "confirmMessage": "您确定要注册所有学生吗？此操作无法撤销。",
+    "cancel": "取消",
+    "confirmEnroll": "是的，注册所有学生",
+    "enrollStudents": "注册学生",
+    "enrolling": "注册中...",
+    "close": "关闭",
+    "totalProcessed": "已处理总数",
+    "promoted": "已升级",
+    "graduated": "已毕业",
+    "failed": "失败",
+    "enrollButton": "将学生注册到新学年",
+    "enrollButtonSubtitle": "自动将学生升级到 {{year}}",
+    "alreadyCompleted": "注册已完成",
+    "alreadyCompletedMessage": "学生已成功从 {{from}} 注册到 {{to}}。现在有 {{count}} 名学生在新学年中。"
   }
 }

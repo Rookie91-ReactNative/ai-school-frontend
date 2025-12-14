@@ -1,8 +1,9 @@
 ﻿import { useState, useEffect } from 'react';
-import { Calendar, Plus, Edit, Trash2, X, CheckCircle, Users, GraduationCap } from 'lucide-react';
+import { Calendar, Plus, Edit, Trash2, X, CheckCircle, Users, GraduationCap, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import axios from 'axios';
+import EnrollmentPreviewModal from '../components/AcademicYear/EnrollmentPreviewModal';
 
 interface AcademicYear {
     academicYearID: number;
@@ -33,6 +34,13 @@ const AcademicYearsPage = () => {
     const [selectedYear, setSelectedYear] = useState<AcademicYear | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Auto-create classes toggle
+    const [autoCreateClasses, setAutoCreateClasses] = useState(true);
+
+    // Enrollment modal state
+    const [showEnrollmentModal, setShowEnrollmentModal] = useState(false);
+    const [enrollmentTargetYear, setEnrollmentTargetYear] = useState<AcademicYear | null>(null);
+
     // Get schoolID from auth context (assuming user is logged in)
     const userStr = localStorage.getItem('user');
     const user = userStr ? JSON.parse(userStr) : null;
@@ -53,6 +61,11 @@ const AcademicYearsPage = () => {
 
     const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
+    const activeYear = academicYears.find(year => year.isActive);
+
+    // Get the next inactive year for enrollment
+    const futureYear = academicYears.find(year => !year.isActive && year.yearName > (activeYear?.yearName || ''));
+
     useEffect(() => {
         fetchAcademicYears();
     }, [schoolID]);
@@ -67,6 +80,17 @@ const AcademicYearsPage = () => {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleOpenEnrollmentModal = () => {
+        if (futureYear) {
+            setEnrollmentTargetYear(futureYear);
+            setShowEnrollmentModal(true);
+        }
+    };
+
+    const handleEnrollmentComplete = () => {
+        fetchAcademicYears();
     };
 
     const validateForm = (): boolean => {
@@ -119,8 +143,12 @@ const AcademicYearsPage = () => {
         return Object.keys(errors).length === 0;
     };
 
-    const handleInputChange = (field: keyof AcademicYearFormData, value: string | number) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
+    const handleInputChange = (field: keyof AcademicYearFormData, value: string) => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: value
+        }));
+        // Clear error for this field
         if (formErrors[field]) {
             setFormErrors(prev => {
                 const newErrors = { ...prev };
@@ -131,128 +159,17 @@ const AcademicYearsPage = () => {
     };
 
     const handleEditInputChange = (field: string, value: string) => {
-        setEditFormData(prev => ({ ...prev, [field]: value }));
+        setEditFormData(prev => ({
+            ...prev,
+            [field]: value
+        }));
+        // Clear error for this field
         if (formErrors[field]) {
             setFormErrors(prev => {
                 const newErrors = { ...prev };
                 delete newErrors[field];
                 return newErrors;
             });
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
-        setIsSubmitting(true);
-        try {
-            await api.post('/academic-year', formData);
-
-            setShowCreateModal(false);
-            resetForm();
-            fetchAcademicYears();
-            alert(t('academicYears.successCreate'));
-        } catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
-                const errorMessage = error.response?.data?.message || t('academicYears.errorCreate');
-                alert(errorMessage);
-            }
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    const handleEditClick = (year: AcademicYear) => {
-        setSelectedYear(year);
-        setEditFormData({
-            yearName: year.yearName,
-            startDate: year.startDate.split('T')[0],
-            endDate: year.endDate.split('T')[0]
-        });
-        setShowEditModal(true);
-    };
-
-    const handleEditSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!validateEditForm() || !selectedYear) {
-            return;
-        }
-
-        setIsSubmitting(true);
-        try {
-            await api.put(`/academic-year/${selectedYear.academicYearID}`, editFormData);
-
-            setShowEditModal(false);
-            setSelectedYear(null);
-            resetEditForm();
-            fetchAcademicYears();
-            alert(t('academicYears.successUpdate'));
-        } catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
-                const errorMessage = error.response?.data?.message || t('academicYears.errorUpdate');
-                alert(errorMessage);
-            }
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    const handleSetActive = async (year: AcademicYear) => {
-        if (year.isActive) {
-            alert(t('academicYears.alreadyActive'));
-            return;
-        }
-
-        const confirmMessage = `${t('academicYears.confirmSetActive')} ${year.yearName} ${t('academicYears.asActive')}`;
-        if (!window.confirm(confirmMessage)) {
-            return;
-        }
-
-        try {
-            await api.put(`/academic-year/${year.academicYearID}/activate`);
-            fetchAcademicYears();
-            alert(t('academicYears.successSetActive'));
-        } catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
-                const errorMessage = error.response?.data?.message || t('academicYears.errorSetActive');
-                alert(errorMessage);
-            }
-        }
-    };
-
-    const handleDelete = async (year: AcademicYear) => {
-        if (year.isActive) {
-            alert(t('academicYears.cannotDeleteActive'));
-            return;
-        }
-
-        if (year.totalStudents > 0) {
-            alert(t('academicYears.cannotDeleteWithStudents', {
-                yearName: year.yearName,
-                count: year.totalStudents
-            }));
-            return;
-        }
-
-        const confirmMessage = `${t('academicYears.confirmDelete')} ${year.yearName}?`;
-        if (!window.confirm(confirmMessage)) {
-            return;
-        }
-
-        try {
-            await api.delete(`/academic-year/${year.academicYearID}`);
-            fetchAcademicYears();
-            alert(t('academicYears.successDelete'));
-        } catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
-                const errorMessage = error.response?.data?.message || t('academicYears.errorDelete');
-                alert(errorMessage);
-            }
         }
     };
 
@@ -266,24 +183,124 @@ const AcademicYearsPage = () => {
         setFormErrors({});
     };
 
-    const resetEditForm = () => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!validateForm()) {
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            // Add autoCreateClasses as query parameter
+            await api.post(`/academic-year?autoCreateClasses=${autoCreateClasses}`, formData);
+            await fetchAcademicYears();
+            setShowCreateModal(false);
+            resetForm();
+            setAutoCreateClasses(true); // Reset to default
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                alert(error.response.data.message || t('academicYears.errorCreate'));
+            } else {
+                alert(t('academicYears.errorCreate'));
+            }
+            console.error('Error creating academic year:', error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleEditClick = (year: AcademicYear) => {
+        setSelectedYear(year);
         setEditFormData({
-            yearName: '',
-            startDate: '',
-            endDate: ''
+            yearName: year.yearName,
+            startDate: year.startDate.split('T')[0],
+            endDate: year.endDate.split('T')[0]
         });
         setFormErrors({});
+        setShowEditModal(true);
     };
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-MY', {
-            year: 'numeric',
+    const handleEditSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!validateEditForm() || !selectedYear) {
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            await api.put(`/academic-year/${selectedYear.academicYearID}`, editFormData);
+            await fetchAcademicYears();
+            setShowEditModal(false);
+            setSelectedYear(null);
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                alert(error.response.data.message || t('academicYears.errorUpdate'));
+            } else {
+                alert(t('academicYears.errorUpdate'));
+            }
+            console.error('Error updating academic year:', error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleSetActive = async (year: AcademicYear) => {
+        if (year.isActive) {
+            alert(t('academicYears.alreadyActive'));
+            return;
+        }
+
+        if (window.confirm(t('academicYears.confirmSetActive') + ' ' + year.yearName + ' ' + t('academicYears.asActive'))) {
+            try {
+                await api.put(`/academic-year/${year.academicYearID}/activate`);
+                await fetchAcademicYears();
+            } catch (error) {
+                if (axios.isAxiosError(error) && error.response) {
+                    alert(error.response.data.message || t('academicYears.errorSetActive'));
+                } else {
+                    alert(t('academicYears.errorSetActive'));
+                }
+                console.error('Error setting active academic year:', error);
+            }
+        }
+    };
+
+    const handleDelete = async (year: AcademicYear) => {
+        if (year.isActive) {
+            alert(t('academicYears.cannotDeleteActive'));
+            return;
+        }
+
+        if (year.totalStudents > 0) {
+            alert(t('academicYears.cannotDeleteWithStudents'));
+            return;
+        }
+
+        if (window.confirm(t('academicYears.confirmDelete') + ' ' + year.yearName + '?')) {
+            try {
+                await api.delete(`/academic-year/${year.academicYearID}`);
+                await fetchAcademicYears();
+            } catch (error) {
+                if (axios.isAxiosError(error) && error.response) {
+                    alert(error.response.data.message || t('academicYears.errorDelete'));
+                } else {
+                    alert(t('academicYears.errorDelete'));
+                }
+                console.error('Error deleting academic year:', error);
+            }
+        }
+    };
+
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-GB', {
+            day: '2-digit',
             month: 'short',
-            day: 'numeric'
+            year: 'numeric'
         });
     };
-
-    const activeYear = academicYears.find(y => y.isActive);
 
     if (isLoading) {
         return (
@@ -354,6 +371,67 @@ const AcademicYearsPage = () => {
                 </div>
             </div>
 
+            {/* Enrollment Banner - Shows when active year exists and future year has no students yet */}
+            {activeYear && activeYear.totalStudents > 0 && futureYear && futureYear.totalStudents === 0 && (
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-lg shadow-md overflow-hidden">
+                    <div className="p-6">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="p-4 bg-blue-500 rounded-full">
+                                    <GraduationCap className="w-8 h-8 text-white" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-900">
+                                        {t('enrollment.enrollButton')}
+                                    </h3>
+                                    <p className="text-gray-600 mt-1">
+                                        {t('enrollment.enrollButtonSubtitle', { year: futureYear.yearName })}
+                                    </p>
+                                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-700">
+                                        <span className="flex items-center gap-1">
+                                            <Users className="w-4 h-4" />
+                                            {activeYear.totalStudents} {t('enrollment.students')}
+                                        </span>
+                                        <span className="flex items-center gap-1">
+                                            <ArrowRight className="w-4 h-4" />
+                                            {t('enrollment.toPromote')}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                onClick={handleOpenEnrollmentModal}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all hover:scale-105 flex items-center gap-2 shadow-lg"
+                            >
+                                <Users className="w-5 h-5" />
+                                {t('enrollment.enrollStudents')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Enrollment Already Completed Message */}
+            {activeYear && activeYear.totalStudents > 0 && futureYear && futureYear.totalStudents > 0 && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        <div>
+                            <p className="text-green-900 font-semibold">
+                                {t('enrollment.alreadyCompleted')}
+                            </p>
+                            <p className="text-green-700 text-sm mt-1">
+                                {t('enrollment.alreadyCompletedMessage', {
+                                    from: activeYear.yearName,
+                                    to: futureYear.yearName,
+                                    count: futureYear.totalStudents
+                                })}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Academic Years Table */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 <div className="overflow-x-auto">
@@ -380,22 +458,25 @@ const AcademicYearsPage = () => {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="divide-y divide-gray-200">
                             {academicYears.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
-                                        {t('academicYears.noYears')}
+                                    <td colSpan={6} className="px-6 py-12 text-center">
+                                        <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                                        <p className="text-gray-500">{t('academicYears.noYears')}</p>
                                     </td>
                                 </tr>
                             ) : (
                                 academicYears.map((year) => (
                                     <tr key={year.academicYearID} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center gap-2">
-                                                <Calendar className="w-4 h-4 text-gray-400" />
-                                                <span className="text-sm font-medium text-gray-900">
-                                                    {year.yearName}
-                                                </span>
+                                                <span className="text-sm font-medium text-gray-900">{year.yearName}</span>
+                                                {year.isActive && (
+                                                    <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full font-semibold">
+                                                        {t('academicYears.active')}
+                                                    </span>
+                                                )}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
@@ -417,8 +498,8 @@ const AcademicYearsPage = () => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className={`px-2 py-1 text-xs font-semibold rounded-full ${year.isActive
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-gray-100 text-gray-800'
+                                                ? 'bg-green-100 text-green-800'
+                                                : 'bg-gray-100 text-gray-800'
                                                 }`}>
                                                 {year.isActive ? t('academicYears.active') : t('academicYears.inactive')}
                                             </span>
@@ -525,24 +606,47 @@ const AcademicYearsPage = () => {
                                 </div>
                             </div>
 
+                            {/* Auto-Create Classes Toggle */}
+                            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <label className="flex items-start gap-3 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={autoCreateClasses}
+                                        onChange={(e) => setAutoCreateClasses(e.target.checked)}
+                                        className="mt-1 w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                                    />
+                                    <div className="flex-1">
+                                        <p className="text-sm font-semibold text-green-900">
+                                            {t('academicYears.autoCreateClasses')}
+                                        </p>
+                                        <p className="text-xs text-green-700 mt-1">
+                                            {t('academicYears.autoCreateClassesHint')}
+                                        </p>
+                                        <p className="text-xs text-green-600 mt-1">
+                                            {t('academicYears.autoCreateClassesExample')}
+                                        </p>
+                                    </div>
+                                </label>
+                            </div>
+
                             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                                 <p className="text-sm text-blue-800">
-                                    💡 <strong>{t('academicYears.tipTitle')}</strong> {t('academicYears.tipMessage')}
+                                    <strong>{t('academicYears.tipTitle')}</strong> {t('academicYears.tipMessage')}
                                 </p>
                             </div>
 
-                            <div className="flex gap-3 pt-4">
+                            <div className="flex justify-end gap-3 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => { setShowCreateModal(false); resetForm(); }}
-                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
                                     disabled={isSubmitting}
                                 >
                                     {t('academicYears.cancel')}
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? t('academicYears.creating') : t('academicYears.save')}
@@ -560,7 +664,7 @@ const AcademicYearsPage = () => {
                         <div className="border-b px-6 py-4 flex justify-between items-center">
                             <h2 className="text-xl font-bold text-gray-900">{t('academicYears.editYear')}</h2>
                             <button
-                                onClick={() => { setShowEditModal(false); setSelectedYear(null); resetEditForm(); }}
+                                onClick={() => { setShowEditModal(false); setSelectedYear(null); }}
                                 className="text-gray-400 hover:text-gray-600"
                             >
                                 <X className="w-6 h-6" />
@@ -583,7 +687,6 @@ const AcademicYearsPage = () => {
                                 {formErrors.yearName && (
                                     <p className="text-red-500 text-xs mt-1">{formErrors.yearName}</p>
                                 )}
-                                <p className="text-xs text-gray-500 mt-1">{t('academicYears.formatHint')}</p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
@@ -623,23 +726,23 @@ const AcademicYearsPage = () => {
                             {selectedYear.isActive && (
                                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                                     <p className="text-sm text-green-800">
-                                        ✓ {t('academicYears.currentlyActive')}
+                                        <strong>ℹ️</strong> {t('academicYears.currentlyActive')}
                                     </p>
                                 </div>
                             )}
 
-                            <div className="flex gap-3 pt-4">
+                            <div className="flex justify-end gap-3 pt-4">
                                 <button
                                     type="button"
-                                    onClick={() => { setShowEditModal(false); setSelectedYear(null); resetEditForm(); }}
-                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                                    onClick={() => { setShowEditModal(false); setSelectedYear(null); }}
+                                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
                                     disabled={isSubmitting}
                                 >
                                     {t('academicYears.cancel')}
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? t('academicYears.updating') : t('academicYears.save')}
@@ -648,6 +751,17 @@ const AcademicYearsPage = () => {
                         </form>
                     </div>
                 </div>
+            )}
+
+            {/* Enrollment Preview Modal */}
+            {enrollmentTargetYear && (
+                <EnrollmentPreviewModal
+                    isOpen={showEnrollmentModal}
+                    onClose={() => setShowEnrollmentModal(false)}
+                    academicYearId={enrollmentTargetYear.academicYearID}
+                    academicYearName={enrollmentTargetYear.yearName}
+                    onEnrollmentComplete={handleEnrollmentComplete}
+                />
             )}
         </div>
     );

@@ -560,7 +560,6 @@ const StudentsPage = () => {
                             }}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
-                            <option value="">{t('classes.allYears')}</option>
                             <option value="-1" className="font-semibold text-orange-600">
                                 {t('students.notEnrolledFilter')}
                             </option>
@@ -801,8 +800,8 @@ const StudentsPage = () => {
                                             key={pageNum}
                                             onClick={() => setCurrentPage(pageNum)}
                                             className={`px-3 py-1.5 text-sm border rounded-lg ${currentPage === pageNum
-                                                    ? 'bg-blue-600 text-white border-blue-600'
-                                                    : 'border-gray-300 hover:bg-gray-100'
+                                                ? 'bg-blue-600 text-white border-blue-600'
+                                                : 'border-gray-300 hover:bg-gray-100'
                                                 }`}
                                         >
                                             {pageNum}

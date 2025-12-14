@@ -113,7 +113,8 @@ const DashboardPage = () => {
                                             <div className="text-sm text-gray-500">{detection.studentCode}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {new Date(detection.detectionTime).toLocaleTimeString()}
+                                            <div>{new Date(detection.detectionTime).toLocaleDateString()}</div>
+                                            <div className="text-xs text-gray-400">{new Date(detection.detectionTime).toLocaleTimeString()}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {detection.cameraName}

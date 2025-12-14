@@ -274,7 +274,10 @@
     "currentlyActive": "This is the currently active academic year",
     "alreadyActive": "This academic year is already active.",
     "cannotDeleteActive": "Cannot delete the active academic year. Please activate another year first.",
-    "cannotDeleteWithStudents": "Cannot delete this year. Students are enrolled in this year."
+    "cannotDeleteWithStudents": "Cannot delete this year. Students are enrolled in this year.",
+    "autoCreateClasses": "Copy class structure from current year",
+    "autoCreateClassesHint": "Automatically copy all classes from the active year to the new year. Maintains consistent class structure.",
+    "autoCreateClassesExample": "Example: If 2024/2025 has classes 1A, 1J, 2A, 2J, then 2025/2026 will also have 1A, 1J, 2A, 2J."
   },
   "grades": {
     "title": "Grades Management",
@@ -1474,5 +1477,45 @@
       "importMore": "Import More Students",
       "viewStudents": "View Students List"
     }
+  },
+
+  "enrollment": {
+    "title": "Student Enrollment",
+    "subtitle": "Enroll students to new academic year:",
+    "loadingPreview": "Loading enrollment preview...",
+    "error": "Error",
+    "errorFetchPreview": "Failed to fetch enrollment preview",
+    "errorEnroll": "Failed to enroll students",
+    "success": "Enrollment Completed Successfully!",
+    "totalStudents": "Total Students",
+    "toPromote": "To Promote",
+    "toGraduate": "To Graduate",
+    "currentYear": "Current Year",
+    "newYear": "New Year",
+    "gradeDetails": "Grade Enrollment Details",
+    "students": "students",
+    "graduating": "Graduating",
+    "currentClass": "Current Class",
+    "newClass": "New Class",
+    "status": "Status",
+    "noMatch": "No class (assign later)",
+    "infoTitle": "Important Information:",
+    "info1": "Students will be automatically promoted to the next grade level",
+    "info2": "Classes with matching names (e.g., 1J → 2J) will be assigned automatically",
+    "info3": "Grade 6 students will be marked as graduated and set inactive",
+    "confirmMessage": "Are you sure you want to enroll all students? This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirmEnroll": "Yes, Enroll All Students",
+    "enrollStudents": "Enroll Students",
+    "enrolling": "Enrolling...",
+    "close": "Close",
+    "totalProcessed": "Total Processed",
+    "promoted": "Promoted",
+    "graduated": "Graduated",
+    "failed": "Failed",
+    "enrollButton": "Enroll Students to New Year",
+    "enrollButtonSubtitle": "Automatically promote students to {{year}}",
+    "alreadyCompleted": "Enrollment Already Completed",
+    "alreadyCompletedMessage": "Students have been successfully enrolled from {{from}} to {{to}}. {{count}} students are now in the new academic year."
   }
 }
