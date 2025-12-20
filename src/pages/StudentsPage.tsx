@@ -228,9 +228,9 @@ const StudentsPage = () => {
         try {
             setIsLoading(true);
             const [gradesRes, yearsRes, classesRes] = await Promise.all([
-                api.get(`/grade/school/${schoolID}`),
-                api.get(`/academic-year/school/${schoolID}`),
-                api.get(`/class/school/${schoolID}`)
+                api.get('/grade'),
+                api.get('/academic-year'),
+                api.get('/class')
             ]);
 
             setGrades(gradesRes.data.data || []);
