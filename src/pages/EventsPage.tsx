@@ -119,13 +119,35 @@ const EventsPage = () => {
         }
     };
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-MY', {
+    const formatDateRange = (startDate: string, endDate?: string) => {
+        const start = new Date(startDate).toLocaleDateString('en-MY', {
             day: '2-digit',
             month: 'short',
             year: 'numeric'
         });
+
+        if (!endDate || startDate === endDate) {
+            // Single day event
+            return start;
+        }
+
+        // Multi-day event
+        const end = new Date(endDate).toLocaleDateString('en-MY', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
+
+        return `${start} - ${end}`;
     };
+
+    //const formatDate = (dateString: string) => {
+    //    return new Date(dateString).toLocaleDateString('en-MY', {
+    //        day: '2-digit',
+    //        month: 'short',
+    //        year: 'numeric'
+    //    });
+    //};
 
     const formatTime = (timeString: string) => {
         // timeString is in format "HH:mm:ss"
@@ -262,7 +284,15 @@ const EventsPage = () => {
                                             <tr key={event.eventID} className="hover:bg-gray-50">
                                                 <td className="px-6 py-4">
                                                     <div>
-                                                        <div className="font-medium text-gray-900">{event.eventName}</div>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="font-medium text-gray-900">{event.eventName}</span>
+                                                            {/* ✅ NEW: Multi-day indicator */}
+                                                            {event.endDate && event.eventDate !== event.endDate && (
+                                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
+                                                                    Multi-day
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                         <div className="text-sm text-gray-500">{event.eventCode}</div>
                                                         {event.opponentSchool && (
                                                             <div className="text-sm text-blue-600 mt-1">
@@ -287,7 +317,10 @@ const EventsPage = () => {
                                                     <div className="flex items-center gap-2 text-sm">
                                                         <Calendar className="w-4 h-4 text-gray-400" />
                                                         <div>
-                                                            <div className="text-gray-900">{formatDate(event.eventDate)}</div>
+                                                            {/* ✅ UPDATED: Use formatDateRange instead of formatDate */}
+                                                            <div className="text-gray-900">
+                                                                {formatDateRange(event.eventDate, event.endDate)}
+                                                            </div>
                                                             <div className="text-gray-500">
                                                                 {formatTime(event.startTime)}
                                                                 {event.endTime && ` - ${formatTime(event.endTime)}`}

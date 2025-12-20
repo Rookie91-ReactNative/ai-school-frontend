@@ -42,6 +42,7 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
         activityType: ActivityType.Football,
         status: EventStatus.Planned,
         eventDate: new Date().toISOString().split('T')[0],
+        endDate: undefined,  // ✅ ADD THIS LINE
         startTime: '08:00',
         venue: '',
         requiresParentConsent: false,
@@ -414,13 +415,16 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
 
                         {/* Date & Time */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">{t('events.addModal.sections.dateTime')}</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">
+                                {t('events.addModal.sections.dateTime')}
+                            </h3>
                         </div>
 
+                        {/* Start Date */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 <Calendar className="w-4 h-4 inline mr-2" />
-                                {t('events.addModal.fields.eventDate')} *
+                                {t('events.addModal.fields.startDate') || 'Start Date'} *
                             </label>
                             <input
                                 type="date"
@@ -432,6 +436,29 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
                             />
                         </div>
 
+                        {/* ✅ NEW - End Date (Optional) */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <Calendar className="w-4 h-4 inline mr-2" />
+                                {t('events.addModal.fields.endDate') || 'End Date'}
+                                <span className="text-xs text-gray-500 ml-1">
+                                    ({t('events.addModal.labels.optional') || 'Optional'})
+                                </span>
+                            </label>
+                            <input
+                                type="date"
+                                value={formData.endDate || ''}
+                                onChange={(e) => handleChange('endDate', e.target.value || undefined)}
+                                min={formData.eventDate}  // Cannot be before start date
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                disabled={loading || success}
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                                {t('events.addModal.helpers.endDate') || 'Leave blank for single-day events. Select a date for multi-day events.'}
+                            </p>
+                        </div>
+
+                        {/* Start Time */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 <Clock className="w-4 h-4 inline mr-2" />
@@ -447,10 +474,14 @@ const AddEventModal = ({ onClose, onSuccess }: AddEventModalProps) => {
                             />
                         </div>
 
+                        {/* End Time (Optional) */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 <Clock className="w-4 h-4 inline mr-2" />
                                 {t('events.addModal.fields.endTime')}
+                                <span className="text-xs text-gray-500 ml-1">
+                                    ({t('events.addModal.labels.optional') || 'Optional'})
+                                </span>
                             </label>
                             <input
                                 type="time"

@@ -78,14 +78,14 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-MY', {
-            weekday: 'long',
             day: '2-digit',
-            month: 'long',
+            month: 'short',
             year: 'numeric'
         });
     };
 
     const formatTime = (timeString: string) => {
+        // timeString is in format "HH:mm:ss"
         const [hours, minutes] = timeString.split(':');
         return `${hours}:${minutes}`;
     };
@@ -192,16 +192,45 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                                     </div>
                                 )}
 
+                                {/* Date & Time section */}
                                 <div>
                                     <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
                                         <Calendar className="w-4 h-4" />
-                                        {t('events.detailsModal.labels.dateTime')}
+                                        {t('events.detailsModal.labels.dateTime') || 'Date & Time'}
                                     </h3>
-                                    <p className="text-gray-900">{formatDate(event.eventDate)}</p>
-                                    <p className="text-gray-600 text-sm">
-                                        {formatTime(event.startTime)}
-                                        {event.endTime && ` - ${formatTime(event.endTime)}`}
-                                    </p>
+                                    <div className="flex items-start gap-2">
+                                        <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
+                                        <div>
+                                            {/* ✅ UPDATED: Show date range for multi-day events */}
+                                            <p className="text-gray-900">
+                                                {event.endDate && event.eventDate.split('T')[0] !== event.endDate.split('T')[0] ? (
+                                                    // Multi-day event - show date range
+                                                    <>
+                                                        {formatDate(event.eventDate)} - {formatDate(event.endDate)}
+                                                    </>
+                                                ) : (
+                                                    // Single-day event - show single date
+                                                    formatDate(event.eventDate)
+                                                )}
+                                            </p>
+                                            <p className="text-sm text-gray-500">
+                                                {formatTime(event.startTime)}
+                                                {event.endTime && ` - ${formatTime(event.endTime)}`}
+                                            </p>
+
+                                            {/* ✅ UPDATED: Show duration for multi-day events */}
+                                            {event.endDate && event.eventDate.split('T')[0] !== event.endDate.split('T')[0] && (
+                                                <p className="text-xs text-purple-600 mt-1">
+                                                    {(() => {
+                                                        const start = new Date(event.eventDate);
+                                                        const end = new Date(event.endDate);
+                                                        const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+                                                        return `${days}-day event`;
+                                                    })()}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div>

@@ -71,6 +71,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
         activityType: event.activityType,
         status: event.status,
         eventDate: event.eventDate.split('T')[0],
+        endDate: event.endDate ? event.endDate.split('T')[0] : undefined,  // ✅ FIXED LINE
         startTime: formatTimeForInput(event.startTime),
         endTime: formatTimeForInput(event.endTime),
         venue: event.venue,
@@ -81,7 +82,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
         uniformRequirements: event.uniformRequirements,
         description: event.description,
         specialInstructions: event.specialInstructions,
-        requiresParentConsent: event.requiresParentConsent,  // ✅ IMPORTANT: Required field!
+        requiresParentConsent: event.requiresParentConsent,
         teamID: event.teamID,
         result: event.result,
         awardsReceived: event.awardsReceived,
@@ -523,17 +524,20 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* Date & Time */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">{t('events.editModal.sections.dateTime')}</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">
+                                {t('events.editModal.sections.dateTime') || 'Date & Time'}
+                            </h3>
                         </div>
 
+                        {/* Start Date */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                                <Calendar className="w-4 h-4 text-gray-500" />
-                                {t('events.editModal.fields.eventDate')} *
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <Calendar className="w-4 h-4 inline mr-2" />
+                                {t('events.editModal.fields.startDate') || 'Start Date'} *
                             </label>
                             <input
                                 type="date"
-                                value={formData.eventDate || ''}
+                                value={formData.eventDate}
                                 onChange={(e) => handleChange('eventDate', e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 required
@@ -541,15 +545,37 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                             />
                         </div>
 
+                        {/* ✅ NEW - End Date (Optional) */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <Calendar className="w-4 h-4 inline mr-2" />
+                                {t('events.editModal.fields.endDate') || 'End Date'}
+                                <span className="text-xs text-gray-500 ml-1">
+                                    ({t('events.editModal.labels.optional') || 'Optional'})
+                                </span>
+                            </label>
+                            <input
+                                type="date"
+                                value={formData.endDate || ''}
+                                onChange={(e) => handleChange('endDate', e.target.value || undefined)}
+                                min={formData.eventDate}  // Cannot be before start date
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                disabled={loading || success}
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                                {t('events.editModal.helpers.endDate') || 'Leave blank for single-day events. Select a date for multi-day events.'}
+                            </p>
+                        </div>
+
                         {/* Start Time */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                                <Clock className="w-4 h-4 text-gray-500" />
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <Clock className="w-4 h-4 inline mr-2" />
                                 {t('events.editModal.fields.startTime')} *
                             </label>
                             <input
                                 type="time"
-                                value={formData.startTime || ''}
+                                value={formData.startTime}
                                 onChange={(e) => handleChange('startTime', e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 required
@@ -557,11 +583,14 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                             />
                         </div>
 
-                        {/* End Time */}
+                        {/* End Time (Optional) */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                                <Clock className="w-4 h-4 text-gray-500" />
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <Clock className="w-4 h-4 inline mr-2" />
                                 {t('events.editModal.fields.endTime')}
+                                <span className="text-xs text-gray-500 ml-1">
+                                    ({t('events.editModal.labels.optional') || 'Optional'})
+                                </span>
                             </label>
                             <input
                                 type="time"

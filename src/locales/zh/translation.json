@@ -1063,6 +1063,10 @@
       "errorLoadingDetails": "加载活动详情失败，请重试。"
     },
 
+    "details": {
+      "dateTime": "日期和时间"
+    },
+
     "addModal": {
       "title": "添加新活动",
 
@@ -1080,6 +1084,8 @@
         "activityType": "运动类型",
         "leadingTeacher": "负责教师",
         "eventDate": "活动日期",
+        "startDate": "开始日期",
+        "endDate": "结束日期",
         "startTime": "开始时间",
         "endTime": "结束时间（可选）",
         "venue": "场地",
@@ -1125,7 +1131,11 @@
       },
       "labels": {
         "primary": "主要",
-        "teachers": "教师"
+        "teachers": "教师",
+        "optional": "可选"
+      },
+      "helpers": {
+        "endDate": "单日活动留空。多日活动请选择结束日期。"
       }
     },
 
@@ -1146,6 +1156,8 @@
         "activityType": "运动类型",
         "leadingTeacher": "负责教师",
         "eventDate": "活动日期",
+        "startDate": "开始日期",
+        "endDate": "结束日期",
         "startTime": "开始时间",
         "endTime": "结束时间（可选）",
         "venue": "场地",
@@ -1191,7 +1203,11 @@
 
       "labels": {
         "primary": "主要",
-        "teachers": "教师"
+        "teachers": "教师",
+        "optional": "可选"
+      },
+      "helpers": {
+        "endDate": "单日活动留空。多日活动请选择结束日期。"
       }
     },
 

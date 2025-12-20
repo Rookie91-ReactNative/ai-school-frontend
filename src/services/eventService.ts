@@ -61,16 +61,6 @@ export const EventStatusColors: Record<EventStatus, string> = {
 // ============================================
 // INTERFACES
 // ============================================
-
-// ✅ CORRECTED: Matches actual backend response field names
-export interface EventTeacher {
-    eventTeacherID: number;
-    teacherID: number;
-    teacherName: string;         // Backend returns "teacherName"
-    teacherEmail?: string;       // Backend returns "teacherEmail"
-    isPrimary: boolean;
-}
-
 export interface ActivityEvent {
     eventID: number;
     schoolID: number;
@@ -81,20 +71,14 @@ export interface ActivityEvent {
     activityType: number;
     status: EventStatus;
     eventDate: string;
+    endDate?: string;  // ✅ Multi-Day Events Support
     startTime: string;
     endTime?: string;
     venue: string;
     venueAddress?: string;
     organizer?: string;
     opponentSchool?: string;
-
-    // ✅ DEPRECATED: Keep for backward compatibility
     leadingTeacherID?: number;
-
-    // ✅ NEW: Multiple teachers support
-    teachers?: EventTeacher[];
-    teacherNames?: string; // Comma-separated for list view
-
     transportationDetails?: string;
     uniformRequirements?: string;
     description?: string;
@@ -112,24 +96,29 @@ export interface ActivityEvent {
     updatedBy?: number;
 }
 
+// ✅ NEW: Teacher assignment interface
+export interface EventTeacher {
+    eventTeacherID: number;
+    teacherID: number;
+    teacherName: string;
+    teacherEmail?: string;
+    isPrimary: boolean;
+}
+
 export interface EventWithDetails extends ActivityEvent {
     team?: {
         teamID: number;
         teamName: string;
         activityType: number;
     };
-
-    // ✅ DEPRECATED: Keep for backward compatibility
     leadingTeacher?: {
         teacherID: number;
         fullName: string;
         email: string;
         phoneNumber: string;
     };
-
-    // ✅ NEW: Multiple teachers
+    // ✅ NEW: Multiple teachers support
     teachers: EventTeacher[];
-
     totalParticipants: number;
     confirmedParticipants: number;
     attendedParticipants: number;
@@ -164,20 +153,16 @@ export interface EventCreateDto {
     activityType: number;
     status: EventStatus;
     eventDate: string;
+    endDate?: string;  // ✅ Multi-Day Events Support
     startTime: string;
     endTime?: string;
     venue: string;
     venueAddress?: string;
     organizer?: string;
     opponentSchool?: string;
-
-    // ✅ DEPRECATED: Keep for backward compatibility
     leadingTeacherID?: number;
-
-    // ✅ NEW: Multiple teachers support
-    teacherIDs?: number[];
-    primaryTeacherID?: number;
-
+    teacherIDs?: number[];  // ✅ Multiple teachers support
+    primaryTeacherID?: number;  // ✅ Multiple teachers support
     transportationDetails?: string;
     uniformRequirements?: string;
     description?: string;
@@ -195,20 +180,16 @@ export interface EventUpdateDto {
     activityType?: number;
     status?: EventStatus;
     eventDate?: string;
+    endDate?: string;  // ✅ Multi-Day Events Support
     startTime?: string;
     endTime?: string;
     venue?: string;
     venueAddress?: string;
     organizer?: string;
     opponentSchool?: string;
-
-    // ✅ DEPRECATED: Keep for backward compatibility
     leadingTeacherID?: number;
-
-    // ✅ NEW: Multiple teachers support
-    teacherIDs?: number[];
-    primaryTeacherID?: number;
-
+    teacherIDs?: number[];  // ✅ Multiple teachers support
+    primaryTeacherID?: number;  // ✅ Multiple teachers support
     transportationDetails?: string;
     uniformRequirements?: string;
     description?: string;
@@ -240,19 +221,15 @@ export interface UpdateEventParticipantRequest {
 export interface EventCalendarItem {
     eventID: number;
     eventName: string;
-    eventCode: string;
     eventType: EventType;
     activityType: number;
     status: EventStatus;
     eventDate: string;
+    endDate?: string;  // ✅ Multi-Day Events Support
     startTime: string;
     venue: string;
-    teamID?: number;
     teamName?: string;
     participantCount: number;
-
-    // ✅ NEW: Teacher names for calendar view
-    teacherNames?: string;
 }
 
 // ============================================

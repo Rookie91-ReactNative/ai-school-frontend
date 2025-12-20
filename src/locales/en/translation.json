@@ -1063,6 +1063,10 @@
       "errorLoadingDetails": "Failed to load event details. Please try again."
     },
 
+    "details": {
+      "dateTime": "Date & Time"
+    },
+
     "addModal": {
       "title": "Add New Event",
 
@@ -1080,6 +1084,8 @@
         "activityType": "Activity Type",
         "leadingTeacher": "Leading Teacher",
         "eventDate": "Event Date",
+        "startDate": "Start Date",
+        "endDate": "End Date",
         "startTime": "Start Time",
         "endTime": "End Time (Optional)",
         "venue": "Venue",
@@ -1126,7 +1132,12 @@
 
       "labels": {
         "primary": "Primary",
-        "teachers": "Teachers"
+        "teachers": "Teachers",
+        "optional": "Optional"
+      },
+
+      "helpers": {
+        "endDate": "Leave blank for single-day events. Select a date for multi-day events."
       }
     },
     "editModal": {
@@ -1146,6 +1157,8 @@
         "activityType": "Activity Type",
         "leadingTeacher": "Leading Teacher",
         "eventDate": "Event Date",
+        "startDate": "Start Date",
+        "endDate": "End Date",
         "startTime": "Start Time",
         "endTime": "End Time (Optional)",
         "venue": "Venue",
@@ -1191,7 +1204,12 @@
 
       "labels": {
         "primary": "Primary",
-        "teachers": "Teachers"
+        "teachers": "Teachers",
+        "optional": "Optional"
+      },
+
+      "helpers": {
+        "endDate": "Leave blank for single-day events. Select a date for multi-day events."
       }
     },
 

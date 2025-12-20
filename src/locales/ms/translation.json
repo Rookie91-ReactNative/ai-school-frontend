@@ -1063,6 +1063,10 @@
       "errorLoadingDetails": "Gagal memuatkan butiran acara. Sila cuba lagi."
     },
 
+    "details": {
+      "dateTime": "Tarikh & Masa"
+    },
+
     "addModal": {
       "title": "Tambah Acara Baharu",
 
@@ -1080,6 +1084,8 @@
         "activityType": "Jenis Aktiviti",
         "leadingTeacher": "Guru Pengiring",
         "eventDate": "Tarikh Acara",
+        "startDate": "Tarikh Mula",
+        "endDate": "Tarikh Tamat",
         "startTime": "Masa Mula",
         "endTime": "Masa Tamat (Pilihan)",
         "venue": "Tempat",
@@ -1126,7 +1132,12 @@
 
       "labels": {
         "primary": "Utama",
-        "teachers": "Guru"
+        "teachers": "Guru",
+        "optional": "Pilihan"
+      },
+
+      "helpers": {
+        "endDate": "Biarkan kosong untuk acara sehari. Pilih tarikh untuk acara berbilang hari."
       }
     },
 
@@ -1147,6 +1158,8 @@
         "activityType": "Jenis Aktiviti",
         "leadingTeacher": "Guru Pengiring",
         "eventDate": "Tarikh Acara",
+        "startDate": "Tarikh Mula",
+        "endDate": "Tarikh Tamat",
         "startTime": "Masa Mula",
         "endTime": "Masa Tamat (Pilihan)",
         "venue": "Tempat",
@@ -1192,7 +1205,12 @@
 
       "labels": {
         "primary": "Utama",
-        "teachers": "Guru"
+        "teachers": "Guru",
+        "optional": "Pilihan"
+      },
+
+      "helpers": {
+        "endDate": "Biarkan kosong untuk acara sehari. Pilih tarikh untuk acara berbilang hari."
       }
     },
 
