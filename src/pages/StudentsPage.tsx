@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Users, Plus, Edit, Trash2, X, Upload, Filter, GraduationCap, BookOpen, RefreshCw, Image as ImageIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Users, Plus, Edit, Trash2, X, Upload, Filter, GraduationCap, BookOpen, RefreshCw, Image as ImageIcon, ChevronLeft, ChevronRight, Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import api from '../services/api';
 import axios from 'axios';
 import PhotoManagementModal from '../components/Students/PhotoManagementModal';
@@ -74,6 +74,13 @@ const StudentsPage = () => {
     const [filterGradeId, setFilterGradeId] = useState<number | null>(null);
     const [filterClassId, setFilterClassId] = useState<number | null>(null);
 
+    // Search & Sorting state
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortField, setSortField] = useState<'studentCode' | 'fullName' | 'otherName' | 'academicYear' | 'gradeName' | 'className' | null>(null);
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [filteredSuggestions, setFilteredSuggestions] = useState<Student[]>([]);
+
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(20);
@@ -82,16 +89,62 @@ const StudentsPage = () => {
     const user = userStr ? JSON.parse(userStr) : null;
     const schoolID = user?.schoolID || 1;
 
+    // Filter students by search term (Enhanced to handle "CODE - NAME" format)
+    const getFilteredStudents = () => {
+        if (!searchTerm.trim()) return students;
+
+        const term = searchTerm.toLowerCase();
+
+        // Check if search term is in "CODE - NAME" format (from autocomplete)
+        const dashIndex = term.indexOf(' - ');
+        if (dashIndex > 0) {
+            // Extract code and name parts
+            const codePart = term.substring(0, dashIndex).trim();
+            const namePart = term.substring(dashIndex + 3).trim();
+
+            // Search using both parts for exact match
+            return students.filter(student =>
+                student.studentCode.toLowerCase().includes(codePart) &&
+                student.fullName.toLowerCase().includes(namePart)
+            );
+        }
+
+        // Original search logic for normal typing
+        return students.filter(student =>
+            student.studentCode.toLowerCase().includes(term) ||
+            student.fullName.toLowerCase().includes(term) ||
+            (student.otherName && student.otherName.toLowerCase().includes(term))
+        );
+    };
+
+    // Sort students
+    const getSortedStudents = (studentsToSort: Student[]) => {
+        if (!sortField) return studentsToSort;
+        return [...studentsToSort].sort((a, b) => {
+            let aValue = a[sortField] || '';
+            let bValue = b[sortField] || '';
+            aValue = String(aValue).toLowerCase();
+            bValue = String(bValue).toLowerCase();
+            if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+            return 0;
+        });
+    };
+
+    // Get filtered and sorted students
+    const filteredStudents = getFilteredStudents();
+    const sortedStudents = getSortedStudents(filteredStudents);
+
     // Pagination computed values
-    const totalPages = Math.ceil(students.length / itemsPerPage);
+    const totalPages = Math.ceil(sortedStudents.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const paginatedStudents = students.slice(startIndex, endIndex);
+    const paginatedStudents = sortedStudents.slice(startIndex, endIndex);
 
-    // Reset to page 1 when filters or itemsPerPage change
+    // Reset to page 1 when filters, search, or itemsPerPage change
     useEffect(() => {
         setCurrentPage(1);
-    }, [filterAcademicYearId, filterGradeId, filterClassId, itemsPerPage]);
+    }, [filterAcademicYearId, filterGradeId, filterClassId, searchTerm, sortField, sortDirection, itemsPerPage]);
 
     // Photo Management Modal State
     const [photoManagementModal, setPhotoManagementModal] = useState<{
@@ -230,6 +283,50 @@ const StudentsPage = () => {
         } catch (error) {
             console.error('Error fetching students:', error);
         }
+    };
+
+    // Sorting handler
+    const handleSort = (field: 'studentCode' | 'fullName' | 'otherName' | 'academicYear' | 'gradeName' | 'className') => {
+        if (sortField === field) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortField(field);
+            setSortDirection('asc');
+        }
+    };
+
+    // Get sort icon component
+    const getSortIcon = (field: string) => {
+        if (sortField !== field) {
+            return <ArrowUpDown className="w-4 h-4 text-gray-400" />;
+        }
+        return sortDirection === 'asc'
+            ? <ArrowUp className="w-4 h-4 text-blue-600" />
+            : <ArrowDown className="w-4 h-4 text-blue-600" />;
+    };
+
+    // Handle search input change
+    const handleSearchChange = (value: string) => {
+        setSearchTerm(value);
+        if (value.trim().length > 0) {
+            const term = value.toLowerCase();
+            const suggestions = students.filter(student =>
+                student.studentCode.toLowerCase().includes(term) ||
+                student.fullName.toLowerCase().includes(term) ||
+                (student.otherName && student.otherName.toLowerCase().includes(term))
+            ).slice(0, 10);
+            setFilteredSuggestions(suggestions);
+            setShowSuggestions(true);
+        } else {
+            setShowSuggestions(false);
+            setFilteredSuggestions([]);
+        }
+    };
+
+    // Select autocomplete suggestion
+    const handleSelectSuggestion = (student: Student) => {
+        setSearchTerm(student.studentCode + ' - ' + student.fullName);
+        setShowSuggestions(false);
     };
 
     const validateForm = () => {
@@ -603,10 +700,75 @@ const StudentsPage = () => {
                     </div>
                 </div>
 
+                {/* Search Box with Autocomplete */}
+                <div className="mt-4 relative">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Search Students
+                    </label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <Search className="w-5 h-5 text-gray-400" />
+                        </div>
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => handleSearchChange(e.target.value)}
+                            onFocus={() => searchTerm && setShowSuggestions(true)}
+                            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                            placeholder="Search by Student Code, Full Name, or Other Name..."
+                            className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        {searchTerm && (
+                            <button
+                                onClick={() => {
+                                    setSearchTerm('');
+                                    setShowSuggestions(false);
+                                }}
+                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Autocomplete Dropdown */}
+                    {showSuggestions && filteredSuggestions.length > 0 && (
+                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                            {filteredSuggestions.map((student) => (
+                                <button
+                                    key={student.studentID}
+                                    onClick={() => handleSelectSuggestion(student)}
+                                    className="w-full px-4 py-2 text-left hover:bg-blue-50 flex items-center gap-3 border-b border-gray-100 last:border-0"
+                                >
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-medium text-gray-900">{student.studentCode}</span>
+                                            <span className="text-gray-400">•</span>
+                                            <span className="text-gray-700">{student.fullName}</span>
+                                        </div>
+                                        {student.otherName && (
+                                            <div className="text-sm text-gray-500">{student.otherName}</div>
+                                        )}
+                                        <div className="text-xs text-gray-400 mt-0.5">
+                                            {student.gradeName && `${student.gradeName} `}
+                                            {student.className && `- ${student.className}`}
+                                        </div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
                 <div className="mt-4 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                         <Users className="w-4 h-4" />
-                        <span>{t('students.totalStudents')}: <strong className="text-gray-900">{students.length}</strong></span>
+                        <span>{t('students.totalStudents')}: <strong className="text-gray-900">{filteredStudents.length}</strong></span>
+                        {searchTerm && filteredStudents.length !== students.length && (
+                            <span className="text-xs text-gray-500 ml-2">
+                                (filtered from {students.length})
+                            </span>
+                        )}
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
@@ -635,23 +797,59 @@ const StudentsPage = () => {
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {t('students.table.studentCode')}
+                                <th
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                                    onClick={() => handleSort('studentCode')}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {t('students.table.studentCode')}
+                                        {getSortIcon('studentCode')}
+                                    </div>
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {t('students.table.name')}
+                                <th
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                                    onClick={() => handleSort('fullName')}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {t('students.table.name')}
+                                        {getSortIcon('fullName')}
+                                    </div>
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {t('students.table.otherName')}
+                                <th
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                                    onClick={() => handleSort('otherName')}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {t('students.table.otherName')}
+                                        {getSortIcon('otherName')}
+                                    </div>
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {t('students.academicYear')}
+                                <th
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                                    onClick={() => handleSort('academicYear')}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {t('students.academicYear')}
+                                        {getSortIcon('academicYear')}
+                                    </div>
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {t('students.grade')}
+                                <th
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                                    onClick={() => handleSort('gradeName')}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {t('students.grade')}
+                                        {getSortIcon('gradeName')}
+                                    </div>
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {t('students.class')}
+                                <th
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                                    onClick={() => handleSort('className')}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {t('students.class')}
+                                        {getSortIcon('className')}
+                                    </div>
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     {t('students.table.photos')}
