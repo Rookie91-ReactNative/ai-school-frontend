@@ -203,7 +203,7 @@ const StudentsPage = () => {
 
     const fetchStudents = async () => {
         try {
-            let url = `/student/school/${schoolID}`;
+            let url = `/student`;
             const params = new URLSearchParams();
 
             // ✅ Handle special case: -1 means "not enrolled"

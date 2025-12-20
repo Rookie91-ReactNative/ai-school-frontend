@@ -123,7 +123,7 @@ const ClassesPage = () => {
 
     const fetchClasses = async () => {
         try {
-            let url = `/class/school/${schoolID}`;
+            let url = `/class`;
             const params = new URLSearchParams();
             if (filterAcademicYearId) params.append('academicYearId', filterAcademicYearId.toString());
             if (filterGradeId) params.append('gradeId', filterGradeId.toString());

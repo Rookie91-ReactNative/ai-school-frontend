@@ -73,7 +73,7 @@ const AcademicYearsPage = () => {
     const fetchAcademicYears = async () => {
         try {
             setIsLoading(true);
-            const response = await api.get(`/academic-year/school/${schoolID}`);
+            const response = await api.get(`/academic-year`);
             setAcademicYears(response.data.data || []);
         } catch (error) {
             console.error('Error fetching academic years:', error);

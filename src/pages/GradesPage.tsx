@@ -59,7 +59,7 @@ const GradesPage = () => {
     const fetchGrades = async () => {
         try {
             setIsLoading(true);
-            const response = await api.get(`/grade/school/${schoolID}`);
+            const response = await api.get(`/grade`);
             setGrades(response.data.data || []);
         } catch (error) {
             console.error('Error fetching grades:', error);
