@@ -104,10 +104,10 @@ const LoginPage = () => {
                     </button>
                 </form>
 
-                {/*<div className="mt-6 text-center text-sm text-gray-600">*/}
-                {/*    <p>{t('login.demoCredentials')}</p> */}{/* ✅ Translated */}
-                {/*    <p className="font-mono mt-1">superadmin / admin123</p>*/}
-                {/*</div>*/}
+                <div className="mt-6 text-center text-sm text-gray-600">
+                    {/*<p>{t('login.demoCredentials')}</p>  ✅ Translated */}
+                    {/*<p className="font-mono mt-1">superadmin / admin123</p>*/}
+                </div>
             </div>
         </div>
     );
