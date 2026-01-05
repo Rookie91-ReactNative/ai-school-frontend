@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Users, UserCheck, UserX, Clock } from 'lucide-react';
+﻿import { useEffect, useState } from 'react';
+import { Users, UserCheck, UserX, Clock, Calendar, ClipboardList, BookOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import StatCard from '../components/Common/StatCard';
 import { attendanceService } from '../services/attendanceService';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
@@ -11,10 +13,20 @@ const DashboardPage = () => {
     const [recentDetections, setRecentDetections] = useState<RecentDetection[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const { t } = useTranslation();
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    // Check if user is Teacher or Staff role
+    const isTeacherOrStaff = user?.userRole === 'Teacher' || user?.userRole === 'Staff';
 
     useEffect(() => {
-        fetchDashboardData();
-    }, []);
+        // Only fetch dashboard data for non-Teacher/Staff roles
+        if (!isTeacherOrStaff) {
+            fetchDashboardData();
+        } else {
+            setIsLoading(false);
+        }
+    }, [isTeacherOrStaff]);
 
     const fetchDashboardData = async () => {
         try {
@@ -35,6 +47,104 @@ const DashboardPage = () => {
         return <LoadingSpinner />;
     }
 
+    // ✅ Teacher/Staff Dashboard - Simple Welcome Page
+    if (isTeacherOrStaff) {
+        return (
+            <div className="space-y-6">
+                {/* Welcome Header */}
+                <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl p-8 text-white">
+                    <h1 className="text-3xl font-bold mb-2">
+                        {t('dashboard.welcome', { name: user?.fullName || user?.username })}
+                    </h1>
+                    <p className="text-blue-100 text-lg">
+                        {t('dashboard.teacherSubtitle')}
+                    </p>
+                </div>
+
+                {/* Quick Actions for Teachers */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Events Card */}
+                    <div
+                        onClick={() => navigate('/events')}
+                        className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer hover:shadow-lg hover:border-blue-300 transition-all duration-200"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-blue-100 rounded-lg">
+                                <Calendar className="w-8 h-8 text-blue-600" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                    {t('dashboard.quickActions.events')}
+                                </h3>
+                                <p className="text-sm text-gray-500">
+                                    {t('dashboard.quickActions.eventsDesc')}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Students Card - Only if they have permission */}
+                    <div
+                        onClick={() => navigate('/students')}
+                        className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer hover:shadow-lg hover:border-green-300 transition-all duration-200"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-green-100 rounded-lg">
+                                <Users className="w-8 h-8 text-green-600" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                    {t('dashboard.quickActions.students')}
+                                </h3>
+                                <p className="text-sm text-gray-500">
+                                    {t('dashboard.quickActions.studentsDesc')}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Attendance Card */}
+                    <div
+                        onClick={() => navigate('/attendance')}
+                        className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer hover:shadow-lg hover:border-yellow-300 transition-all duration-200"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-yellow-100 rounded-lg">
+                                <ClipboardList className="w-8 h-8 text-yellow-600" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                    {t('dashboard.quickActions.attendance')}
+                                </h3>
+                                <p className="text-sm text-gray-500">
+                                    {t('dashboard.quickActions.attendanceDesc')}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Info Card */}
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                    <div className="flex items-start gap-4">
+                        <div className="p-2 bg-blue-100 rounded-lg">
+                            <BookOpen className="w-6 h-6 text-blue-600" />
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-blue-900 mb-1">
+                                {t('dashboard.teacherInfo.title')}
+                            </h3>
+                            <p className="text-blue-700 text-sm">
+                                {t('dashboard.teacherInfo.description')}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // ✅ Admin Dashboard - Full Statistics View
     return (
         <div className="space-y-6">
             <div>

@@ -25,7 +25,21 @@
     "time": "Time",
     "camera": "Camera",
     "confidence": "Confidence",
-    "noDetections": "No recent detections"
+    "noDetections": "No recent detections",
+    "welcome": "Welcome, {{name}}!",
+    "teacherSubtitle": "Here's your quick access to school activities and resources.",
+    "quickActions": {
+      "events": "Events & Activities",
+      "eventsDesc": "View and manage school events",
+      "students": "Students",
+      "studentsDesc": "View student information",
+      "attendance": "Attendance",
+      "attendanceDesc": "View attendance records"
+    },
+    "teacherInfo": {
+      "title": "Quick Tips",
+      "description": "Use the sidebar menu to navigate between different sections. You can manage events, view student information, and check attendance records."
+    }
   },
   "common": {
     "welcome": "Welcome",

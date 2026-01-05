@@ -25,7 +25,21 @@
     "time": "Masa",
     "camera": "Kamera",
     "confidence": "Keyakinan",
-    "noDetections": "Tiada pengesanan terkini"
+    "noDetections": "Tiada pengesanan terkini",
+    "welcome": "Selamat datang, {{name}}!",
+    "teacherSubtitle": "Akses pantas ke aktiviti dan sumber sekolah anda.",
+    "quickActions": {
+      "events": "Acara & Aktiviti",
+      "eventsDesc": "Lihat dan urus acara sekolah",
+      "students": "Pelajar",
+      "studentsDesc": "Lihat maklumat pelajar",
+      "attendance": "Kehadiran",
+      "attendanceDesc": "Lihat rekod kehadiran"
+    },
+    "teacherInfo": {
+      "title": "Petua Pantas",
+      "description": "Gunakan menu bar sisi untuk menavigasi antara bahagian yang berbeza. Anda boleh mengurus acara, melihat maklumat pelajar, dan menyemak rekod kehadiran."
+    }
   },
   "common": {
     "welcome": "Selamat datang",

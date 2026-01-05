@@ -25,7 +25,21 @@
     "time": "时间",
     "camera": "摄像头",
     "confidence": "置信度",
-    "noDetections": "暂无最近检测记录"
+    "noDetections": "暂无最近检测记录",
+    "welcome": "欢迎，{{name}}！",
+    "teacherSubtitle": "这是您快速访问学校活动和资源的入口。",
+    "quickActions": {
+      "events": "活动与事件",
+      "eventsDesc": "查看和管理学校活动",
+      "students": "学生",
+      "studentsDesc": "查看学生信息",
+      "attendance": "出勤记录",
+      "attendanceDesc": "查看出勤记录"
+    },
+    "teacherInfo": {
+      "title": "快速提示",
+      "description": "使用侧边栏菜单在不同部分之间导航。您可以管理活动、查看学生信息和检查出勤记录。"
+    }
   },
   "common": {
     "welcome": "欢迎",
