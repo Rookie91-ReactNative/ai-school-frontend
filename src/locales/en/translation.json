@@ -1067,6 +1067,12 @@
       "dateTime": "Date & Time"
     },
 
+    "eventMode": {
+      "online": "Online",
+      "offline": "Offline",
+      "label": "Event Mode"
+    },
+
     "addModal": {
       "title": "Add New Event",
 
@@ -1093,7 +1099,8 @@
         "result": "Result (Optional)",
         "awardsReceived": "Awards Received (Optional)",
         "remarks": "Remarks / Suggestions (Optional)",
-        "teachers": "Teachers"
+        "teachers": "Teachers",
+        "eventMode": "Event Mode"
       },
 
       "placeholders": {
@@ -1104,14 +1111,17 @@
         "venueAddress": "Full address with postcode",
         "result": "e.g., Won 3-1, 2nd Place",
         "awardsReceived": "e.g., 1st Place - District Level, Best Team Award, Champion Trophy",
-        "remarks": "Suggestions for improvement, lessons learned, recommendations..."
+        "remarks": "Suggestions for improvement, lessons learned, recommendations...",
+        "venueOnline": "e.g., Zoom, Google Meet, Microsoft Teams",
+        "venueAddressOnline": "e.g., Meeting URL or access instructions"
       },
 
       "validation": {
         "eventNameRequired": "Event name is required",
         "eventCodeRequired": "Event code is required",
         "venueRequired": "Venue is required",
-        "teacherRequired": "Leading teacher is required"
+        "teacherRequired": "Leading teacher is required",
+        "venueRequiredOffline": "Venue is required for offline events"
       },
 
       "messages": {
@@ -1137,7 +1147,10 @@
       },
 
       "helpers": {
-        "endDate": "Leave blank for single-day events. Select a date for multi-day events."
+        "endDate": "Leave blank for single-day events. Select a date for multi-day events.",
+        "eventModeOnline": "Virtual event - venue is optional",
+        "eventModeOffline": "Physical event - venue is required",
+        "venueOnline": "For online events, you can specify the platform name or meeting link"
       }
     },
     "editModal": {
@@ -1165,7 +1178,8 @@
         "venueAddress": "Venue Address (Optional)",
         "result": "Result (Optional)",
         "awardsReceived": "Awards Received (Optional)",
-        "remarks": "Remarks / Suggestions (Optional)"
+        "remarks": "Remarks / Suggestions (Optional)",
+        "eventMode": "Event Mode"
       },
 
       "placeholders": {
@@ -1176,14 +1190,17 @@
         "venueAddress": "Full address with postcode",
         "result": "e.g., Won 3-1, 2nd Place",
         "awardsReceived": "e.g., 1st Place - District Level, Best Team Award, Champion Trophy",
-        "remarks": "Suggestions for improvement, lessons learned, recommendations..."
+        "remarks": "Suggestions for improvement, lessons learned, recommendations...",
+        "venueOnline": "e.g., Zoom, Google Meet, Microsoft Teams",
+        "venueAddressOnline": "e.g., Meeting URL or access instructions"
       },
 
       "validation": {
         "eventNameRequired": "Event name is required",
         "eventCodeRequired": "Event code is required",
         "venueRequired": "Venue is required",
-        "teacherRequired": "Leading teacher is required"
+        "teacherRequired": "Leading teacher is required",
+        "venueRequiredOffline": "Venue is required for offline events"
       },
 
       "messages": {
@@ -1209,7 +1226,10 @@
       },
 
       "helpers": {
-        "endDate": "Leave blank for single-day events. Select a date for multi-day events."
+        "endDate": "Leave blank for single-day events. Select a date for multi-day events.",
+        "eventModeOnline": "Virtual event - venue is optional",
+        "eventModeOffline": "Physical event - venue is required",
+        "venueOnline": "For online events, you can specify the platform name or meeting link"
       }
     },
 
@@ -1242,7 +1262,10 @@
         "uniformRequirements": "Uniform Requirements",
         "result": "Result",
         "awardsReceived": "Awards Received",
-        "primary": "Primary"
+        "primary": "Primary",
+        "eventMode": "Event Mode",
+        "online": "Online Event",
+        "offline": "Offline Event"
       },
 
       "sections": {
@@ -1381,7 +1404,12 @@
       "remarks": "Remarks/Suggestion",
       "results": "Results",
       "achievement": "Achievement",
-      "eventDate": "Event Date"
+      "eventDate": "Event Date",
+      "primaryTeacher": "Primary Teacher",
+      "allTeachers": "All Teachers",
+      "eventMode": "Event Mode",
+      "eventStartDate": "Start Date",
+      "eventEndDate": "End Date"
     },
 
     "excel": {
@@ -1396,7 +1424,12 @@
       "remarks": "Remarks/Suggestion",
       "results": "Results",
       "achievement": "Achievement",
-      "eventDate": "Event Date"
+      "eventDate": "Event Date",
+      "primaryTeacher": "Primary Teacher",
+      "allTeachers": "All Teachers",
+      "eventMode": "Event Mode",
+      "eventStartDate": "Event Start Date",
+      "eventEndDate": "Event End Date"
     },
 
     "noEventsFound": "No events found"

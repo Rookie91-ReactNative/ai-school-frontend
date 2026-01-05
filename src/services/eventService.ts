@@ -26,6 +26,12 @@ export enum EventStatus {
     Postponed = 5
 }
 
+// ✅ NEW - Event Mode Enum
+export enum EventMode {
+    Offline = 0,
+    Online = 1
+}
+
 export const EventTypeLabels: Record<EventType, string> = {
     [EventType.Training]: 'Training Session',
     [EventType.SchoolCompetition]: 'School Competition',
@@ -58,6 +64,18 @@ export const EventStatusColors: Record<EventStatus, string> = {
     [EventStatus.Postponed]: 'bg-orange-100 text-orange-800'
 };
 
+// ✅ NEW - Event Mode Labels
+export const EventModeLabels: Record<EventMode, string> = {
+    [EventMode.Offline]: 'Offline',
+    [EventMode.Online]: 'Online'
+};
+
+// ✅ NEW - Event Mode Colors (for badges/display)
+export const EventModeColors: Record<EventMode, string> = {
+    [EventMode.Offline]: 'bg-purple-100 text-purple-800',
+    [EventMode.Online]: 'bg-cyan-100 text-cyan-800'
+};
+
 // ============================================
 // INTERFACES
 // ============================================
@@ -70,11 +88,12 @@ export interface ActivityEvent {
     eventType: EventType;
     activityType: number;
     status: EventStatus;
+    eventMode: EventMode;  // ✅ NEW
     eventDate: string;
-    endDate?: string;  // ✅ Multi-Day Events Support
+    endDate?: string;  // Multi-Day Events Support
     startTime: string;
     endTime?: string;
-    venue: string;
+    venue?: string;  // ✅ UPDATED - Now optional
     venueAddress?: string;
     organizer?: string;
     opponentSchool?: string;
@@ -96,7 +115,7 @@ export interface ActivityEvent {
     updatedBy?: number;
 }
 
-// ✅ NEW: Teacher assignment interface
+// Teacher assignment interface
 export interface EventTeacher {
     eventTeacherID: number;
     teacherID: number;
@@ -117,7 +136,7 @@ export interface EventWithDetails extends ActivityEvent {
         email: string;
         phoneNumber: string;
     };
-    // ✅ NEW: Multiple teachers support
+    // Multiple teachers support
     teachers: EventTeacher[];
     totalParticipants: number;
     confirmedParticipants: number;
@@ -152,17 +171,18 @@ export interface EventCreateDto {
     eventType: EventType;
     activityType: number;
     status: EventStatus;
+    eventMode: EventMode;  // ✅ NEW
     eventDate: string;
-    endDate?: string;  // ✅ Multi-Day Events Support
+    endDate?: string;  // Multi-Day Events Support
     startTime: string;
     endTime?: string;
-    venue: string;
+    venue?: string;  // ✅ UPDATED - Now optional
     venueAddress?: string;
     organizer?: string;
     opponentSchool?: string;
     leadingTeacherID?: number;
-    teacherIDs?: number[];  // ✅ Multiple teachers support
-    primaryTeacherID?: number;  // ✅ Multiple teachers support
+    teacherIDs?: number[];  // Multiple teachers support
+    primaryTeacherID?: number;  // Multiple teachers support
     transportationDetails?: string;
     uniformRequirements?: string;
     description?: string;
@@ -179,17 +199,18 @@ export interface EventUpdateDto {
     eventType?: EventType;
     activityType?: number;
     status?: EventStatus;
+    eventMode?: EventMode;  // ✅ NEW
     eventDate?: string;
-    endDate?: string;  // ✅ Multi-Day Events Support
+    endDate?: string;  // Multi-Day Events Support
     startTime?: string;
     endTime?: string;
-    venue?: string;
+    venue?: string;  // ✅ UPDATED - Now optional
     venueAddress?: string;
     organizer?: string;
     opponentSchool?: string;
     leadingTeacherID?: number;
-    teacherIDs?: number[];  // ✅ Multiple teachers support
-    primaryTeacherID?: number;  // ✅ Multiple teachers support
+    teacherIDs?: number[];  // Multiple teachers support
+    primaryTeacherID?: number;  // Multiple teachers support
     transportationDetails?: string;
     uniformRequirements?: string;
     description?: string;
@@ -224,10 +245,11 @@ export interface EventCalendarItem {
     eventType: EventType;
     activityType: number;
     status: EventStatus;
+    eventMode: EventMode;  // ✅ NEW
     eventDate: string;
-    endDate?: string;  // ✅ Multi-Day Events Support
+    endDate?: string;  // Multi-Day Events Support
     startTime: string;
-    venue: string;
+    venue?: string;  // ✅ UPDATED - Now optional
     teamName?: string;
     participantCount: number;
 }

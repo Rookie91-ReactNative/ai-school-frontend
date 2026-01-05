@@ -293,7 +293,6 @@ const EventsPage = () => {
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        <div className="text-sm text-gray-500">{event.eventCode}</div>
                                                         {event.opponentSchool && (
                                                             <div className="text-sm text-blue-600 mt-1">
                                                                 vs {event.opponentSchool}

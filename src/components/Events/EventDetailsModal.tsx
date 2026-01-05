@@ -2,13 +2,17 @@
 import { useTranslation } from 'react-i18next';
 import {
     X, Calendar, /*Clock,*/ MapPin, Users, User, Mail, Phone,
-    Edit, Trash2, /*Plus, CheckCircle, XCircle,*/ Award, /*AlertCircle,*/ Bell
+    Edit, Trash2, /*Plus, CheckCircle, XCircle,*/ Award, /*AlertCircle,*/ Bell,
+    Globe, Building  // ✅ NEW - Icons for Event Mode
 } from 'lucide-react';
 import {
     eventService,
     EventTypeLabels,
     EventStatusLabels,
     EventStatusColors,
+    EventMode,           // ✅ NEW - Import EventMode enum
+    EventModeLabels,     // ✅ NEW - Import EventModeLabels
+    /*EventModeColors, */    // ✅ NEW - Import EventModeColors
     type EventWithDetails
 } from '../../services/eventService';
 import { ActivityTypeLabels, ActivityType } from '../../services/teamService';
@@ -183,6 +187,31 @@ const EventDetailsModal = ({ eventId, onClose, onEdit }: EventDetailsModalProps)
                                     <p className="text-gray-900">
                                         {getTranslatedActivityType(ActivityTypeLabels[event.activityType as ActivityType], t) || `Unknown Activity (${event.activityType})`}
                                     </p>
+                                </div>
+
+                                {/* ✅ NEW - Event Mode Display */}
+                                <div>
+                                    <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-2">
+                                        {event.eventMode === EventMode.Online ? (
+                                            <Globe className="w-4 h-4" />
+                                        ) : (
+                                            <Building className="w-4 h-4" />
+                                        )}
+                                        {t('events.detailsModal.labels.eventMode') || 'Event Mode'}
+                                    </h3>
+                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-medium ${event.eventMode === EventMode.Online
+                                            ? 'bg-cyan-100 text-cyan-800'
+                                            : 'bg-purple-100 text-purple-800'
+                                        }`}>
+                                        {event.eventMode === EventMode.Online ? (
+                                            <Globe className="w-3.5 h-3.5" />
+                                        ) : (
+                                            <Building className="w-3.5 h-3.5" />
+                                        )}
+                                        {t(`events.eventMode.${event.eventMode === EventMode.Online ? 'online' : 'offline'}`) ||
+                                            EventModeLabels[event.eventMode] ||
+                                            (event.eventMode === EventMode.Online ? 'Online' : 'Offline')}
+                                    </span>
                                 </div>
 
                                 {event.team && (

@@ -1067,6 +1067,12 @@
       "dateTime": "日期和时间"
     },
 
+    "eventMode": {
+      "online": "线上",
+      "offline": "线下",
+      "label": "活动模式"
+    },
+
     "addModal": {
       "title": "添加新活动",
 
@@ -1093,7 +1099,8 @@
         "result": "成绩（可选）",
         "awardsReceived": "所获奖项（可选）",
         "remarks": "备注/建议（可选）",
-        "teachers": "教师队伍"
+        "teachers": "教师队伍",
+        "eventMode": "活动模式"
       },
 
       "placeholders": {
@@ -1104,14 +1111,17 @@
         "venueAddress": "完整地址及邮编",
         "result": "例如：3-1获胜、第二名",
         "awardsReceived": "例如：区级第一名、最佳团队奖、冠军奖杯",
-        "remarks": "改进建议、经验教训、推荐..."
+        "remarks": "改进建议、经验教训、推荐...",
+        "venueOnline": "例如：Zoom、Google Meet、Microsoft Teams",
+        "venueAddressOnline": "例如：会议链接或访问说明"
       },
 
       "validation": {
         "eventNameRequired": "活动名称为必填项",
         "eventCodeRequired": "活动代码为必填项",
         "venueRequired": "场地为必填项",
-        "teacherRequired": "负责教师为必填项"
+        "teacherRequired": "负责教师为必填项",
+        "venueRequiredOffline": "线下活动必须填写地点"
       },
 
       "messages": {
@@ -1135,7 +1145,9 @@
         "optional": "可选"
       },
       "helpers": {
-        "endDate": "单日活动留空。多日活动请选择结束日期。"
+        "endDate": "单日活动留空。多日活动请选择结束日期。",
+        "eventModeOnline": "虚拟活动 - 地点为可选",
+        "eventModeOffline": "实体活动 - 地点为必填"
       }
     },
 
@@ -1164,7 +1176,8 @@
         "venueAddress": "场地地址（可选）",
         "result": "成绩（可选）",
         "awardsReceived": "所获奖项（可选）",
-        "remarks": "备注/建议（可选）"
+        "remarks": "备注/建议（可选）",
+        "eventMode": "活动模式"
       },
 
       "placeholders": {
@@ -1175,14 +1188,17 @@
         "venueAddress": "完整地址及邮编",
         "result": "例如：3-1获胜、第二名",
         "awardsReceived": "例如：区级第一名、最佳团队奖、冠军奖杯",
-        "remarks": "改进建议、经验教训、推荐..."
+        "remarks": "改进建议、经验教训、推荐...",
+        "venueOnline": "例如：Zoom、Google Meet、Microsoft Teams",
+        "venueAddressOnline": "例如：会议链接或访问说明"
       },
 
       "validation": {
         "eventNameRequired": "活动名称为必填项",
         "eventCodeRequired": "活动代码为必填项",
         "venueRequired": "场地为必填项",
-        "teacherRequired": "负责教师为必填项"
+        "teacherRequired": "负责教师为必填项",
+        "venueRequiredOffline": "线下活动必须填写地点"
       },
 
       "messages": {
@@ -1207,7 +1223,9 @@
         "optional": "可选"
       },
       "helpers": {
-        "endDate": "单日活动留空。多日活动请选择结束日期。"
+        "endDate": "单日活动留空。多日活动请选择结束日期。",
+        "eventModeOnline": "虚拟活动 - 地点为可选",
+        "eventModeOffline": "实体活动 - 地点为必填"
       }
     },
 
@@ -1240,7 +1258,10 @@
         "uniformRequirements": "服装要求",
         "result": "成绩",
         "awardsReceived": "所获奖项",
-        "primary": "主要"
+        "primary": "主要",
+        "eventMode": "活动模式",
+        "online": "线上活动",
+        "offline": "线下活动"
       },
 
       "sections": {
@@ -1379,7 +1400,12 @@
       "remarks": "备注/建议",
       "results": "成绩",
       "achievement": "成就",
-      "eventDate": "活动日期"
+      "eventDate": "活动日期",
+      "primaryTeacher": "主要教师",
+      "allTeachers": "所有教师",
+      "eventMode": "活动模式",
+      "eventStartDate": "开始日期",
+      "eventEndDate": "结束日期"
     },
 
     "excel": {
@@ -1394,7 +1420,12 @@
       "remarks": "备注/建议",
       "results": "成绩",
       "achievement": "成就",
-      "eventDate": "活动日期"
+      "eventDate": "活动日期",
+      "primaryTeacher": "主要教师",
+      "allTeachers": "所有教师",
+      "eventMode": "活动模式",
+      "eventStartDate": "活动开始日期",
+      "eventEndDate": "活动结束日期"
     },
 
     "noEventsFound": "未找到活动"

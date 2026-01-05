@@ -1067,6 +1067,12 @@
       "dateTime": "Tarikh & Masa"
     },
 
+    "eventMode": {
+      "online": "Dalam Talian",
+      "offline": "Luar Talian",
+      "label": "Mod Acara"
+    },
+
     "addModal": {
       "title": "Tambah Acara Baharu",
 
@@ -1093,7 +1099,8 @@
         "result": "Keputusan (Pilihan)",
         "awardsReceived": "Anugerah Diterima (Pilihan)",
         "remarks": "Catatan / Cadangan (Pilihan)",
-        "teachers": "Guru-guru"
+        "teachers": "Guru-guru",
+        "eventMode": "Mod Acara"
       },
 
       "placeholders": {
@@ -1104,14 +1111,17 @@
         "venueAddress": "Alamat penuh dengan poskod",
         "result": "cth: Menang 3-1, Tempat Ke-2",
         "awardsReceived": "cth: Tempat Pertama - Peringkat Daerah, Anugerah Pasukan Terbaik",
-        "remarks": "Cadangan penambahbaikan, pengajaran, syor..."
+        "remarks": "Cadangan penambahbaikan, pengajaran, syor...",
+        "venueOnline": "cth., Zoom, Google Meet, Microsoft Teams",
+        "venueAddressOnline": "cth., URL mesyuarat atau arahan akses"
       },
 
       "validation": {
         "eventNameRequired": "Nama acara diperlukan",
         "eventCodeRequired": "Kod acara diperlukan",
         "venueRequired": "Tempat diperlukan",
-        "teacherRequired": "Guru memimpin diperlukan"
+        "teacherRequired": "Guru memimpin diperlukan",
+        "venueRequiredOffline": "Tempat diperlukan untuk acara luar talian"
       },
 
       "messages": {
@@ -1137,7 +1147,9 @@
       },
 
       "helpers": {
-        "endDate": "Biarkan kosong untuk acara sehari. Pilih tarikh untuk acara berbilang hari."
+        "endDate": "Biarkan kosong untuk acara sehari. Pilih tarikh untuk acara berbilang hari.",
+        "eventModeOnline": "Acara maya - tempat adalah pilihan",
+        "eventModeOffline": "Acara fizikal - tempat diperlukan"
       }
     },
 
@@ -1166,7 +1178,8 @@
         "venueAddress": "Alamat Tempat (Pilihan)",
         "result": "Keputusan (Pilihan)",
         "awardsReceived": "Anugerah Diterima (Pilihan)",
-        "remarks": "Catatan / Cadangan (Pilihan)"
+        "remarks": "Catatan / Cadangan (Pilihan)",
+        "eventMode": "Mod Acara"
       },
 
       "placeholders": {
@@ -1177,14 +1190,17 @@
         "venueAddress": "Alamat penuh dengan poskod",
         "result": "cth: Menang 3-1, Tempat Ke-2",
         "awardsReceived": "cth: Tempat Pertama - Peringkat Daerah, Anugerah Pasukan Terbaik",
-        "remarks": "Cadangan penambahbaikan, pengajaran, syor..."
+        "remarks": "Cadangan penambahbaikan, pengajaran, syor...",
+        "venueOnline": "cth., Zoom, Google Meet, Microsoft Teams",
+        "venueAddressOnline": "cth., URL mesyuarat atau arahan akses"
       },
 
       "validation": {
         "eventNameRequired": "Nama acara diperlukan",
         "eventCodeRequired": "Kod acara diperlukan",
         "venueRequired": "Tempat diperlukan",
-        "teacherRequired": "Guru memimpin diperlukan"
+        "teacherRequired": "Guru memimpin diperlukan",
+        "venueRequiredOffline": "Tempat diperlukan untuk acara luar talian"
       },
 
       "messages": {
@@ -1210,7 +1226,9 @@
       },
 
       "helpers": {
-        "endDate": "Biarkan kosong untuk acara sehari. Pilih tarikh untuk acara berbilang hari."
+        "endDate": "Biarkan kosong untuk acara sehari. Pilih tarikh untuk acara berbilang hari.",
+        "eventModeOnline": "Acara maya - tempat adalah pilihan",
+        "eventModeOffline": "Acara fizikal - tempat diperlukan"
       }
     },
 
@@ -1243,7 +1261,10 @@
         "uniformRequirements": "Keperluan Pakaian Seragam",
         "result": "Keputusan",
         "awardsReceived": "Anugerah Diterima",
-        "primary": "Utama"
+        "primary": "Utama",
+        "eventMode": "Mod Acara",
+        "online": "Acara Dalam Talian",
+        "offline": "Acara Luar Talian"
       },
 
       "sections": {
@@ -1382,7 +1403,12 @@
       "remarks": "Catatan/Cadangan",
       "results": "Keputusan",
       "achievement": "Pencapaian",
-      "eventDate": "Tarikh Acara"
+      "eventDate": "Tarikh Acara",
+      "primaryTeacher": "Guru Utama",
+      "allTeachers": "Semua Guru",
+      "eventMode": "Mod Acara",
+      "eventStartDate": "Tarikh Mula",
+      "eventEndDate": "Tarikh Tamat"
     },
 
     "excel": {
@@ -1397,7 +1423,12 @@
       "remarks": "Catatan/Cadangan",
       "results": "Keputusan",
       "achievement": "Pencapaian",
-      "eventDate": "Tarikh Acara"
+      "eventDate": "Tarikh Acara",
+      "primaryTeacher": "Guru Utama",
+      "allTeachers": "Semua Guru",
+      "eventMode": "Mod Acara",
+      "eventStartDate": "Tarikh Mula Acara",
+      "eventEndDate": "Tarikh Tamat Acara"
     },
 
     "noEventsFound": "Tiada acara dijumpai"
