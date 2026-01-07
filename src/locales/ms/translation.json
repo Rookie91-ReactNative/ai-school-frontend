@@ -68,7 +68,17 @@
     "thisClassHas": "Kelas ini mempunyai",
     "studentsEnrolled": "pelajar didaftarkan.",
     "deactivate": "Letak jawatan",
-    "clearSearch": "Kosongkan carian"
+    "clearSearch": "Kosongkan carian",
+    "filters": "Penapis",
+    "refresh": "Muat Semula",
+    "export": "Eksport CSV",
+    "grade": "Gred",
+    "class": "Kelas",
+    "allGrades": "Semua Gred",
+    "allClasses": "Semua Kelas",
+    "showing": "Menunjukkan",
+    "of": "daripada",
+    "upload": "Muat Naik"
   },
   "nav": {
     "dashboard": "Papan Pemuka",
@@ -88,7 +98,8 @@
     "teams": "Pasukan",
     "events": "Peristiwa",
     "eventsReport": "Laporan peristiwa",
-    "importStudents": "Import Pelajar"
+    "importStudents": "Import Pelajar",
+    "lateReport": "Laporan Lewat"
   },
   "unauthorized": {
     "title": "Akses Ditolak",
@@ -133,6 +144,8 @@
     "updating": "Mengemaskini...",
     "selectState": "Pilih Negeri",
     "capacity": "Kapasiti: 50 - 10,000 pelajar",
+    "swipeHint": "Tatal untuk melihat semua",
+
     "validation": {
       "schoolCodeRequired": "Kod sekolah diperlukan",
       "schoolCodeMin": "Kod sekolah mestilah sekurang-kurangnya 2 aksara",
@@ -194,6 +207,8 @@
     "save": "Simpan",
     "creating": "Mencipta...",
     "updating": "Mengemaskini...",
+    "swipeHint": "Tatal untuk melihat semua",
+
     "validation": {
       "usernameRequired": "Nama pengguna diperlukan",
       "usernameMin": "Nama pengguna mestilah sekurang-kurangnya 3 aksara",
@@ -585,6 +600,9 @@
     "notEnrolled": "Tidak Berdaftar",
     "notEnrolledFilter": "⚠️ Tidak Mendaftar (Tiada Tahun Akademik)",
     "otherNameHint": "Nama alternatif dalam bahasa lain (cth., nama Cina 中文名, nama Tamil)",
+    "yourClasses": "Kelas Anda",
+    "teacherPhotoPermission": "Anda boleh mengurus foto untuk pelajar dalam kelas yang ditugaskan kepada anda.",
+    "noAssignedClasses": "Anda tidak ditugaskan sebagai guru kelas untuk mana-mana kelas.",
 
     "table": {
       "studentCode": "Kod Pelajar",
@@ -617,7 +635,8 @@
       "delete": "Padam Pelajar",
       "enroll": "Daftar/Pindah",
       "uploadPhotos": "Muat Naik Foto",
-      "managePhotos": "Urus Foto"
+      "managePhotos": "Urus Foto",
+      "capturePhoto": "Tangkap Foto"
     },
 
     "createModal": {
@@ -644,6 +663,12 @@
       "saving": "Menyimpan...",
       "createWithEnrollment": "Cipta pelajar dengan pendaftaran",
       "createWithoutEnrollment": "Cipta pelajar tanpa pendaftaran",
+      "male": "Lelaki",
+      "female": "Perempuan",
+      "enrollDescription": "Cipta pelajar dengan pendaftaran",
+      "enrollmentDetails": "Butiran Pendaftaran",
+      "create": "Cipta",
+      "gender": "Jantina",
       "placeholders": {
         "studentCode": "cth: STU001",
         "fullName": "cth: Ahmad bin Ali",
@@ -653,7 +678,8 @@
         "parentName": "cth: Siti binti Hassan",
         "parentContact": "+60123456789",
         "parentEmail": "parent@email.com",
-        "remarks": "Catatan pilihan tentang pendaftaran/pemindahan"
+        "remarks": "Catatan pilihan tentang pendaftaran/pemindahan",
+        "otherName": "Name Lain (中文名/Nama Lain)"
       }
     },
 
@@ -694,7 +720,8 @@
       "selected": "dipilih",
       "cancel": "Batal",
       "save": "Muat Naik Foto",
-      "uploading": "Memuat naik..."
+      "uploading": "Memuat naik...",
+      "title": "Muat Naik Foto"
     },
 
     "managePhotoModal": {
@@ -748,6 +775,48 @@
       "uploadNew": "Muat Naik Foto Baharu",
       "noPhotos": "Tiada foto dimuat naik",
       "photoCount": "foto"
+    },
+
+    "cameraCapture": {
+      "step2": "2. Ambil swafoto",
+      "positionFace": "Letakkan muka anda dalam bulatan.",
+      "reviewPhoto": "Semak foto anda",
+      "goodHoldStill": "Bagus, jangan gerak",
+      "positionYourFace": "Letakkan muka anda",
+      "photoReady": "✓ Foto sedia",
+      "flipCamera": "Tukar Kamera",
+      "capture": "Tangkap",
+      "retake": "Ambil Semula",
+      "usePhoto": "Guna Foto",
+      "uploading": "Memuat naik...",
+      "cancel": "Batal",
+      "permissionDenied": "Kebenaran kamera ditolak. Sila benarkan akses kamera.",
+      "noCameraFound": "Tiada kamera dijumpai pada peranti ini.",
+      "cameraError": "Tidak dapat mengakses kamera: ",
+      "title": "Tangkap Foto",
+      "subtitle": "Letakkan muka dalam bulatan",
+      "instructions": "Sila pandang terus ke kamera. Muka anda harus kelihatan jelas dalam bingkai bulat.",
+      "upload": "Muat Naik Foto",
+      "switchCamera": "Tukar Kamera",
+      "countdown": "Mengambil foto dalam",
+      "captureSuccess": "Foto berjaya ditangkap!",
+      "uploadSuccess": "Foto berjaya dimuat naik!",
+      "uploadError": "Gagal memuat naik foto. Sila cuba lagi.",
+      "tips": {
+        "title": "Tips untuk hasil terbaik:",
+        "tip1": "Pastikan pencahayaan yang baik pada muka anda",
+        "tip2": "Pandang terus ke kamera",
+        "tip3": "Pastikan muka anda di tengah bingkai",
+        "tip4": "Elakkan memakai cermin mata atau topi jika boleh"
+      }
+    },
+
+    "photoOptions": {
+      "title": "Tambah Foto",
+      "uploadFromDevice": "Muat Naik dari Peranti",
+      "uploadDescription": "Pilih fail foto dari komputer atau telefon anda",
+      "captureWithCamera": "Tangkap dengan Kamera",
+      "captureDescription": "Ambil foto menggunakan kamera peranti anda"
     }
   },
   "teachers": {
@@ -1382,6 +1451,7 @@
   "eventReport": {
     "title": "Laporan Acara",
     "subtitle": "Lihat dan eksport butiran acara dengan peserta",
+    "swipeHint": "Tatal untuk melihat semua",
 
     "buttons": {
       "showFilters": "Tunjuk Penapis",
@@ -1486,5 +1556,74 @@
     "enrollButtonSubtitle": "Naikkan pelajar secara automatik ke {{year}}",
     "alreadyCompleted": "Pendaftaran Telah Selesai",
     "alreadyCompletedMessage": "Pelajar telah berjaya didaftarkan dari {{from}} ke {{to}}. {{count}} pelajar kini berada dalam tahun akademik baharu."
+  },
+
+  "lateReport": {
+    "title": "Laporan Pelajar Lewat",
+    "subtitle": "Lihat dan urus rekod kehadiran lewat",
+    "totalLate": "Jumlah Lewat",
+    "totalPresent": "Tepat Masa",
+    "totalAbsent": "Tidak Hadir",
+    "uniqueRecords": "Rekod Hari Ini",
+    "ofTotal": "daripada jumlah pelajar",
+    "byGrade": "Lewat Mengikut Gred",
+    "byClass": "Lewat Mengikut Kelas",
+    "startDate": "Tarikh Mula",
+    "endDate": "Tarikh Akhir",
+    "date": "Tarikh",
+    "checkInTime": "Masa Daftar Masuk",
+    "studentCode": "Kod Pelajar",
+    "studentName": "Nama Pelajar",
+    "grade": "Gred",
+    "class": "Kelas",
+    "remarks": "Catatan",
+    "snapshot": "Gambar",
+    "viewSnapshot": "Lihat Gambar",
+    "noRecords": "Tiada rekod lewat dijumpai",
+    "searchPlaceholder": "Cari pelajar..."
+  },
+
+  "lateCheckIn": {
+    "title": "Daftar Masuk Lewat",
+    "subtitle": "Rekod ketibaan lewat menggunakan pengecaman muka",
+    "uploadImage": "Muat Naik Imej",
+    "capturePhoto": "Tangkap Foto",
+    "processing": "Memproses...",
+    "recognized": "Pelajar Dikenali",
+    "notRecognized": "Muka Tidak Dikenali",
+    "noFaceDetected": "Tiada Muka Dikesan",
+    "checkInRecorded": "Daftar masuk lewat berjaya direkodkan",
+    "addRemarks": "Tambah catatan (pilihan)",
+    "confidence": "Keyakinan",
+    "scanFace": "Imbas Muka",
+    "manualEntry": "Kemasukan Manual",
+    "uploadPhoto": "Muat Naik Foto",
+    "checkInSuccess": "Daftar masuk lewat berjaya direkodkan",
+    "checkInFailed": "Gagal merekodkan daftar masuk lewat",
+    "multipleFaces": "Berbilang muka dikesan. Sila pastikan hanya satu muka kelihatan."
+  },
+
+  "sidebar": {
+    "lateReport": "Laporan Lewat",
+    "lateCheckIn": "Daftar Masuk Lewat"
+  },
+
+  "changePassword": {
+    "title": "Tukar Kata Laluan",
+    "currentPassword": "Kata Laluan Semasa",
+    "newPassword": "Kata Laluan Baharu",
+    "confirmPassword": "Sahkan Kata Laluan Baharu",
+    "enterCurrent": "Masukkan kata laluan semasa",
+    "enterNew": "Masukkan kata laluan baharu",
+    "enterConfirm": "Sahkan kata laluan baharu",
+    "hint": "Minimum 6 aksara",
+    "submit": "Tukar Kata Laluan",
+    "currentRequired": "Kata laluan semasa diperlukan",
+    "newRequired": "Kata laluan baharu diperlukan",
+    "minLength": "Kata laluan mestilah sekurang-kurangnya 6 aksara",
+    "mismatch": "Kata laluan baharu tidak sepadan",
+    "samePassword": "Kata laluan baharu mestilah berbeza daripada kata laluan semasa",
+    "success": "Kata laluan berjaya ditukar!",
+    "failed": "Gagal menukar kata laluan"
   }
 }

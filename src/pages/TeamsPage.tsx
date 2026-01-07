@@ -110,22 +110,22 @@ const TeamsPage = () => {
     }
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
+        <div className="p-4 sm:p-6 max-w-7xl mx-auto">
             {/* Header */}
-            <div className="mb-8">
-                <div className="flex items-center justify-between mb-6">
+            <div className="mb-6 sm:mb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                            <Users className="w-8 h-8 text-blue-600" />
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+                            <Users className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                             {t('teams.title')}
                         </h1>
-                        <p className="text-gray-600 mt-2">
+                        <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
                             {t('teams.subtitle')}
                         </p>
                     </div>
                     <button
                         onClick={() => setIsAddModalOpen(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors w-full sm:w-auto"
                     >
                         <Plus className="w-5 h-5" />
                         {t('teams.actions.createTeam')}
@@ -133,17 +133,17 @@ const TeamsPage = () => {
                 </div>
 
                 {/* Search and Filters */}
-                <div className="bg-white rounded-lg shadow-sm border p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-white rounded-lg shadow-sm border p-3 sm:p-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                         {/* Search */}
-                        <div className="md:col-span-2 relative">
+                        <div className="sm:col-span-2 relative">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <input
                                 type="text"
                                 placeholder={t('teams.search.placeholder')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full pl-10 pr-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                         </div>
 
@@ -153,7 +153,7 @@ const TeamsPage = () => {
                             <select
                                 value={selectedCategory}
                                 onChange={(e) => setSelectedCategory(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+                                className="w-full pl-10 pr-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
                             >
                                 <option value="All">{t('teams.filters.allCategories')}</option>
                                 {Object.keys(ActivityCategories).map((category) => (
@@ -170,7 +170,7 @@ const TeamsPage = () => {
                             <select
                                 value={selectedActivityType}
                                 onChange={(e) => setSelectedActivityType(e.target.value === 'All' ? 'All' : parseInt(e.target.value))}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+                                className="w-full pl-10 pr-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
                             >
                                 <option value="All">{t('teams.filters.allTypes')}</option>
                                 {Object.entries(ActivityCategories).map(([category, types]) => (
@@ -187,7 +187,7 @@ const TeamsPage = () => {
                     </div>
 
                     {/* Active/Inactive Toggle */}
-                    <div className="mt-4 flex items-center gap-2">
+                    <div className="mt-3 sm:mt-4 flex items-center gap-2">
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input
                                 type="checkbox"
@@ -202,8 +202,8 @@ const TeamsPage = () => {
             </div>
 
             {/* Results Count */}
-            <div className="mb-4">
-                <p className="text-sm text-gray-600">
+            <div className="mb-3 sm:mb-4">
+                <p className="text-xs sm:text-sm text-gray-600">
                     {t('teams.results.showing', {
                         count: filteredTeams.length,
                         total: teams.length
@@ -213,12 +213,12 @@ const TeamsPage = () => {
 
             {/* Empty State */}
             {filteredTeams.length === 0 ? (
-                <div className="text-center py-12">
-                    <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <div className="text-center py-8 sm:py-12">
+                    <Users className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-3 sm:mb-4" />
+                    <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
                         {t('teams.empty.title')}
                     </h3>
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 px-4">
                         {searchTerm || selectedCategory !== 'All' || selectedActivityType !== 'All'
                             ? t('teams.empty.noResults')
                             : t('teams.empty.noTeams')}
@@ -226,7 +226,7 @@ const TeamsPage = () => {
                     {!searchTerm && selectedCategory === 'All' && selectedActivityType === 'All' && (
                         <button
                             onClick={() => setIsAddModalOpen(true)}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            className="inline-flex items-center gap-2 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors"
                         >
                             <Plus className="w-5 h-5" />
                             {t('teams.actions.createTeam')}
@@ -236,34 +236,34 @@ const TeamsPage = () => {
             ) : (
                 <>
                     {/* Teams Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         {currentTeams.map((team) => (
                             <div
                                 key={team.teamID}
                                 className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow overflow-hidden"
                             >
                                 {/* Card Header */}
-                                <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
-                                    <div className="flex items-start justify-between mb-2">
-                                        <div className="flex-1">
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                                <div className="p-3 sm:p-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+                                    <div className="flex items-start justify-between gap-2 mb-2">
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 truncate">
                                                 {team.teamName}
                                             </h3>
-                                            <p className="text-sm text-gray-600 font-mono">
+                                            <p className="text-xs sm:text-sm text-gray-600 font-mono">
                                                 {team.teamCode}
                                             </p>
                                         </div>
                                         {team.isActive ? (
-                                            <span className="px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">
+                                            <span className="px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full flex-shrink-0">
                                                 {t('teams.status.active')}
                                             </span>
                                         ) : (
-                                            <span className="px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full">
+                                            <span className="px-2 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded-full flex-shrink-0">
                                                 {t('teams.status.inactive')}
                                             </span>
                                         )}
                                     </div>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2 flex-wrap">
                                         <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
                                             {t(`teams.categories.${team.activityCategory.toLowerCase().replace(/\s+/g, '')}`)}
                                         </span>
@@ -274,13 +274,13 @@ const TeamsPage = () => {
                                 </div>
 
                                 {/* Card Body */}
-                                <div className="p-4 space-y-3">
+                                <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
                                     {/* Coach */}
                                     {team.coach && (
                                         <div className="flex items-center gap-2 text-sm">
-                                            <User className="w-4 h-4 text-gray-400" />
+                                            <User className="w-4 h-4 text-gray-400 flex-shrink-0" />
                                             <span className="text-gray-600">{t('teams.fields.coach')}:</span>
-                                            <span className="font-medium text-gray-900">
+                                            <span className="font-medium text-gray-900 truncate">
                                                 {team.coach.fullName}
                                             </span>
                                         </div>
@@ -288,7 +288,7 @@ const TeamsPage = () => {
 
                                     {/* Members */}
                                     <div className="flex items-center gap-2 text-sm">
-                                        <Users className="w-4 h-4 text-gray-400" />
+                                        <Users className="w-4 h-4 text-gray-400 flex-shrink-0" />
                                         <span className="text-gray-600">
                                             {t('teams.fields.members', {
                                                 current: team.currentMemberCount,
@@ -300,7 +300,7 @@ const TeamsPage = () => {
                                     {/* Training Schedule */}
                                     {team.trainingSchedule && (
                                         <div className="flex items-center gap-2 text-sm">
-                                            <Calendar className="w-4 h-4 text-gray-400" />
+                                            <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
                                             <span className="text-gray-600 truncate">
                                                 {team.trainingSchedule}
                                             </span>
@@ -310,7 +310,7 @@ const TeamsPage = () => {
                                     {/* Training Venue */}
                                     {team.trainingVenue && (
                                         <div className="flex items-center gap-2 text-sm">
-                                            <MapPin className="w-4 h-4 text-gray-400" />
+                                            <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
                                             <span className="text-gray-600 truncate">
                                                 {team.trainingVenue}
                                             </span>
@@ -320,7 +320,7 @@ const TeamsPage = () => {
                                     {/* Achievements */}
                                     {team.achievements && (
                                         <div className="flex items-start gap-2 text-sm">
-                                            <Trophy className="w-4 h-4 text-yellow-500 mt-0.5" />
+                                            <Trophy className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
                                             <span className="text-gray-600 text-xs line-clamp-2">
                                                 {team.achievements}
                                             </span>
@@ -330,7 +330,7 @@ const TeamsPage = () => {
                                     {/* Division/Age Group */}
                                     {(team.division || team.ageGroup) && (
                                         <div className="flex items-center gap-2 text-sm">
-                                            <Star className="w-4 h-4 text-gray-400" />
+                                            <Star className="w-4 h-4 text-gray-400 flex-shrink-0" />
                                             <span className="text-gray-600">
                                                 {[team.division, team.ageGroup].filter(Boolean).join(' • ')}
                                             </span>
@@ -339,10 +339,10 @@ const TeamsPage = () => {
                                 </div>
 
                                 {/* Card Actions */}
-                                <div className="p-4 border-t bg-gray-50 flex gap-2">
+                                <div className="p-3 sm:p-4 border-t bg-gray-50 flex gap-2">
                                     <button
                                         onClick={() => handleViewTeam(team.teamID)}
-                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors"
                                     >
                                         <Eye className="w-4 h-4" />
                                         {t('teams.actions.view')}
@@ -350,7 +350,7 @@ const TeamsPage = () => {
                                     <button
                                         onClick={() => handleEditTeam(team)}
                                         disabled={loadingTeamDetails}
-                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <Edit className="w-4 h-4" />
                                         {loadingTeamDetails ? t('teams.actions.loading') : t('teams.actions.edit')}
@@ -362,7 +362,7 @@ const TeamsPage = () => {
 
                     {/* Pagination */}
                     {totalPages > 1 && (
-                        <div className="border-t border-gray-200 px-6 py-4 mt-6">
+                        <div className="border-t border-gray-200 px-4 sm:px-6 py-3 sm:py-4 mt-4 sm:mt-6">
                             <Pagination
                                 currentPage={currentPage}
                                 totalPages={totalPages}

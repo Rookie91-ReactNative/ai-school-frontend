@@ -287,18 +287,18 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
                 {/* Header with Success Alert */}
-                <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center z-10 shadow-sm">
-                    <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <h2 className="text-xl font-bold text-gray-900 flex-shrink-0">{t('events.editModal.title')}</h2>
+                <div className="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-4 z-10 shadow-sm">
+                    <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+                        <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex-shrink-0">{t('events.editModal.title')}</h2>
 
                         {success && (
-                            <div className="flex items-center gap-2 px-4 py-2 bg-green-50 border-2 border-green-500 rounded-lg shadow-lg">
-                                <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                            <div className="hidden sm:flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-green-50 border-2 border-green-500 rounded-lg shadow-lg">
+                                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 flex-shrink-0" />
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-semibold text-green-900 whitespace-nowrap">{t('events.editModal.messages.successUpdated')}</p>
+                                    <p className="text-xs sm:text-sm font-semibold text-green-900 whitespace-nowrap">{t('events.editModal.messages.successUpdated')}</p>
                                     <p className="text-xs text-green-700 whitespace-nowrap">{t('events.editModal.messages.closingIn')}</p>
                                 </div>
                             </div>
@@ -307,39 +307,50 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 ml-4"
+                        className="absolute right-4 top-3 sm:relative sm:right-auto sm:top-auto p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 active:bg-gray-200 rounded-lg transition-colors flex-shrink-0"
                         disabled={loading || success}
                     >
-                        <X className="w-6 h-6" />
+                        <X className="w-5 h-5 sm:w-6 sm:h-6" />
                     </button>
                 </div>
 
+                {/* Mobile Success Alert */}
+                {success && (
+                    <div className="sm:hidden mx-4 mt-4 flex items-center gap-2 px-3 py-2 bg-green-50 border-2 border-green-500 rounded-lg">
+                        <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                            <p className="text-xs font-semibold text-green-900">{t('events.editModal.messages.successUpdated')}</p>
+                            <p className="text-xs text-green-700">{t('events.editModal.messages.closingIn')}</p>
+                        </div>
+                    </div>
+                )}
+
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="p-6">
+                <form onSubmit={handleSubmit} className="p-4 sm:p-6">
                     {/* Error Alert */}
                     {error && !success && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                        <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2 sm:gap-3">
                             <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                            <p className="text-sm text-red-700">{error}</p>
+                            <p className="text-xs sm:text-sm text-red-700">{error}</p>
                         </div>
                     )}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                         {/* Basic Information */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('events.editModal.sections.basicInfo')}</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('events.editModal.sections.basicInfo')}</h3>
                         </div>
 
                         {/* Event Name */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 {t('events.editModal.fields.eventName')} *
                             </label>
                             <input
                                 type="text"
                                 value={formData.eventName || ''}
                                 onChange={(e) => handleChange('eventName', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder={t('events.editModal.placeholders.eventName')}
                                 required
                                 disabled={loading || success}
@@ -348,13 +359,13 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* Event Type */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 {t('events.editModal.fields.eventType')} *
                             </label>
                             <select
                                 value={formData.eventType ?? EventType.Training}
                                 onChange={(e) => handleChange('eventType', Number(e.target.value) as EventType)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 required
                                 disabled={loading || success}
                             >
@@ -368,13 +379,13 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* Activity Type */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 {t('events.editModal.fields.activityType')} *
                             </label>
                             <select
                                 value={formData.activityType ?? ActivityType.Football}
                                 onChange={(e) => handleChange('activityType', Number(e.target.value) as ActivityType)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 required
                                 disabled={loading || success}
                             >
@@ -388,7 +399,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* ✅ NEW - Event Mode (Online/Offline) */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 {formData.eventMode === EventMode.Online ? (
                                     <Globe className="w-4 h-4 inline mr-2 text-cyan-600" />
                                 ) : (
@@ -399,7 +410,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                             <select
                                 value={formData.eventMode ?? EventMode.Offline}
                                 onChange={(e) => handleChange('eventMode', Number(e.target.value) as EventMode)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 required
                                 disabled={loading || success}
                             >
@@ -420,7 +431,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* Multiple Teachers Selection */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 <Users className="w-4 h-4 inline mr-2" />
                                 {t('events.editModal.fields.leadingTeacher') || 'Assigned Teachers'} *
                                 {isTeacherRole && currentUserTeacherId && (
@@ -429,13 +440,13 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                             </label>
 
                             {isLoadingEventDetails ? (
-                                <div className="p-4 bg-gray-50 border border-gray-300 rounded-lg text-center">
-                                    <p className="text-sm text-gray-500">Loading teacher assignments...</p>
+                                <div className="p-3 sm:p-4 bg-gray-50 border border-gray-300 rounded-lg text-center">
+                                    <p className="text-xs sm:text-sm text-gray-500">Loading teacher assignments...</p>
                                 </div>
                             ) : (
-                                <div className="border border-gray-300 rounded-lg max-h-64 overflow-y-auto">
+                                <div className="border border-gray-300 rounded-lg max-h-48 sm:max-h-64 overflow-y-auto">
                                     {teachers.length === 0 ? (
-                                        <div className="p-4 text-center text-gray-500">
+                                        <div className="p-3 sm:p-4 text-center text-gray-500 text-sm">
                                             {t('events.editModal.messages.noTeachers') || 'No teachers available'}
                                         </div>
                                     ) : (
@@ -448,9 +459,9 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                                                 return (
                                                     <div
                                                         key={teacher.teacherID}
-                                                        className={`p-3 hover:bg-gray-50 transition-colors ${isSelected ? 'bg-blue-50' : ''}`}
+                                                        className={`p-2.5 sm:p-3 hover:bg-gray-50 transition-colors ${isSelected ? 'bg-blue-50' : ''}`}
                                                     >
-                                                        <div className="flex items-center gap-3">
+                                                        <div className="flex items-center gap-2 sm:gap-3">
                                                             <input
                                                                 type="checkbox"
                                                                 checked={isSelected}
@@ -460,12 +471,12 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                                                             />
 
                                                             <div className="flex-1 min-w-0">
-                                                                <div className="flex items-center gap-2">
-                                                                    <span className={`font-medium ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
+                                                                <div className="flex items-center gap-2 flex-wrap">
+                                                                    <span className={`font-medium text-sm sm:text-base ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
                                                                         {teacher.fullName}
                                                                     </span>
                                                                     {isPrimary && (
-                                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
+                                                                        <span className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
                                                                             <Star className="w-3 h-3 fill-yellow-500" />
                                                                             {t('events.editModal.labels.primary') || 'Primary'}
                                                                         </span>
@@ -486,7 +497,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                                                                     type="button"
                                                                     onClick={() => handleSetPrimaryTeacher(teacher.teacherID)}
                                                                     disabled={loading || success}
-                                                                    className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                                                                    className="text-xs text-blue-600 hover:text-blue-800 active:text-blue-900 font-medium whitespace-nowrap"
                                                                     title={t('events.editModal.buttons.setPrimary') || 'Set as primary'}
                                                                 >
                                                                     {t('events.editModal.buttons.setPrimary') || 'Set Primary'}
@@ -502,7 +513,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                             )}
 
                             {selectedTeacherIds.length > 0 && (
-                                <p className="mt-2 text-sm text-gray-600">
+                                <p className="mt-2 text-xs sm:text-sm text-gray-600">
                                     {t('events.editModal.messages.teachersSelected') || 'Selected'}: {selectedTeacherIds.length} {t('events.editModal.labels.teachers') || 'teacher(s)'}
                                 </p>
                             )}
@@ -510,14 +521,14 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* Date & Time */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 mt-2 sm:mt-4">
                                 {t('events.editModal.sections.dateTime')}
                             </h3>
                         </div>
 
                         {/* Start Date */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 <Calendar className="w-4 h-4 inline mr-2" />
                                 {t('events.editModal.fields.startDate') || 'Start Date'} *
                             </label>
@@ -525,7 +536,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                                 type="date"
                                 value={formData.eventDate || ''}
                                 onChange={(e) => handleChange('eventDate', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 required
                                 disabled={loading || success}
                             />
@@ -533,7 +544,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* End Date (Optional) */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 <Calendar className="w-4 h-4 inline mr-2" />
                                 {t('events.editModal.fields.endDate') || 'End Date'}
                                 <span className="text-xs text-gray-500 ml-1">
@@ -545,7 +556,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                                 value={formData.endDate || ''}
                                 onChange={(e) => handleChange('endDate', e.target.value || undefined)}
                                 min={formData.eventDate}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 disabled={loading || success}
                             />
                             <p className="text-xs text-gray-500 mt-1">
@@ -555,7 +566,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* Start Time */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 <Clock className="w-4 h-4 inline mr-2" />
                                 {t('events.editModal.fields.startTime')} *
                             </label>
@@ -563,7 +574,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                                 type="time"
                                 value={formData.startTime}
                                 onChange={(e) => handleChange('startTime', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 required
                                 disabled={loading || success}
                             />
@@ -571,7 +582,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* End Time (Optional) */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 <Clock className="w-4 h-4 inline mr-2" />
                                 {t('events.editModal.fields.endTime')}
                             </label>
@@ -579,19 +590,19 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                                 type="time"
                                 value={formData.endTime || ''}
                                 onChange={(e) => handleChange('endTime', e.target.value || undefined)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 disabled={loading || success}
                             />
                         </div>
 
                         {/* Location */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">{t('events.editModal.sections.location')}</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 mt-2 sm:mt-4">{t('events.editModal.sections.location')}</h3>
                         </div>
 
                         {/* ✅ UPDATED - Venue is now completely optional */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2 flex items-center gap-2">
                                 <MapPin className="w-4 h-4 text-gray-500" />
                                 {t('events.editModal.fields.venue')}
                                 <span className="text-xs text-gray-500 ml-1">
@@ -602,7 +613,7 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                                 type="text"
                                 value={formData.venue || ''}
                                 onChange={(e) => handleChange('venue', e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder={
                                     formData.eventMode === EventMode.Online
                                         ? (t('events.editModal.placeholders.venueOnline') || 'e.g., Zoom, Google Meet, Microsoft Teams')
@@ -619,14 +630,14 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* Venue Address */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 {t('events.editModal.fields.venueAddress')}
                             </label>
                             <input
                                 type="text"
                                 value={formData.venueAddress || ''}
                                 onChange={(e) => handleChange('venueAddress', e.target.value || undefined)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder={
                                     formData.eventMode === EventMode.Online
                                         ? (t('events.editModal.placeholders.venueAddressOnline') || 'e.g., Meeting URL or access instructions')
@@ -638,19 +649,19 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* Additional Information */}
                         <div className="md:col-span-2">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-4">{t('events.editModal.sections.additionalInfo')}</h3>
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 mt-2 sm:mt-4">{t('events.editModal.sections.additionalInfo')}</h3>
                         </div>
 
                         {/* Result */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 {t('events.editModal.fields.result')}
                             </label>
                             <input
                                 type="text"
                                 value={formData.result || ''}
                                 onChange={(e) => handleChange('result', e.target.value || undefined)}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder={t('events.editModal.placeholders.result')}
                                 disabled={loading || success}
                             />
@@ -658,14 +669,14 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* Awards Received */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 {t('events.editModal.fields.awardsReceived')}
                             </label>
                             <textarea
                                 value={formData.awardsReceived || ''}
                                 onChange={(e) => handleChange('awardsReceived', e.target.value || undefined)}
                                 rows={3}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder={t('events.editModal.placeholders.awardsReceived')}
                                 disabled={loading || success}
                             />
@@ -673,14 +684,14 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
 
                         {/* Remarks / Suggestions */}
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 {t('events.editModal.fields.remarks')}
                             </label>
                             <textarea
                                 value={formData.remarks || ''}
                                 onChange={(e) => handleChange('remarks', e.target.value || undefined)}
                                 rows={3}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder={t('events.editModal.placeholders.remarks')}
                                 disabled={loading || success}
                             />
@@ -688,18 +699,18 @@ const EditEventModal = ({ event, onClose, onSuccess }: EditEventModalProps) => {
                     </div>
 
                     {/* Footer Buttons */}
-                    <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+                    <div className="flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3 mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                            className="w-full sm:w-auto px-6 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-colors order-2 sm:order-1"
                             disabled={loading || success}
                         >
                             {t('events.editModal.buttons.cancel')}
                         </button>
                         <button
                             type="submit"
-                            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors"
+                            className="w-full sm:w-auto px-6 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors order-1 sm:order-2"
                             disabled={loading || success}
                         >
                             {loading ? t('events.editModal.buttons.updating') : success ? t('events.editModal.buttons.updated') : t('events.editModal.buttons.update')}

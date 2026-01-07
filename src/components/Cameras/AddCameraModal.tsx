@@ -102,30 +102,30 @@ const AddCameraModal = ({ isOpen, onClose, onSuccess }: AddCameraModalProps) => 
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
                 {/* Header */}
-                <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                <div className="border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center justify-between flex-shrink-0">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                            <Camera className="w-6 h-6 text-blue-600" />
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+                            <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                             {t('cameras.addCameraModalTitle')}
                         </h2>
-                        <p className="text-sm text-gray-600 mt-1">{t('cameras.addCameraModalSubtitle')}</p>
+                        <p className="text-xs sm:text-sm text-gray-600 mt-1">{t('cameras.addCameraModalSubtitle')}</p>
                     </div>
                     <button
                         onClick={handleClose}
-                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="p-2 hover:bg-gray-100 active:bg-gray-200 rounded-lg transition-colors"
                     >
                         <X className="w-6 h-6 text-gray-600" />
                     </button>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
                     {/* Error Message */}
                     {error && (
-                        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-800">
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-xs sm:text-sm text-red-800">
                             {error}
                         </div>
                     )}
@@ -135,22 +135,22 @@ const AddCameraModal = ({ isOpen, onClose, onSuccess }: AddCameraModalProps) => 
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             {t('cameras.cameraType')} <span className="text-red-500">{t('cameras.required')}</span>
                         </label>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 gap-2 sm:gap-3">
                             {/* RTSP Camera Option */}
                             <button
                                 type="button"
                                 onClick={() => setFormData({ ...formData, cameraType: 1 })}
-                                className={`p-4 border-2 rounded-lg transition-all ${formData.cameraType === 1
-                                        ? 'border-blue-500 bg-blue-50'
-                                        : 'border-gray-200 hover:border-gray-300'
+                                className={`p-3 sm:p-4 border-2 rounded-lg transition-all ${formData.cameraType === 1
+                                    ? 'border-blue-500 bg-blue-50'
+                                    : 'border-gray-200 hover:border-gray-300 active:bg-gray-50'
                                     }`}
                             >
-                                <Video className={`w-6 h-6 mx-auto mb-2 ${formData.cameraType === 1 ? 'text-blue-600' : 'text-gray-400'
+                                <Video className={`w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 ${formData.cameraType === 1 ? 'text-blue-600' : 'text-gray-400'
                                     }`} />
-                                <div className="text-sm font-medium text-gray-900">
+                                <div className="text-xs sm:text-sm font-medium text-gray-900">
                                     {t('cameras.cameraTypeRTSP')}
                                 </div>
-                                <div className="text-xs text-gray-500 mt-1">
+                                <div className="text-xs text-gray-500 mt-0.5 sm:mt-1 hidden sm:block">
                                     {t('cameras.traditionalIPCamera')}
                                 </div>
                             </button>
@@ -159,17 +159,17 @@ const AddCameraModal = ({ isOpen, onClose, onSuccess }: AddCameraModalProps) => 
                             <button
                                 type="button"
                                 onClick={() => setFormData({ ...formData, cameraType: 2 })}
-                                className={`p-4 border-2 rounded-lg transition-all ${formData.cameraType === 2
-                                        ? 'border-purple-500 bg-purple-50'
-                                        : 'border-gray-200 hover:border-gray-300'
+                                className={`p-3 sm:p-4 border-2 rounded-lg transition-all ${formData.cameraType === 2
+                                    ? 'border-purple-500 bg-purple-50'
+                                    : 'border-gray-200 hover:border-gray-300 active:bg-gray-50'
                                     }`}
                             >
-                                <Brain className={`w-6 h-6 mx-auto mb-2 ${formData.cameraType === 2 ? 'text-purple-600' : 'text-gray-400'
+                                <Brain className={`w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 ${formData.cameraType === 2 ? 'text-purple-600' : 'text-gray-400'
                                     }`} />
-                                <div className="text-sm font-medium text-gray-900">
+                                <div className="text-xs sm:text-sm font-medium text-gray-900">
                                     {t('cameras.cameraTypeP6SAI')}
                                 </div>
-                                <div className="text-xs text-gray-500 mt-1">
+                                <div className="text-xs text-gray-500 mt-0.5 sm:mt-1 hidden sm:block">
                                     {t('cameras.aiFaceRecognition')}
                                 </div>
                             </button>
@@ -178,7 +178,7 @@ const AddCameraModal = ({ isOpen, onClose, onSuccess }: AddCameraModalProps) => 
 
                     {/* Camera Name */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
                             {t('cameras.cameraName')} <span className="text-red-500">{t('cameras.required')}</span>
                         </label>
                         <input
@@ -187,14 +187,14 @@ const AddCameraModal = ({ isOpen, onClose, onSuccess }: AddCameraModalProps) => 
                             value={formData.cameraName}
                             onChange={handleChange}
                             placeholder={t('cameras.cameraNamePlaceholder')}
-                            className="input-field"
+                            className="input-field py-2.5 sm:py-2 text-base sm:text-sm"
                             required
                         />
                     </div>
 
                     {/* Location */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
                             {t('cameras.location')}
                         </label>
                         <input
@@ -203,14 +203,14 @@ const AddCameraModal = ({ isOpen, onClose, onSuccess }: AddCameraModalProps) => 
                             value={formData.location}
                             onChange={handleChange}
                             placeholder={t('cameras.locationPlaceholder')}
-                            className="input-field"
+                            className="input-field py-2.5 sm:py-2 text-base sm:text-sm"
                         />
                     </div>
 
                     {/* RTSP URL - Only for RTSP cameras */}
                     {formData.cameraType === 1 && (
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
                                 {t('cameras.rtspUrl')} <span className="text-red-500">{t('cameras.required')}</span>
                             </label>
                             <input
@@ -219,7 +219,7 @@ const AddCameraModal = ({ isOpen, onClose, onSuccess }: AddCameraModalProps) => 
                                 value={formData.rtspUrl}
                                 onChange={handleChange}
                                 placeholder={t('cameras.rtspUrlPlaceholder')}
-                                className="input-field"
+                                className="input-field py-2.5 sm:py-2 text-base sm:text-sm"
                             />
                             <p className="text-xs text-gray-500 mt-1">
                                 {t('cameras.rtspExampleTitle')}
@@ -234,7 +234,7 @@ const AddCameraModal = ({ isOpen, onClose, onSuccess }: AddCameraModalProps) => 
                     {/* Device Serial - Only for P6SAI cameras */}
                     {formData.cameraType === 2 && (
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
                                 {t('cameras.deviceSerial')} <span className="text-red-500">{t('cameras.required')}</span>
                             </label>
                             <input
@@ -243,7 +243,7 @@ const AddCameraModal = ({ isOpen, onClose, onSuccess }: AddCameraModalProps) => 
                                 value={formData.deviceSerial}
                                 onChange={handleChange}
                                 placeholder={t('cameras.deviceSerialPlaceholder')}
-                                className="input-field"
+                                className="input-field py-2.5 sm:py-2 text-base sm:text-sm"
                             />
                             <p className="text-xs text-gray-500 mt-1">
                                 {t('cameras.deviceSerialHint')}
@@ -253,7 +253,7 @@ const AddCameraModal = ({ isOpen, onClose, onSuccess }: AddCameraModalProps) => 
 
                     {/* IP Address - Optional for both types */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
                             {t('cameras.ipAddress')}{' '}
                             <span className="text-gray-400 text-xs">({t('cameras.optional')})</span>
                         </label>
@@ -263,16 +263,16 @@ const AddCameraModal = ({ isOpen, onClose, onSuccess }: AddCameraModalProps) => 
                             value={formData.ipAddress}
                             onChange={handleChange}
                             placeholder={t('cameras.ipAddressPlaceholder')}
-                            className="input-field"
+                            className="input-field py-2.5 sm:py-2 text-base sm:text-sm"
                         />
                     </div>
 
                     {/* Guidelines */}
                     <div className={`${formData.cameraType === 1
-                            ? 'bg-blue-50 border-blue-200'
-                            : 'bg-purple-50 border-purple-200'
+                        ? 'bg-blue-50 border-blue-200'
+                        : 'bg-purple-50 border-purple-200'
                         } border rounded-lg p-3`}>
-                        <p className={`text-sm font-semibold ${formData.cameraType === 1 ? 'text-blue-900' : 'text-purple-900'
+                        <p className={`text-xs sm:text-sm font-semibold ${formData.cameraType === 1 ? 'text-blue-900' : 'text-purple-900'
                             } mb-1`}>
                             {formData.cameraType === 1
                                 ? t('cameras.rtspSetupTitle')
@@ -304,14 +304,14 @@ const AddCameraModal = ({ isOpen, onClose, onSuccess }: AddCameraModalProps) => 
                             type="button"
                             onClick={handleClose}
                             disabled={isSubmitting}
-                            className="flex-1 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                            className="flex-1 px-4 py-2.5 sm:py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors disabled:opacity-50"
                         >
                             {t('cameras.cancel')}
                         </button>
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex-1 btn-primary flex items-center justify-center gap-2"
+                            className="flex-1 btn-primary flex items-center justify-center gap-2 py-2.5 sm:py-2"
                         >
                             {isSubmitting ? (
                                 <>

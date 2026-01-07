@@ -68,7 +68,17 @@
     "thisClassHas": "This class has",
     "studentsEnrolled": "student(s) enrolled.",
     "deactivate": "Deactivate",
-    "clearSearch": "Clear search"
+    "clearSearch": "Clear search",
+    "filters": "Filters",
+    "refresh": "Refresh",
+    "export": "Export CSV",
+    "grade": "Grade",
+    "class": "Class",
+    "allGrades": "All Grades",
+    "allClasses": "All Classes",
+    "showing": "Showing",
+    "of": "of",
+    "upload": "Upload"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -88,7 +98,8 @@
     "teams": "Teams",
     "events": "Events",
     "eventsReport": "Events Report",
-    "importStudents": "Import Students"
+    "importStudents": "Import Students",
+    "lateReport": "Late Report"
   },
   "unauthorized": {
     "title": "Access Denied",
@@ -133,6 +144,8 @@
     "updating": "Updating...",
     "selectState": "Select State",
     "capacity": "Capacity: 50 - 10,000 students",
+    "swipeHint": "Scroll to see all",
+
     "validation": {
       "schoolCodeRequired": "School code is required",
       "schoolCodeMin": "School code must be at least 2 characters",
@@ -194,6 +207,8 @@
     "save": "Save",
     "creating": "Creating...",
     "updating": "Updating...",
+    "swipeHint": "Scroll to see all",
+
     "validation": {
       "usernameRequired": "Username is required",
       "usernameMin": "Username must be at least 3 characters",
@@ -585,6 +600,9 @@
     "notEnrolled": "Not Enrolled",
     "notEnrolledFilter": "⚠️ Not Enrolled (No Academic Year)",
     "otherNameHint": "Alternative name in another language (e.g., Chinese name 中文名, Tamil name)",
+    "yourClasses": "Your Assigned Classes",
+    "teacherPhotoPermission": "You can manage photos for students in your assigned classes.",
+    "noAssignedClasses": "You are not assigned as a class teacher to any class.",
 
     "table": {
       "studentCode": "Student Code",
@@ -617,7 +635,8 @@
       "delete": "Delete Student",
       "enroll": "Enroll/Transfer",
       "uploadPhotos": "Upload Photos",
-      "managePhotos": "Manage Photos"
+      "managePhotos": "Manage Photos",
+      "capturePhoto": "Capture Photo"
     },
 
     "createModal": {
@@ -644,6 +663,12 @@
       "saving": "Creating...",
       "createWithEnrollment": "Create student with enrollment",
       "createWithoutEnrollment": "Create student without enrollment",
+      "male": "Male",
+      "female": "Female",
+      "enrollDescription": "Create student with enrollment",
+      "enrollmentDetails": "Enrollment Details",
+      "create": "Create",
+      "gender": "Gender",
       "placeholders": {
         "studentCode": "e.g., STU001",
         "fullName": "e.g., John Doe",
@@ -653,7 +678,8 @@
         "parentName": "e.g., Jane Doe",
         "parentContact": "+60123456789",
         "parentEmail": "parent@email.com",
-        "remarks": "Optional notes about enrollment/transfer"
+        "remarks": "Optional notes about enrollment/transfer",
+        "otherName": "Other Name (中文名/Nama Lain)"
       }
     },
 
@@ -694,7 +720,8 @@
       "selected": "selected",
       "cancel": "Cancel",
       "save": "Upload Photo",
-      "uploading": "Uploading..."
+      "uploading": "Uploading...",
+      "title": "Upload Photos"
     },
 
     "managePhotoModal": {
@@ -748,6 +775,48 @@
       "uploadNew": "Upload New Photos",
       "noPhotos": "No photos uploaded",
       "photoCount": "photos"
+    },
+
+    "cameraCapture": {
+      "step2": "2. Take a selfie",
+      "positionFace": "Position your face in the circle.",
+      "reviewPhoto": "Review your photo",
+      "goodHoldStill": "Good, hold still",
+      "positionYourFace": "Position your face",
+      "photoReady": "✓ Photo ready",
+      "flipCamera": "Flip Camera",
+      "capture": "Capture",
+      "retake": "Retake",
+      "usePhoto": "Use Photo",
+      "uploading": "Uploading...",
+      "cancel": "Cancel",
+      "permissionDenied": "Camera permission denied. Please allow camera access.",
+      "noCameraFound": "No camera found on this device.",
+      "cameraError": "Unable to access camera: ",
+      "title": "Capture Photo",
+      "subtitle": "Position face within the circle",
+      "instructions": "Please look directly at the camera. Your face should be clearly visible within the circular frame.",
+      "upload": "Upload Photo",
+      "switchCamera": "Switch Camera",
+      "countdown": "Taking photo in",
+      "captureSuccess": "Photo captured successfully!",
+      "uploadSuccess": "Photo uploaded successfully!",
+      "uploadError": "Failed to upload photo. Please try again.",
+      "tips": {
+        "title": "Tips for best results:",
+        "tip1": "Ensure good lighting on your face",
+        "tip2": "Look directly at the camera",
+        "tip3": "Keep your face centered in the frame",
+        "tip4": "Avoid wearing glasses or hats if possible"
+      }
+    },
+
+    "photoOptions": {
+      "title": "Add Photo",
+      "uploadFromDevice": "Upload from Device",
+      "uploadDescription": "Select photo files from your computer or phone",
+      "captureWithCamera": "Capture with Camera",
+      "captureDescription": "Take a photo using your device camera"
     }
   },
   "teachers": {
@@ -1383,6 +1452,7 @@
   "eventReport": {
     "title": "Event Report",
     "subtitle": "View and export event details with participants",
+    "swipeHint": "Scroll to see all",
 
     "buttons": {
       "showFilters": "Show Filters",
@@ -1582,5 +1652,74 @@
     "enrollButtonSubtitle": "Automatically promote students to {{year}}",
     "alreadyCompleted": "Enrollment Already Completed",
     "alreadyCompletedMessage": "Students have been successfully enrolled from {{from}} to {{to}}. {{count}} students are now in the new academic year."
+  },
+
+  "lateReport": {
+    "title": "Late Students Report",
+    "subtitle": "View and manage late attendance records",
+    "totalLate": "Total Late",
+    "totalPresent": "On Time",
+    "totalAbsent": "Absent",
+    "uniqueRecords": "Records Today",
+    "ofTotal": "of total students",
+    "byGrade": "Late by Grade",
+    "byClass": "Late by Class",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "date": "Date",
+    "checkInTime": "Check-in Time",
+    "studentCode": "Student Code",
+    "studentName": "Student Name",
+    "grade": "Grade",
+    "class": "Class",
+    "remarks": "Remarks",
+    "snapshot": "Snapshot",
+    "viewSnapshot": "View Snapshot",
+    "noRecords": "No late records found",
+    "searchPlaceholder": "Search student..."
+  },
+
+  "lateCheckIn": {
+    "title": "Late Check-in",
+    "subtitle": "Record late arrivals using face recognition",
+    "uploadImage": "Upload Image",
+    "capturePhoto": "Capture Photo",
+    "processing": "Processing...",
+    "recognized": "Student Recognized",
+    "notRecognized": "Face Not Recognized",
+    "noFaceDetected": "No Face Detected",
+    "checkInRecorded": "Late check-in recorded successfully",
+    "addRemarks": "Add remarks (optional)",
+    "confidence": "Confidence",
+    "scanFace": "Scan Face",
+    "manualEntry": "Manual Entry",
+    "uploadPhoto": "Upload Photo",
+    "checkInSuccess": "Late check-in recorded successfully",
+    "checkInFailed": "Failed to record late check-in",
+    "multipleFaces": "Multiple faces detected. Please ensure only one face is visible."
+  },
+
+  "sidebar": {
+    "lateReport": "Late Report",
+    "lateCheckIn": "Late Check-in"
+  },
+
+  "changePassword": {
+    "title": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "enterCurrent": "Enter current password",
+    "enterNew": "Enter new password",
+    "enterConfirm": "Confirm new password",
+    "hint": "Minimum 6 characters",
+    "submit": "Change Password",
+    "currentRequired": "Current password is required",
+    "newRequired": "New password is required",
+    "minLength": "Password must be at least 6 characters",
+    "mismatch": "New passwords do not match",
+    "samePassword": "New password must be different from current password",
+    "success": "Password changed successfully!",
+    "failed": "Failed to change password"
   }
 }

@@ -315,74 +315,76 @@ const EventReportPage = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-64">
+            <div className="flex items-center justify-center h-48 sm:h-64">
                 <LoadingSpinner />
             </div>
         );
     }
 
     return (
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
             {/* Header */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 sm:mb-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{t('eventReport.title')}</h1>
-                    <p className="text-gray-600 mt-1">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('eventReport.title')}</h1>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1">
                         {t('eventReport.subtitle')}
                     </p>
                 </div>
                 <div className="flex gap-2">
                     <button
                         onClick={() => setShowFilters(!showFilters)}
-                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 active:bg-gray-300 transition-colors text-sm"
                     >
                         <Filter className="w-4 h-4" />
-                        {showFilters ? t('eventReport.buttons.hideFilters') : t('eventReport.buttons.showFilters')}
+                        <span className="hidden sm:inline">{showFilters ? t('eventReport.buttons.hideFilters') : t('eventReport.buttons.showFilters')}</span>
+                        <span className="sm:hidden">{showFilters ? t('eventReport.buttons.hideFilters') : t('eventReport.buttons.showFilters')}</span>
                     </button>
                     <button
                         onClick={exportToExcel}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 active:bg-green-800 transition-colors text-sm"
                     >
                         <FileDown className="w-4 h-4" />
-                        {t('eventReport.buttons.exportExcel')}
+                        <span className="hidden sm:inline">{t('eventReport.buttons.exportExcel')}</span>
+                        <span className="sm:hidden">{t('eventReport.buttons.exportExcel') || 'Export'}</span>
                     </button>
                 </div>
             </div>
 
             {/* Filters */}
             {showFilters && (
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 {t('eventReport.filters.startDate')}
                             </label>
                             <input
                                 type="date"
                                 value={startDate}
                                 onChange={(e) => setStartDate(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 {t('eventReport.filters.endDate')}
                             </label>
                             <input
                                 type="date"
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 {t('eventReport.filters.eventType')}
                             </label>
                             <select
                                 value={selectedEventType}
                                 onChange={(e) => setSelectedEventType(e.target.value === '' ? '' : Number(e.target.value) as EventType)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             >
                                 <option value="">{t('eventReport.filters.allTypes')}</option>
                                 {Object.entries(EventTypeLabels).map(([key, label]) => (
@@ -393,13 +395,13 @@ const EventReportPage = () => {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
                                 {t('eventReport.filters.status')}
                             </label>
                             <select
                                 value={selectedStatus}
                                 onChange={(e) => setSelectedStatus(e.target.value === '' ? '' : Number(e.target.value) as EventStatus)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             >
                                 <option value="">{t('eventReport.filters.allStatus')}</option>
                                 {Object.entries(EventStatusLabels).map(([key, label]) => (
@@ -408,10 +410,10 @@ const EventReportPage = () => {
                             </select>
                         </div>
                     </div>
-                    <div className="mt-4 flex justify-end">
+                    <div className="mt-3 sm:mt-4 flex justify-end">
                         <button
                             onClick={clearFilters}
-                            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800"
+                            className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 active:text-gray-900 text-sm"
                         >
                             <X className="w-4 h-4" />
                             {t('eventReport.buttons.clearFilters')}
@@ -421,20 +423,20 @@ const EventReportPage = () => {
             )}
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                    <p className="text-sm text-gray-600">{t('eventReport.summary.totalEvents')}</p>
-                    <p className="text-2xl font-bold text-gray-900">{filteredEvents.length}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm text-gray-600">{t('eventReport.summary.totalEvents')}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-gray-900">{filteredEvents.length}</p>
                 </div>
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                    <p className="text-sm text-gray-600">{t('eventReport.summary.totalParticipants')}</p>
-                    <p className="text-2xl font-bold text-gray-900">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm text-gray-600">{t('eventReport.summary.totalParticipants')}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-gray-900">
                         {filteredEvents.reduce((sum, e) => sum + e.participants.length, 0)}
                     </p>
                 </div>
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                    <p className="text-sm text-gray-600">{t('eventReport.summary.dateRange')}</p>
-                    <p className="text-lg font-medium text-gray-900">
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm text-gray-600">{t('eventReport.summary.dateRange')}</p>
+                    <p className="text-sm sm:text-lg font-medium text-gray-900">
                         {startDate && endDate
                             ? `${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`
                             : t('eventReport.summary.allDates')}
@@ -444,116 +446,122 @@ const EventReportPage = () => {
 
             {/* Report Table */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                {/* Mobile hint */}
+                <div className="sm:hidden px-4 py-2 bg-gray-50 border-b border-gray-200 text-xs text-gray-500 flex items-center gap-1">
+                    <span>←</span>
+                    {t('eventReport.swipeHint') || 'Scroll horizontally to see all columns'}
+                    <span>→</span>
+                </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
                                 {/* ✅ NEW: Primary Teacher Column */}
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('primaryTeacher')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.primaryTeacher') || 'Primary Teacher'} {getSortIcon('primaryTeacher')}
                                     </div>
                                 </th>
                                 {/* ✅ NEW: All Teachers Column */}
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('allTeachers')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.allTeachers') || 'All Teachers'} {getSortIcon('allTeachers')}
                                     </div>
                                 </th>
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('studentName')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.students')} {getSortIcon('studentName')}
                                     </div>
                                 </th>
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('gender')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.gender')} {getSortIcon('gender')}
                                     </div>
                                 </th>
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('class')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.className')} {getSortIcon('class')}
                                     </div>
                                 </th>
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('eventName')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.eventName')} {getSortIcon('eventName')}
                                     </div>
                                 </th>
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('eventType')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.eventType')} {getSortIcon('eventType')}
                                     </div>
                                 </th>
                                 {/* ✅ NEW: Event Mode Column */}
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('eventMode')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.eventMode') || 'Event Mode'} {getSortIcon('eventMode')}
                                     </div>
                                 </th>
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('remarks')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.remarks')} {getSortIcon('remarks')}
                                     </div>
                                 </th>
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('result')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.results')} {getSortIcon('result')}
                                     </div>
                                 </th>
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('achievement')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.achievement')} {getSortIcon('achievement')}
                                     </div>
                                 </th>
                                 {/* ✅ UPDATED: Event Start Date (renamed from Event Date) */}
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('eventStartDate')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.eventStartDate') || 'Start Date'} {getSortIcon('eventStartDate')}
                                     </div>
                                 </th>
                                 {/* ✅ NEW: Event End Date Column */}
                                 <th
-                                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                                    className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 active:bg-gray-200 whitespace-nowrap"
                                     onClick={() => handleSort('eventEndDate')}
                                 >
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1 sm:gap-2">
                                         {t('eventReport.table.eventEndDate') || 'End Date'} {getSortIcon('eventEndDate')}
                                     </div>
                                 </th>
@@ -562,9 +570,9 @@ const EventReportPage = () => {
                         <tbody className="bg-white divide-y divide-gray-200">
                             {filteredEvents.length === 0 ? (
                                 <tr>
-                                    <td colSpan={13} className="px-4 py-8 text-center text-gray-500">
-                                        <Calendar className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-                                        <p>{t('eventReport.noEventsFound')}</p>
+                                    <td colSpan={13} className="px-4 py-6 sm:py-8 text-center text-gray-500">
+                                        <Calendar className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 text-gray-400" />
+                                        <p className="text-sm sm:text-base">{t('eventReport.noEventsFound')}</p>
                                     </td>
                                 </tr>
                             ) : (
@@ -574,59 +582,59 @@ const EventReportPage = () => {
                                         return (
                                             <tr key={`${event.eventID}-${participant.studentID}-${index}`} className="hover:bg-gray-50">
                                                 {/* ✅ NEW: Primary Teacher */}
-                                                <td className="px-4 py-3 text-sm text-gray-900">
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 whitespace-nowrap">
                                                     {getPrimaryTeacherName(event)}
                                                 </td>
                                                 {/* ✅ NEW: All Teachers */}
-                                                <td className="px-4 py-3 text-sm text-gray-600">
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600">
                                                     <span className="max-w-xs truncate block" title={getAllTeachersString(event)}>
                                                         {getAllTeachersString(event)}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 whitespace-nowrap">
                                                     {participant.studentName}
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 whitespace-nowrap">
                                                     {participantWithGender.gender || '-'}
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 whitespace-nowrap">
                                                     {participant.class}
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">
                                                     {event.eventName}
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 whitespace-nowrap">
                                                     {getTranslatedEventType(EventTypeLabels[event.eventType], t)}
                                                 </td>
                                                 {/* ✅ NEW: Event Mode with badge */}
-                                                <td className="px-4 py-3 text-sm">
-                                                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${event.eventMode === EventMode.Online
-                                                            ? 'bg-cyan-100 text-cyan-800'
-                                                            : 'bg-purple-100 text-purple-800'
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm">
+                                                    <span className={`inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium ${event.eventMode === EventMode.Online
+                                                        ? 'bg-cyan-100 text-cyan-800'
+                                                        : 'bg-purple-100 text-purple-800'
                                                         }`}>
                                                         {event.eventMode === EventMode.Online ? (
                                                             <Globe className="w-3 h-3" />
                                                         ) : (
                                                             <Building className="w-3 h-3" />
                                                         )}
-                                                        {getEventModeDisplay(event.eventMode)}
+                                                        <span className="hidden sm:inline">{getEventModeDisplay(event.eventMode)}</span>
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-600">
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-600">
                                                     {event.remarks || '-'}
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">
                                                     {event.result || '-'}
                                                 </td>
-                                                <td className="px-4 py-3 text-sm text-gray-900">
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900">
                                                     {event.awardsReceived || '-'}
                                                 </td>
                                                 {/* ✅ UPDATED: Event Start Date */}
-                                                <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 whitespace-nowrap">
                                                     {new Date(event.eventDate).toLocaleDateString()}
                                                 </td>
                                                 {/* ✅ NEW: Event End Date */}
-                                                <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+                                                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 whitespace-nowrap">
                                                     {event.endDate
                                                         ? new Date(event.endDate).toLocaleDateString()
                                                         : new Date(event.eventDate).toLocaleDateString()}

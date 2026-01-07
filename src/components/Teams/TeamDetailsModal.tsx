@@ -151,10 +151,10 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
 
     if (loading) {
         return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-8">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="text-center mt-4 text-gray-600">{t('teams.loading')}</p>
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-2xl p-6 sm:p-8">
+                    <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="text-center mt-3 sm:mt-4 text-sm sm:text-base text-gray-600">{t('teams.loading')}</p>
                 </div>
             </div>
         );
@@ -203,33 +203,33 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
     }
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
                 {/* Header */}
-                <div className="sticky top-0 bg-white border-b px-6 py-4 z-10">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-blue-100 rounded-lg">
-                                <Users className="w-5 h-5 text-blue-600" />
+                <div className="sticky top-0 bg-white border-b px-4 sm:px-6 py-3 sm:py-4 z-10">
+                    <div className="flex items-start sm:items-center justify-between gap-3">
+                        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                            <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg flex-shrink-0">
+                                <Users className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                             </div>
-                            <div>
-                                <h2 className="text-xl font-semibold text-gray-900">{team.teamName}</h2>
-                                <p className="text-sm text-gray-500">
+                            <div className="min-w-0">
+                                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 truncate">{team.teamName}</h2>
+                                <p className="text-xs sm:text-sm text-gray-500 truncate">
                                     {team.teamCode} • {getTranslatedActivityType(team.activityTypeName, t)} • {team.activityCategory}
                                 </p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                             <button
                                 onClick={onEdit}
-                                className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-2"
+                                className="px-2 sm:px-4 py-1.5 sm:py-2 text-blue-600 hover:bg-blue-50 active:bg-blue-100 rounded-lg transition-colors flex items-center gap-1 sm:gap-2 text-sm"
                             >
                                 <Edit className="w-4 h-4" />
-                                {t('teams.actions.edit')}
+                                <span className="hidden sm:inline">{t('teams.actions.edit')}</span>
                             </button>
                             <button
                                 onClick={onClose}
-                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                className="p-2 hover:bg-gray-100 active:bg-gray-200 rounded-lg transition-colors"
                                 aria-label={t('teams.actions.close')}
                             >
                                 <X className="w-5 h-5" />
@@ -239,35 +239,35 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                 </div>
 
                 {/* Content */}
-                <div className="p-6 space-y-6">
+                <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                     {/* Team Overview */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-blue-50 p-4 rounded-lg">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                        <div className="bg-blue-50 p-3 sm:p-4 rounded-lg">
                             <div className="flex items-center gap-2 text-blue-700 mb-1">
                                 <Users className="w-4 h-4" />
-                                <span className="text-sm font-medium">{t('teams.details.members')}</span>
+                                <span className="text-xs sm:text-sm font-medium">{t('teams.details.members')}</span>
                             </div>
-                            <p className="text-2xl font-bold text-blue-900">
+                            <p className="text-xl sm:text-2xl font-bold text-blue-900">
                                 {team.currentMemberCount}/{team.maxMembers}
                             </p>
                         </div>
 
-                        <div className="bg-green-50 p-4 rounded-lg">
+                        <div className="bg-green-50 p-3 sm:p-4 rounded-lg">
                             <div className="flex items-center gap-2 text-green-700 mb-1">
                                 <Calendar className="w-4 h-4" />
-                                <span className="text-sm font-medium">{t('teams.details.established')}</span>
+                                <span className="text-xs sm:text-sm font-medium">{t('teams.details.established')}</span>
                             </div>
-                            <p className="text-lg font-semibold text-green-900">
+                            <p className="text-base sm:text-lg font-semibold text-green-900">
                                 {new Date(team.establishedDate).toLocaleDateString()}
                             </p>
                         </div>
 
-                        <div className={`${team.isActive ? 'bg-green-50' : 'bg-gray-50'} p-4 rounded-lg`}>
+                        <div className={`${team.isActive ? 'bg-green-50' : 'bg-gray-50'} p-3 sm:p-4 rounded-lg`}>
                             <div className={`flex items-center gap-2 ${team.isActive ? 'text-green-700' : 'text-gray-700'} mb-1`}>
                                 <Shield className="w-4 h-4" />
-                                <span className="text-sm font-medium">{t('teams.details.status')}</span>
+                                <span className="text-xs sm:text-sm font-medium">{t('teams.details.status')}</span>
                             </div>
-                            <p className={`text-lg font-semibold ${team.isActive ? 'text-green-900' : 'text-gray-900'}`}>
+                            <p className={`text-base sm:text-lg font-semibold ${team.isActive ? 'text-green-900' : 'text-gray-900'}`}>
                                 {team.isActive ? t('teams.status.active') : t('teams.status.inactive')}
                             </p>
                         </div>
@@ -275,23 +275,23 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
 
                     {/* Coaching Staff */}
                     {(team.coach || team.assistantCoach) && (
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                            <h3 className="text-sm font-semibold text-gray-900 mb-3 uppercase tracking-wide">
+                        <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+                            <h3 className="text-xs sm:text-sm font-semibold text-gray-900 mb-2 sm:mb-3 uppercase tracking-wide">
                                 {t('teams.modal.sections.coachingStaff')}
                             </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                 {team.coach && (
-                                    <div className="bg-white p-3 rounded-lg">
+                                    <div className="bg-white p-2.5 sm:p-3 rounded-lg">
                                         <p className="text-xs text-gray-500 mb-1">{t('teams.details.mainCoach')}</p>
-                                        <p className="font-semibold text-gray-900">{team.coach.fullName}</p>
-                                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                                            <span className="flex items-center gap-1">
-                                                <Mail className="w-3 h-3" />
-                                                {team.coach.email}
+                                        <p className="font-semibold text-gray-900 text-sm sm:text-base">{team.coach.fullName}</p>
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-2 text-xs sm:text-sm text-gray-600">
+                                            <span className="flex items-center gap-1 truncate">
+                                                <Mail className="w-3 h-3 flex-shrink-0" />
+                                                <span className="truncate">{team.coach.email}</span>
                                             </span>
                                             {team.coach.phoneNumber && (
                                                 <span className="flex items-center gap-1">
-                                                    <Phone className="w-3 h-3" />
+                                                    <Phone className="w-3 h-3 flex-shrink-0" />
                                                     {team.coach.phoneNumber}
                                                 </span>
                                             )}
@@ -299,17 +299,17 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                                     </div>
                                 )}
                                 {team.assistantCoach && (
-                                    <div className="bg-white p-3 rounded-lg">
+                                    <div className="bg-white p-2.5 sm:p-3 rounded-lg">
                                         <p className="text-xs text-gray-500 mb-1">{t('teams.details.assistantCoach')}</p>
-                                        <p className="font-semibold text-gray-900">{team.assistantCoach.fullName}</p>
-                                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-                                            <span className="flex items-center gap-1">
-                                                <Mail className="w-3 h-3" />
-                                                {team.assistantCoach.email}
+                                        <p className="font-semibold text-gray-900 text-sm sm:text-base">{team.assistantCoach.fullName}</p>
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-2 text-xs sm:text-sm text-gray-600">
+                                            <span className="flex items-center gap-1 truncate">
+                                                <Mail className="w-3 h-3 flex-shrink-0" />
+                                                <span className="truncate">{team.assistantCoach.email}</span>
                                             </span>
                                             {team.assistantCoach.phoneNumber && (
                                                 <span className="flex items-center gap-1">
-                                                    <Phone className="w-3 h-3" />
+                                                    <Phone className="w-3 h-3 flex-shrink-0" />
                                                     {team.assistantCoach.phoneNumber}
                                                 </span>
                                             )}
@@ -321,59 +321,59 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                     )}
 
                     {/* Team Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         {team.ageGroup && (
                             <div>
-                                <p className="text-sm text-gray-500">{t('teams.fields.ageGroup')}</p>
-                                <p className="font-medium text-gray-900">{team.ageGroup}</p>
+                                <p className="text-xs sm:text-sm text-gray-500">{t('teams.fields.ageGroup')}</p>
+                                <p className="font-medium text-gray-900 text-sm sm:text-base">{team.ageGroup}</p>
                             </div>
                         )}
                         {team.division && (
                             <div>
-                                <p className="text-sm text-gray-500">{t('teams.fields.division')}</p>
-                                <p className="font-medium text-gray-900">{team.division}</p>
+                                <p className="text-xs sm:text-sm text-gray-500">{t('teams.fields.division')}</p>
+                                <p className="font-medium text-gray-900 text-sm sm:text-base">{team.division}</p>
                             </div>
                         )}
                         {team.trainingSchedule && (
                             <div>
-                                <p className="text-sm text-gray-500">{t('teams.fields.trainingSchedule')}</p>
-                                <p className="font-medium text-gray-900">{team.trainingSchedule}</p>
+                                <p className="text-xs sm:text-sm text-gray-500">{t('teams.fields.trainingSchedule')}</p>
+                                <p className="font-medium text-gray-900 text-sm sm:text-base">{team.trainingSchedule}</p>
                             </div>
                         )}
                         {team.trainingVenue && (
                             <div>
-                                <p className="text-sm text-gray-500 flex items-center gap-1">
+                                <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-1">
                                     <MapPin className="w-3 h-3" />
                                     {t('teams.fields.trainingVenue')}
                                 </p>
-                                <p className="font-medium text-gray-900">{team.trainingVenue}</p>
+                                <p className="font-medium text-gray-900 text-sm sm:text-base">{team.trainingVenue}</p>
                             </div>
                         )}
                     </div>
 
                     {team.description && (
                         <div>
-                            <p className="text-sm text-gray-500 mb-1">{t('teams.fields.description')}</p>
-                            <p className="text-gray-900">{team.description}</p>
+                            <p className="text-xs sm:text-sm text-gray-500 mb-1">{t('teams.fields.description')}</p>
+                            <p className="text-sm sm:text-base text-gray-900">{team.description}</p>
                         </div>
                     )}
 
                     {team.achievements && (
-                        <div className="bg-yellow-50 p-4 rounded-lg">
+                        <div className="bg-yellow-50 p-3 sm:p-4 rounded-lg">
                             <div className="flex items-center gap-2 text-yellow-700 mb-2">
                                 <Award className="w-4 h-4" />
-                                <h3 className="text-sm font-semibold uppercase tracking-wide">
+                                <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wide">
                                     {t('teams.modal.sections.achievements')}
                                 </h3>
                             </div>
-                            <p className="text-gray-900">{team.achievements}</p>
+                            <p className="text-sm sm:text-base text-gray-900">{team.achievements}</p>
                         </div>
                     )}
 
                     {/* Team Members */}
                     <div>
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3 sm:mb-4">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                                 {t('teams.members.title')} ({team.members.length})
                             </h3>
                             <button
@@ -383,7 +383,7 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                                     setSelectedClass('All');
                                     setSearchTerm('');
                                 }}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                                className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors flex items-center justify-center gap-2 text-sm"
                             >
                                 <UserPlus className="w-4 h-4" />
                                 {t('teams.members.addMembers')}
@@ -391,9 +391,9 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                         </div>
 
                         {showAddMember && (
-                            <div className="bg-blue-50 p-4 rounded-lg mb-4">
-                                <div className="flex items-center justify-between mb-3">
-                                    <h4 className="font-semibold text-blue-900">{t('teams.members.addNew')}</h4>
+                            <div className="bg-blue-50 p-3 sm:p-4 rounded-lg mb-3 sm:mb-4">
+                                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                                    <h4 className="font-semibold text-blue-900 text-sm sm:text-base">{t('teams.members.addNew')}</h4>
                                     <button
                                         onClick={() => {
                                             setShowAddMember(false);
@@ -402,7 +402,7 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                                             setSelectedClass('All');
                                             setSearchTerm('');
                                         }}
-                                        className="text-blue-600 hover:text-blue-800"
+                                        className="text-blue-600 hover:text-blue-800 p-1"
                                     >
                                         <X className="w-4 h-4" />
                                     </button>
@@ -423,7 +423,7 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                                     {/*</div>*/}
 
                                     {/* ✅ Filters Row */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         {/* Class Filter */}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
@@ -433,7 +433,7 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                                             <select
                                                 value={selectedClass}
                                                 onChange={(e) => setSelectedClass(e.target.value)}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             >
                                                 <option value="All">{t('teams.members.allClasses')}</option>
                                                 {uniqueClasses.map((className) => (
@@ -453,7 +453,7 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                                                 type="text"
                                                 value={searchTerm}
                                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                 placeholder={t('teams.members.searchPlaceholder')}
                                             />
                                         </div>
@@ -466,7 +466,7 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                                                 ({filteredStudents.length} {t('teams.members.available')})
                                             </span>
                                         </label>
-                                        <div className="max-h-48 overflow-y-auto border border-gray-300 rounded-lg p-2 bg-white">
+                                        <div className="max-h-40 sm:max-h-48 overflow-y-auto border border-gray-300 rounded-lg p-2 bg-white">
                                             {filteredStudents.length === 0 ? (
                                                 <div className="text-center py-4 text-gray-500 text-sm">
                                                     {t('teams.members.noStudentsFound')}
@@ -480,7 +480,7 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                                                     return (
                                                         <label
                                                             key={student.studentID}
-                                                            className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer"
+                                                            className="flex items-center gap-2 p-2 hover:bg-gray-50 active:bg-gray-100 rounded cursor-pointer"
                                                         >
                                                             <input
                                                                 type="checkbox"
@@ -492,7 +492,7 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                                                                         setSelectedStudents(selectedStudents.filter(id => id !== student.studentID));
                                                                     }
                                                                 }}
-                                                                className="rounded border-gray-300"
+                                                                className="rounded border-gray-300 w-4 h-4"
                                                             />
                                                             <span className="text-sm">
                                                                 {student.fullName} ({student.studentCode})
@@ -508,7 +508,7 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                                     <button
                                         onClick={handleAddMembers}
                                         disabled={selectedStudents.length === 0}
-                                        className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                        className="w-full px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
                                     >
                                         {t('teams.members.addCount', { count: selectedStudents.length })}
                                     </button>
@@ -519,39 +519,41 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                         {/* Members List */}
                         <div className="space-y-2">
                             {team.members.length === 0 ? (
-                                <div className="text-center py-8 text-gray-500">
-                                    <Users className="w-12 h-12 mx-auto mb-2 opacity-20" />
-                                    <p>{t('teams.members.noMembers')}</p>
+                                <div className="text-center py-6 sm:py-8 text-gray-500">
+                                    <Users className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-2 opacity-20" />
+                                    <p className="text-sm sm:text-base">{t('teams.members.noMembers')}</p>
                                 </div>
                             ) : (
                                 team.members.map((member) => (
                                     <div
                                         key={member.teamMemberID}
-                                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                                        className="flex items-center justify-between p-2.5 sm:p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors gap-2"
                                     >
-                                        <div className="flex items-center gap-3">
-                                            <div className="p-2 bg-white rounded-lg">
-                                                <User className="w-5 h-5 text-gray-600" />
+                                        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                                            <div className="p-1.5 sm:p-2 bg-white rounded-lg flex-shrink-0">
+                                                <User className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
                                             </div>
-                                            <div>
-                                                <div className="flex items-center gap-2">
-                                                    <p className="font-semibold text-gray-900">{member.studentName}</p>
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">{member.studentName}</p>
                                                     {member.isCaptain && (
-                                                        <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded">
-                                                            <Star className="w-3 h-3 inline mr-1" />
-                                                            {t('teams.members.captain')}
+                                                        <span className="px-1.5 sm:px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded flex-shrink-0">
+                                                            <Star className="w-3 h-3 inline mr-0.5 sm:mr-1" />
+                                                            <span className="hidden sm:inline">{t('teams.members.captain')}</span>
+                                                            <span className="sm:hidden">C</span>
                                                         </span>
                                                     )}
                                                     {member.isViceCaptain && (
-                                                        <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-semibold rounded">
-                                                            {t('teams.members.viceCaptain')}
+                                                        <span className="px-1.5 sm:px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-semibold rounded flex-shrink-0">
+                                                            <span className="hidden sm:inline">{t('teams.members.viceCaptain')}</span>
+                                                            <span className="sm:hidden">VC</span>
                                                         </span>
                                                     )}
                                                 </div>
-                                                <div className="flex items-center gap-4 text-sm text-gray-600">
+                                                <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-4 gap-y-0.5 text-xs sm:text-sm text-gray-600">
                                                     <span>{member.studentCode}</span>
-                                                    <span>{member.grade} {member.class}</span>
-                                                    {member.position && <span>• {member.position}</span>}
+                                                    <span className="hidden sm:inline">{member.grade} {member.class}</span>
+                                                    {member.position && <span className="hidden sm:inline">• {member.position}</span>}
                                                     {member.jerseyNumber && (
                                                         <span className="flex items-center gap-1">
                                                             <Hash className="w-3 h-3" />
@@ -562,7 +564,7 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                                             {/*<button*/}
                                             {/*    onClick={() => setEditingMember(member)}*/}
                                             {/*    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"*/}
@@ -572,7 +574,7 @@ const TeamDetailsModal = ({ teamId, onClose, onEdit }: TeamDetailsModalProps) =>
                                             {/*</button>*/}
                                             <button
                                                 onClick={() => handleRemoveMember(member.teamMemberID, member.studentName)}
-                                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 active:bg-red-100 rounded-lg transition-colors"
                                                 title={t('teams.members.remove')}
                                             >
                                                 <Trash2 className="w-4 h-4" />
@@ -622,18 +624,18 @@ const EditMemberModal = ({
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-                <div className="border-b px-6 py-4 flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">{t('teams.members.editDetails')}</h3>
-                    <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
+                <div className="border-b px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+                    <h3 className="text-base sm:text-lg font-semibold">{t('teams.members.editDetails')}</h3>
+                    <button onClick={onClose} className="p-1.5 hover:bg-gray-100 active:bg-gray-200 rounded-lg">
                         <X className="w-4 h-4" />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
                     <div>
-                        <p className="text-sm text-gray-600 mb-4">
+                        <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
                             {t('teams.members.editing')}: <strong>{member.studentName}</strong> ({member.studentCode})
                         </p>
                     </div>
@@ -646,7 +648,7 @@ const EditMemberModal = ({
                             type="text"
                             value={formData.position}
                             onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                            className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg"
                             placeholder={t('teams.members.positionPlaceholder')}
                         />
                     </div>
@@ -659,7 +661,7 @@ const EditMemberModal = ({
                             type="text"
                             value={formData.jerseyNumber}
                             onChange={(e) => setFormData({ ...formData, jerseyNumber: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                            className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border border-gray-300 rounded-lg"
                             placeholder={t('teams.members.jerseyPlaceholder')}
                         />
                     </div>
@@ -674,7 +676,7 @@ const EditMemberModal = ({
                                     isCaptain: e.target.checked,
                                     isViceCaptain: e.target.checked ? false : formData.isViceCaptain
                                 })}
-                                className="rounded border-gray-300"
+                                className="rounded border-gray-300 w-4 h-4"
                             />
                             <span className="text-sm font-medium">{t('teams.members.captain')}</span>
                         </label>
@@ -688,23 +690,23 @@ const EditMemberModal = ({
                                     isViceCaptain: e.target.checked,
                                     isCaptain: e.target.checked ? false : formData.isCaptain
                                 })}
-                                className="rounded border-gray-300"
+                                className="rounded border-gray-300 w-4 h-4"
                             />
                             <span className="text-sm font-medium">{t('teams.members.viceCaptain')}</span>
                         </label>
                     </div>
 
-                    <div className="flex gap-3 pt-4">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                            className="flex-1 px-4 py-2.5 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-50 active:bg-gray-100 order-2 sm:order-1"
                         >
                             {t('teams.actions.cancel')}
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            className="flex-1 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 order-1 sm:order-2"
                         >
                             {t('teams.actions.saveChanges')}
                         </button>

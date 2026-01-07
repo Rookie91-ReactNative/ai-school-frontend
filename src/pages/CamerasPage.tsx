@@ -182,36 +182,38 @@ const CamerasPage = () => {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                        <Camera className="w-8 h-8 text-blue-600" />
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+                        <Camera className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                         {t('cameras.title')}
                     </h1>
-                    <p className="text-gray-600 mt-1">{t('cameras.subtitle')}</p>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1">{t('cameras.subtitle')}</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-2 sm:gap-3">
                     <button
                         onClick={handleStopAllCameras}
-                        className="px-4 py-2 text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors flex items-center gap-2"
+                        className="flex-1 sm:flex-none px-3 sm:px-4 py-2.5 sm:py-2 text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 active:bg-red-200 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
                         <Square className="w-4 h-4" />
-                        {t('cameras.stopAll')}
+                        <span className="hidden sm:inline">{t('cameras.stopAll')}</span>
+                        <span className="sm:hidden">Stop</span>
                     </button>
                     <button
                         onClick={() => setIsAddModalOpen(true)}
-                        className="btn-primary flex items-center gap-2"
+                        className="flex-1 sm:flex-none btn-primary flex items-center justify-center gap-2 py-2.5 sm:py-2"
                     >
                         <Plus className="w-4 h-4" />
-                        {t('cameras.addCamera')}
+                        <span className="hidden sm:inline">{t('cameras.addCamera')}</span>
+                        <span className="sm:hidden">Add</span>
                     </button>
                 </div>
             </div>
 
             {/* Camera Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {cameras.map((camera) => {
                     const status = cameraStatuses[camera.cameraId];
                     const isRunning = status?.isOnline || false;
@@ -222,13 +224,13 @@ const CamerasPage = () => {
                             className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-200 overflow-hidden"
                         >
                             {/* Camera Header */}
-                            <div className="p-4 border-b border-gray-100">
-                                <div className="flex items-start justify-between mb-2">
-                                    <div className="flex-1">
-                                        <h3 className="font-semibold text-gray-900 text-lg flex items-center gap-2">
+                            <div className="p-3 sm:p-4 border-b border-gray-100">
+                                <div className="flex items-start justify-between mb-2 gap-2">
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-semibold text-gray-900 text-base sm:text-lg flex items-center gap-2 truncate">
                                             {camera.cameraName}
                                         </h3>
-                                        <p className="text-sm text-gray-600 mt-1">{camera.location}</p>
+                                        <p className="text-xs sm:text-sm text-gray-600 mt-1 truncate">{camera.location}</p>
                                     </div>
                                     {getCameraTypeBadge(camera.cameraType)}
                                 </div>
@@ -237,20 +239,20 @@ const CamerasPage = () => {
 
                             {/* Status Section - Only for RTSP cameras */}
                             {camera.cameraType === 1 && (
-                                <div className="p-4 bg-gray-50">
+                                <div className="p-3 sm:p-4 bg-gray-50">
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="flex items-center gap-2">
                                             {isRunning ? (
                                                 <>
                                                     <Wifi className="w-4 h-4 text-green-600" />
-                                                    <span className="text-sm font-medium text-green-600">
+                                                    <span className="text-xs sm:text-sm font-medium text-green-600">
                                                         {t('cameras.online')}
                                                     </span>
                                                 </>
                                             ) : (
                                                 <>
                                                     <WifiOff className="w-4 h-4 text-gray-400" />
-                                                    <span className="text-sm font-medium text-gray-500">
+                                                    <span className="text-xs sm:text-sm font-medium text-gray-500">
                                                         {t('cameras.offline')}
                                                     </span>
                                                 </>
@@ -271,7 +273,7 @@ const CamerasPage = () => {
                                     {isRunning ? (
                                         <button
                                             onClick={() => handleStopCamera(camera.cameraId)}
-                                            className="w-full px-4 py-2 text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+                                            className="w-full px-4 py-2.5 sm:py-2 text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 active:bg-red-200 transition-colors flex items-center justify-center gap-2"
                                         >
                                             <Square className="w-4 h-4" />
                                             {t('cameras.stop')}
@@ -279,7 +281,7 @@ const CamerasPage = () => {
                                     ) : (
                                         <button
                                             onClick={() => handleStartCamera(camera.cameraId)}
-                                            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                                            className="w-full px-4 py-2.5 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 active:bg-green-800 transition-colors flex items-center justify-center gap-2"
                                         >
                                             <Play className="w-4 h-4" />
                                             {t('cameras.start')}
@@ -290,10 +292,10 @@ const CamerasPage = () => {
 
                             {/* P6SAI Camera Info */}
                             {camera.cameraType === 2 && (
-                                <div className="p-4 bg-purple-50">
+                                <div className="p-3 sm:p-4 bg-purple-50">
                                     <div className="flex items-center gap-2 text-purple-700 mb-2">
                                         <Brain className="w-4 h-4" />
-                                        <span className="text-sm font-medium">
+                                        <span className="text-xs sm:text-sm font-medium">
                                             {t('cameras.aiPoweredRecognition')}
                                         </span>
                                     </div>
@@ -309,15 +311,15 @@ const CamerasPage = () => {
 
             {/* Empty State */}
             {cameras.length === 0 && (
-                <div className="text-center py-12">
-                    <Camera className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <div className="text-center py-8 sm:py-12 px-4">
+                    <Camera className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
                         {t('cameras.noCameras')}
                     </h3>
-                    <p className="text-gray-600 mb-4">{t('cameras.noCamerasDesc')}</p>
+                    <p className="text-sm sm:text-base text-gray-600 mb-4">{t('cameras.noCamerasDesc')}</p>
                     <button
                         onClick={() => setIsAddModalOpen(true)}
-                        className="btn-primary inline-flex items-center gap-2"
+                        className="btn-primary inline-flex items-center gap-2 py-2.5 sm:py-2"
                     >
                         <Plus className="w-4 h-4" />
                         {t('cameras.addFirstCamera')}

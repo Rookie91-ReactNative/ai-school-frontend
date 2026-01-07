@@ -20,7 +20,8 @@ import TeachersPage from './pages/TeachersPage';
 import TeamsPage from './pages/TeamsPage';
 import EventsPage from './pages/EventsPage';
 import EventReportPage from './pages/EventReportPage';
-import ImportStudentsPage from './pages/ImportStudentsPage'
+import ImportStudentsPage from './pages/ImportStudentsPage';
+import LateStudentsReportPage from './pages/LateStudentsReportPage';
 
 function App() {
     return (
@@ -171,6 +172,20 @@ function App() {
                                 requiredRole={['SchoolAdmin']}
                             >
                                 <TrainingPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* Late Students Report - NEW */}
+                    <Route
+                        path="/late-report"
+                        element={
+                            <ProtectedRoute
+                                requiredPermission="ViewAttendance"
+                                alternativePermission="ViewAttendanceRecords"
+                                requiredRole={['SchoolAdmin', 'Teacher', 'Staff']}
+                            >
+                                <LateStudentsReportPage />
                             </ProtectedRoute>
                         }
                     />

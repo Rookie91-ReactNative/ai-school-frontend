@@ -273,11 +273,7 @@ const AcademicYearsPage = () => {
             return;
         }
 
-        if (year.totalStudents > 0) {
-            alert(t('academicYears.cannotDeleteWithStudents'));
-            return;
-        }
-
+        // Soft delete confirmation - no longer checking for students since we're not permanently deleting
         if (window.confirm(t('academicYears.confirmDelete') + ' ' + year.yearName + '?')) {
             try {
                 await api.delete(`/academic-year/${year.academicYearID}`);
@@ -311,19 +307,19 @@ const AcademicYearsPage = () => {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             {/* Header */}
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                        <Calendar className="w-8 h-8 text-blue-600" />
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+                        <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                         {t('academicYears.title')}
                     </h1>
-                    <p className="text-gray-600 mt-1">{t('academicYears.subtitle')}</p>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1">{t('academicYears.subtitle')}</p>
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                    className="bg-green-600 text-white px-4 py-2.5 sm:py-2 rounded-lg hover:bg-green-700 active:bg-green-800 transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
                 >
                     <Plus className="w-5 h-5" />
                     {t('academicYears.addYear')}
@@ -331,39 +327,39 @@ const AcademicYearsPage = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white rounded-lg shadow p-6">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-100 rounded-lg">
-                            <Calendar className="w-6 h-6 text-blue-600" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="p-2.5 sm:p-3 bg-blue-100 rounded-lg">
+                            <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">{t('academicYears.totalYears')}</p>
-                            <p className="text-2xl font-bold text-gray-900">{academicYears.length}</p>
+                            <p className="text-xs sm:text-sm text-gray-600">{t('academicYears.totalYears')}</p>
+                            <p className="text-xl sm:text-2xl font-bold text-gray-900">{academicYears.length}</p>
                         </div>
                     </div>
                 </div>
-                <div className="bg-white rounded-lg shadow p-6">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-green-100 rounded-lg">
-                            <CheckCircle className="w-6 h-6 text-green-600" />
+                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="p-2.5 sm:p-3 bg-green-100 rounded-lg">
+                            <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">{t('academicYears.activeYear')}</p>
-                            <p className="text-2xl font-bold text-green-900">
+                            <p className="text-xs sm:text-sm text-gray-600">{t('academicYears.activeYear')}</p>
+                            <p className="text-xl sm:text-2xl font-bold text-green-900">
                                 {activeYear ? activeYear.yearName : t('common.none')}
                             </p>
                         </div>
                     </div>
                 </div>
-                <div className="bg-white rounded-lg shadow p-6">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-purple-100 rounded-lg">
-                            <Users className="w-6 h-6 text-purple-600" />
+                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="p-2.5 sm:p-3 bg-purple-100 rounded-lg">
+                            <Users className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">{t('academicYears.totalEnrollment')}</p>
-                            <p className="text-2xl font-bold text-purple-900">
+                            <p className="text-xs sm:text-sm text-gray-600">{t('academicYears.totalEnrollment')}</p>
+                            <p className="text-xl sm:text-2xl font-bold text-purple-900">
                                 {activeYear ? activeYear.totalStudents : 0}
                             </p>
                         </div>
@@ -374,20 +370,20 @@ const AcademicYearsPage = () => {
             {/* Enrollment Banner - Shows when active year exists and future year has no students yet */}
             {activeYear && activeYear.totalStudents > 0 && futureYear && futureYear.totalStudents === 0 && (
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-lg shadow-md overflow-hidden">
-                    <div className="p-6">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <div className="p-4 bg-blue-500 rounded-full">
-                                    <GraduationCap className="w-8 h-8 text-white" />
+                    <div className="p-4 sm:p-6">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div className="flex items-start sm:items-center gap-3 sm:gap-4">
+                                <div className="p-3 sm:p-4 bg-blue-500 rounded-full flex-shrink-0">
+                                    <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900">
+                                    <h3 className="text-lg sm:text-xl font-bold text-gray-900">
                                         {t('enrollment.enrollButton')}
                                     </h3>
-                                    <p className="text-gray-600 mt-1">
+                                    <p className="text-sm sm:text-base text-gray-600 mt-1">
                                         {t('enrollment.enrollButtonSubtitle', { year: futureYear.yearName })}
                                     </p>
-                                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-700">
+                                    <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-2 text-xs sm:text-sm text-gray-700">
                                         <span className="flex items-center gap-1">
                                             <Users className="w-4 h-4" />
                                             {activeYear.totalStudents} {t('enrollment.students')}
@@ -401,7 +397,7 @@ const AcademicYearsPage = () => {
                             </div>
                             <button
                                 onClick={handleOpenEnrollmentModal}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all hover:scale-105 flex items-center gap-2 shadow-lg"
+                                className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg w-full sm:w-auto"
                             >
                                 <Users className="w-5 h-5" />
                                 {t('enrollment.enrollStudents')}
@@ -413,14 +409,14 @@ const AcademicYearsPage = () => {
 
             {/* Enrollment Already Completed Message */}
             {activeYear && activeYear.totalStudents > 0 && futureYear && futureYear.totalStudents > 0 && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <div className="flex items-center gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600" />
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4">
+                    <div className="flex items-start sm:items-center gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5 sm:mt-0" />
                         <div>
-                            <p className="text-green-900 font-semibold">
+                            <p className="text-sm sm:text-base text-green-900 font-semibold">
                                 {t('enrollment.alreadyCompleted')}
                             </p>
-                            <p className="text-green-700 text-sm mt-1">
+                            <p className="text-green-700 text-xs sm:text-sm mt-1">
                                 {t('enrollment.alreadyCompletedMessage', {
                                     from: activeYear.yearName,
                                     to: futureYear.yearName,
@@ -438,22 +434,22 @@ const AcademicYearsPage = () => {
                     <table className="w-full">
                         <thead className="bg-gray-50 border-b">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                     {t('academicYears.yearName')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                     {t('academicYears.dateRange')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                     {t('academicYears.students')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                     {t('academicYears.classes')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                     {t('academicYears.status')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                     {t('academicYears.actions')}
                                 </th>
                             </tr>
@@ -461,42 +457,42 @@ const AcademicYearsPage = () => {
                         <tbody className="divide-y divide-gray-200">
                             {academicYears.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center">
-                                        <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                                        <p className="text-gray-500">{t('academicYears.noYears')}</p>
+                                    <td colSpan={6} className="px-4 sm:px-6 py-8 sm:py-12 text-center">
+                                        <Calendar className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-3" />
+                                        <p className="text-sm sm:text-base text-gray-500">{t('academicYears.noYears')}</p>
                                     </td>
                                 </tr>
                             ) : (
                                 academicYears.map((year) => (
                                     <tr key={year.academicYearID} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                                             <div className="flex items-center gap-2">
                                                 <span className="text-sm font-medium text-gray-900">{year.yearName}</span>
                                                 {year.isActive && (
-                                                    <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full font-semibold">
+                                                    <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs bg-green-100 text-green-800 rounded-full font-semibold">
                                                         {t('academicYears.active')}
                                                     </span>
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="text-sm text-gray-900">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
+                                            <div className="text-xs sm:text-sm text-gray-900">
                                                 {formatDate(year.startDate)} - {formatDate(year.endDate)}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
+                                            <div className="flex items-center gap-1 sm:gap-2">
                                                 <Users className="w-4 h-4 text-gray-400" />
                                                 <span className="text-sm text-gray-900">{year.totalStudents}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2">
+                                        <td className="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4">
+                                            <div className="flex items-center gap-1 sm:gap-2">
                                                 <GraduationCap className="w-4 h-4 text-gray-400" />
                                                 <span className="text-sm text-gray-900">{year.totalClasses}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                                             <span className={`px-2 py-1 text-xs font-semibold rounded-full ${year.isActive
                                                 ? 'bg-green-100 text-green-800'
                                                 : 'bg-gray-100 text-gray-800'
@@ -504,32 +500,34 @@ const AcademicYearsPage = () => {
                                                 {year.isActive ? t('academicYears.active') : t('academicYears.inactive')}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <button
-                                                onClick={() => handleEditClick(year)}
-                                                className="text-blue-600 hover:text-blue-900 mr-3"
-                                                title={t('academicYears.edit')}
-                                            >
-                                                <Edit className="w-5 h-5 inline" />
-                                            </button>
-                                            {!year.isActive && (
-                                                <>
-                                                    <button
-                                                        onClick={() => handleSetActive(year)}
-                                                        className="text-green-600 hover:text-green-900 mr-3"
-                                                        title={t('academicYears.setActive')}
-                                                    >
-                                                        <CheckCircle className="w-5 h-5 inline" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(year)}
-                                                        className="text-red-600 hover:text-red-900"
-                                                        title={t('academicYears.delete')}
-                                                    >
-                                                        <Trash2 className="w-5 h-5 inline" />
-                                                    </button>
-                                                </>
-                                            )}
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-medium">
+                                            <div className="flex items-center gap-1 sm:gap-3">
+                                                <button
+                                                    onClick={() => handleEditClick(year)}
+                                                    className="p-1.5 sm:p-1 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    title={t('academicYears.edit')}
+                                                >
+                                                    <Edit className="w-5 h-5" />
+                                                </button>
+                                                {!year.isActive && (
+                                                    <>
+                                                        <button
+                                                            onClick={() => handleSetActive(year)}
+                                                            className="p-1.5 sm:p-1 text-green-600 hover:text-green-900 hover:bg-green-50 rounded-lg transition-colors"
+                                                            title={t('academicYears.setActive')}
+                                                        >
+                                                            <CheckCircle className="w-5 h-5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(year)}
+                                                            className="p-1.5 sm:p-1 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
+                                                            title={t('academicYears.delete')}
+                                                        >
+                                                            <Trash2 className="w-5 h-5" />
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -541,19 +539,19 @@ const AcademicYearsPage = () => {
 
             {/* Create Academic Year Modal */}
             {showCreateModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full">
-                        <div className="border-b px-6 py-4 flex justify-between items-center">
-                            <h2 className="text-xl font-bold text-gray-900">{t('academicYears.createYear')}</h2>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white w-full rounded-2xl shadow-xl max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="border-b px-4 sm:px-6 py-4 flex justify-between items-center flex-shrink-0">
+                            <h2 className="text-lg sm:text-xl font-bold text-gray-900">{t('academicYears.createYear')}</h2>
                             <button
                                 onClick={() => { setShowCreateModal(false); resetForm(); }}
-                                className="text-gray-400 hover:text-gray-600"
+                                className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                             >
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     <Calendar className="w-4 h-4 inline mr-1" />{t('academicYears.yearName')} *
@@ -562,7 +560,7 @@ const AcademicYearsPage = () => {
                                     type="text"
                                     value={formData.yearName}
                                     onChange={(e) => handleInputChange('yearName', e.target.value)}
-                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.yearName ? 'border-red-500' : 'border-gray-300'
+                                    className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.yearName ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     placeholder="2024/2025"
                                 />
@@ -572,7 +570,7 @@ const AcademicYearsPage = () => {
                                 <p className="text-xs text-gray-500 mt-1">{t('academicYears.formatHint')}</p>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
                                         {t('academicYears.startDate')} *
@@ -581,7 +579,7 @@ const AcademicYearsPage = () => {
                                         type="date"
                                         value={formData.startDate}
                                         onChange={(e) => handleInputChange('startDate', e.target.value)}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.startDate ? 'border-red-500' : 'border-gray-300'
+                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.startDate ? 'border-red-500' : 'border-gray-300'
                                             }`}
                                     />
                                     {formErrors.startDate && (
@@ -597,7 +595,7 @@ const AcademicYearsPage = () => {
                                         type="date"
                                         value={formData.endDate}
                                         onChange={(e) => handleInputChange('endDate', e.target.value)}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.endDate ? 'border-red-500' : 'border-gray-300'
+                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.endDate ? 'border-red-500' : 'border-gray-300'
                                             }`}
                                     />
                                     {formErrors.endDate && (
@@ -607,13 +605,13 @@ const AcademicYearsPage = () => {
                             </div>
 
                             {/* Auto-Create Classes Toggle */}
-                            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4">
                                 <label className="flex items-start gap-3 cursor-pointer">
                                     <input
                                         type="checkbox"
                                         checked={autoCreateClasses}
                                         onChange={(e) => setAutoCreateClasses(e.target.checked)}
-                                        className="mt-1 w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                                        className="mt-1 w-5 h-5 sm:w-4 sm:h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
                                     />
                                     <div className="flex-1">
                                         <p className="text-sm font-semibold text-green-900">
@@ -629,24 +627,24 @@ const AcademicYearsPage = () => {
                                 </label>
                             </div>
 
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                <p className="text-sm text-blue-800">
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+                                <p className="text-xs sm:text-sm text-blue-800">
                                     <strong>{t('academicYears.tipTitle')}</strong> {t('academicYears.tipMessage')}
                                 </p>
                             </div>
 
-                            <div className="flex justify-end gap-3 pt-4">
+                            <div className="flex gap-3 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => { setShowCreateModal(false); resetForm(); }}
-                                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors"
                                     disabled={isSubmitting}
                                 >
                                     {t('academicYears.cancel')}
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 transition-colors"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? t('academicYears.creating') : t('academicYears.save')}
@@ -659,19 +657,19 @@ const AcademicYearsPage = () => {
 
             {/* Edit Academic Year Modal */}
             {showEditModal && selectedYear && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full">
-                        <div className="border-b px-6 py-4 flex justify-between items-center">
-                            <h2 className="text-xl font-bold text-gray-900">{t('academicYears.editYear')}</h2>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white w-full rounded-2xl shadow-xl max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="border-b px-4 sm:px-6 py-4 flex justify-between items-center flex-shrink-0">
+                            <h2 className="text-lg sm:text-xl font-bold text-gray-900">{t('academicYears.editYear')}</h2>
                             <button
                                 onClick={() => { setShowEditModal(false); setSelectedYear(null); }}
-                                className="text-gray-400 hover:text-gray-600"
+                                className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                             >
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
 
-                        <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
+                        <form onSubmit={handleEditSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     <Calendar className="w-4 h-4 inline mr-1" />{t('academicYears.yearName')} *
@@ -680,7 +678,7 @@ const AcademicYearsPage = () => {
                                     type="text"
                                     value={editFormData.yearName}
                                     onChange={(e) => handleEditInputChange('yearName', e.target.value)}
-                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.yearName ? 'border-red-500' : 'border-gray-300'
+                                    className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.yearName ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     placeholder="2024/2025"
                                 />
@@ -689,7 +687,7 @@ const AcademicYearsPage = () => {
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
                                         {t('academicYears.startDate')} *
@@ -698,7 +696,7 @@ const AcademicYearsPage = () => {
                                         type="date"
                                         value={editFormData.startDate}
                                         onChange={(e) => handleEditInputChange('startDate', e.target.value)}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.startDate ? 'border-red-500' : 'border-gray-300'
+                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.startDate ? 'border-red-500' : 'border-gray-300'
                                             }`}
                                     />
                                     {formErrors.startDate && (
@@ -714,7 +712,7 @@ const AcademicYearsPage = () => {
                                         type="date"
                                         value={editFormData.endDate}
                                         onChange={(e) => handleEditInputChange('endDate', e.target.value)}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.endDate ? 'border-red-500' : 'border-gray-300'
+                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.endDate ? 'border-red-500' : 'border-gray-300'
                                             }`}
                                     />
                                     {formErrors.endDate && (
@@ -724,25 +722,25 @@ const AcademicYearsPage = () => {
                             </div>
 
                             {selectedYear.isActive && (
-                                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                                    <p className="text-sm text-green-800">
+                                <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4">
+                                    <p className="text-xs sm:text-sm text-green-800">
                                         <strong>ℹ️</strong> {t('academicYears.currentlyActive')}
                                     </p>
                                 </div>
                             )}
 
-                            <div className="flex justify-end gap-3 pt-4">
+                            <div className="flex gap-3 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => { setShowEditModal(false); setSelectedYear(null); }}
-                                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors"
                                     disabled={isSubmitting}
                                 >
                                     {t('academicYears.cancel')}
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 transition-colors"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? t('academicYears.updating') : t('academicYears.save')}

@@ -232,19 +232,19 @@ const GradesPage = () => {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             {/* Header */}
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                        <GraduationCap className="w-8 h-8 text-blue-600" />
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+                        <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                         {t('grades.title')}
                     </h1>
-                    <p className="text-gray-600 mt-1">{t('grades.subtitle')}</p>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1">{t('grades.subtitle')}</p>
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                    className="bg-green-600 text-white px-4 py-2.5 sm:py-2 rounded-lg hover:bg-green-700 active:bg-green-800 transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
                 >
                     <Plus className="w-5 h-5" />
                     {t('grades.addGrade')}
@@ -252,39 +252,39 @@ const GradesPage = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white rounded-lg shadow p-6">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-100 rounded-lg">
-                            <GraduationCap className="w-6 h-6 text-blue-600" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="p-2.5 sm:p-3 bg-blue-100 rounded-lg">
+                            <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">{t('grades.totalGrades')}</p>
-                            <p className="text-2xl font-bold text-gray-900">{grades.length}</p>
+                            <p className="text-xs sm:text-sm text-gray-600">{t('grades.totalGrades')}</p>
+                            <p className="text-xl sm:text-2xl font-bold text-gray-900">{grades.length}</p>
                         </div>
                     </div>
                 </div>
-                <div className="bg-white rounded-lg shadow p-6">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-green-100 rounded-lg">
-                            <Users className="w-6 h-6 text-green-600" />
+                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="p-2.5 sm:p-3 bg-green-100 rounded-lg">
+                            <Users className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">{t('common.totalStudents')}</p>
-                            <p className="text-2xl font-bold text-green-900">
+                            <p className="text-xs sm:text-sm text-gray-600">{t('common.totalStudents')}</p>
+                            <p className="text-xl sm:text-2xl font-bold text-green-900">
                                 {grades.reduce((sum, g) => sum + g.totalStudents, 0)}
                             </p>
                         </div>
                     </div>
                 </div>
-                <div className="bg-white rounded-lg shadow p-6">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-purple-100 rounded-lg">
-                            <BookOpen className="w-6 h-6 text-purple-600" />
+                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="p-2.5 sm:p-3 bg-purple-100 rounded-lg">
+                            <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">{t('common.totalClasses')}</p>
-                            <p className="text-2xl font-bold text-purple-900">
+                            <p className="text-xs sm:text-sm text-gray-600">{t('common.totalClasses')}</p>
+                            <p className="text-xl sm:text-2xl font-bold text-purple-900">
                                 {grades.reduce((sum, g) => sum + g.totalClasses, 0)}
                             </p>
                         </div>
@@ -298,22 +298,22 @@ const GradesPage = () => {
                     <table className="w-full">
                         <thead className="bg-gray-50 border-b">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                     {t('grades.gradeLevel')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                     {t('grades.gradeName')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                     {t('grades.description')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                     {t('grades.students')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                     {t('grades.classes')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                                     {t('grades.actions')}
                                 </th>
                             </tr>
@@ -321,57 +321,59 @@ const GradesPage = () => {
                         <tbody className="bg-white divide-y divide-gray-200">
                             {grades.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                                    <td colSpan={6} className="px-4 sm:px-6 py-8 text-center text-gray-500">
                                         {t('grades.noGrades')}
                                     </td>
                                 </tr>
                             ) : (
                                 grades.map((grade) => (
                                     <tr key={grade.gradeID} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
                                             <div className="flex items-center gap-2">
                                                 <span className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm">
                                                     {grade.gradeLevel}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
                                             <span className="text-sm font-medium text-gray-900">
                                                 {grade.gradeName}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4">
                                             <span className="text-sm text-gray-500">
                                                 {grade.description || '-'}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
+                                            <div className="flex items-center gap-1 sm:gap-2">
                                                 <Users className="w-4 h-4 text-gray-400" />
                                                 <span className="text-sm text-gray-900">{grade.totalStudents}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2">
+                                        <td className="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4">
+                                            <div className="flex items-center gap-1 sm:gap-2">
                                                 <BookOpen className="w-4 h-4 text-gray-400" />
                                                 <span className="text-sm text-gray-900">{grade.totalClasses}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <button
-                                                onClick={() => handleEditClick(grade)}
-                                                className="text-blue-600 hover:text-blue-900 mr-4"
-                                                title={t('grades.edit')}
-                                            >
-                                                <Edit className="w-5 h-5 inline" />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(grade)}
-                                                className="text-red-600 hover:text-red-900"
-                                                title={t('grades.delete')}
-                                            >
-                                                <Trash2 className="w-5 h-5 inline" />
-                                            </button>
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-medium">
+                                            <div className="flex items-center gap-1 sm:gap-3">
+                                                <button
+                                                    onClick={() => handleEditClick(grade)}
+                                                    className="p-1.5 sm:p-1 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    title={t('grades.edit')}
+                                                >
+                                                    <Edit className="w-5 h-5" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(grade)}
+                                                    className="p-1.5 sm:p-1 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
+                                                    title={t('grades.delete')}
+                                                >
+                                                    <Trash2 className="w-5 h-5" />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -383,20 +385,20 @@ const GradesPage = () => {
 
             {/* Create Grade Modal */}
             {showCreateModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full">
-                        <div className="border-b px-6 py-4 flex justify-between items-center">
-                            <h2 className="text-xl font-bold text-gray-900">{t('grades.createGrade')}</h2>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="border-b px-4 sm:px-6 py-4 flex justify-between items-center flex-shrink-0">
+                            <h2 className="text-lg sm:text-xl font-bold text-gray-900">{t('grades.createGrade')}</h2>
                             <button
                                 onClick={() => { setShowCreateModal(false); resetForm(); }}
-                                className="text-gray-400 hover:text-gray-600"
+                                className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                             >
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
                                         {t('grades.gradeName')} *
@@ -405,7 +407,7 @@ const GradesPage = () => {
                                         type="text"
                                         value={formData.gradeName}
                                         onChange={(e) => handleInputChange('gradeName', e.target.value)}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.gradeName ? 'border-red-500' : 'border-gray-300'
+                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.gradeName ? 'border-red-500' : 'border-gray-300'
                                             }`}
                                         placeholder="Grade 1 / Form 1"
                                     />
@@ -422,7 +424,7 @@ const GradesPage = () => {
                                         type="number"
                                         value={formData.gradeLevel}
                                         onChange={(e) => handleInputChange('gradeLevel', parseInt(e.target.value) || 1)}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.gradeLevel ? 'border-red-500' : 'border-gray-300'
+                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.gradeLevel ? 'border-red-500' : 'border-gray-300'
                                             }`}
                                         min="1"
                                         max="12"
@@ -441,14 +443,14 @@ const GradesPage = () => {
                                 <textarea
                                     value={formData.description}
                                     onChange={(e) => handleInputChange('description', e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm"
                                     rows={3}
                                     placeholder={t('grades.descriptionPlaceholder')}
                                 />
                             </div>
 
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                <p className="text-sm text-blue-800">
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+                                <p className="text-xs sm:text-sm text-blue-800">
                                     💡 <strong>{t('grades.examplesTitle')}</strong><br />
                                     {t('grades.examplesPrimary')}<br />
                                     {t('grades.examplesSecondary')}
@@ -459,14 +461,14 @@ const GradesPage = () => {
                                 <button
                                     type="button"
                                     onClick={() => { setShowCreateModal(false); resetForm(); }}
-                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors"
                                     disabled={isSubmitting}
                                 >
                                     {t('grades.cancel')}
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? t('grades.creating') : t('grades.save')}
@@ -479,20 +481,20 @@ const GradesPage = () => {
 
             {/* Edit Grade Modal */}
             {showEditModal && selectedGrade && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full">
-                        <div className="border-b px-6 py-4 flex justify-between items-center">
-                            <h2 className="text-xl font-bold text-gray-900">{t('grades.editGrade')}</h2>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="border-b px-4 sm:px-6 py-4 flex justify-between items-center flex-shrink-0">
+                            <h2 className="text-lg sm:text-xl font-bold text-gray-900">{t('grades.editGrade')}</h2>
                             <button
                                 onClick={() => { setShowEditModal(false); setSelectedGrade(null); resetEditForm(); }}
-                                className="text-gray-400 hover:text-gray-600"
+                                className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                             >
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
 
-                        <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                        <form onSubmit={handleEditSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
                                         {t('grades.gradeName')} *
@@ -501,7 +503,7 @@ const GradesPage = () => {
                                         type="text"
                                         value={editFormData.gradeName}
                                         onChange={(e) => handleEditInputChange('gradeName', e.target.value)}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.gradeName ? 'border-red-500' : 'border-gray-300'
+                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.gradeName ? 'border-red-500' : 'border-gray-300'
                                             }`}
                                         placeholder="Grade 1 / Form 1"
                                     />
@@ -518,7 +520,7 @@ const GradesPage = () => {
                                         type="number"
                                         value={editFormData.gradeLevel}
                                         onChange={(e) => handleEditInputChange('gradeLevel', parseInt(e.target.value) || 1)}
-                                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.gradeLevel ? 'border-red-500' : 'border-gray-300'
+                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.gradeLevel ? 'border-red-500' : 'border-gray-300'
                                             }`}
                                         min="1"
                                         max="12"
@@ -537,15 +539,15 @@ const GradesPage = () => {
                                 <textarea
                                     value={editFormData.description}
                                     onChange={(e) => handleEditInputChange('description', e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm"
                                     rows={3}
                                     placeholder={t('grades.descriptionPlaceholder')}
                                 />
                             </div>
 
                             {selectedGrade.totalClasses > 0 && (
-                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                                    <p className="text-sm text-yellow-800">
+                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-4">
+                                    <p className="text-xs sm:text-sm text-yellow-800">
                                         ⚠️ {t('grades.warningClasses')} {selectedGrade.totalClasses} {t('grades.warningClassesText')} {selectedGrade.totalStudents} {t('grades.warningStudentsText')}
                                     </p>
                                 </div>
@@ -555,14 +557,14 @@ const GradesPage = () => {
                                 <button
                                     type="button"
                                     onClick={() => { setShowEditModal(false); setSelectedGrade(null); resetEditForm(); }}
-                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors"
                                     disabled={isSubmitting}
                                 >
                                     {t('grades.cancel')}
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? t('grades.updating') : t('grades.save')}

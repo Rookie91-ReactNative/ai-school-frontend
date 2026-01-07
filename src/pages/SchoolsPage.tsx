@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Building, Plus, Edit, Trash2, X, Mail, Phone, MapPin, User, Hash } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
@@ -369,26 +369,26 @@ const SchoolsPage = () => {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="flex items-center justify-center h-48 sm:h-64">
+                <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-b-2 border-blue-600"></div>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6 p-4 sm:p-0">
             {/* Header */}
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                        <Building className="w-8 h-8 text-blue-600" />
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+                        <Building className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                         {t('schools.title')}
                     </h1>
-                    <p className="text-gray-600 mt-1">{t('schools.subtitle')}</p>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1">{t('schools.subtitle')}</p>
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="btn-primary flex items-center gap-2"
+                    className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto py-2.5 sm:py-2"
                 >
                     <Plus className="w-5 h-5" />
                     {t('schools.addSchool')}
@@ -397,29 +397,35 @@ const SchoolsPage = () => {
 
             {/* Schools Table */}
             <div className="card overflow-hidden">
+                {/* Mobile scroll hint */}
+                <div className="sm:hidden px-4 py-2 bg-gray-50 border-b border-gray-200 text-xs text-gray-500 flex items-center justify-center gap-1">
+                    <span>←</span>
+                    {t('schools.swipeHint') || 'Scroll horizontally to see all columns'}
+                    <span>→</span>
+                </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                                     {t('schools.schoolCode')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                                     {t('schools.schoolName')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                                     {t('schools.city')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                                     {t('schools.state')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                                     {t('schools.currentStudents')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                                     {t('schools.status')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                                     {t('schools.actions')}
                                 </th>
                             </tr>
@@ -427,54 +433,54 @@ const SchoolsPage = () => {
                         <tbody className="bg-white divide-y divide-gray-200">
                             {schools.length === 0 ? (
                                 <tr>
-                                    <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                                    <td colSpan={7} className="px-4 sm:px-6 py-6 sm:py-8 text-center text-gray-500 text-sm">
                                         {t('schools.noSchools')}
                                     </td>
                                 </tr>
                             ) : (
                                 schools.map((school) => (
                                     <tr key={school.schoolID} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-gray-900">{school.schoolCode}</div>
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                            <div className="text-xs sm:text-sm font-medium text-gray-900">{school.schoolCode}</div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="text-sm font-medium text-gray-900">{school.schoolName}</div>
-                                            <div className="text-sm text-gray-500">{school.principalName}</div>
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
+                                            <div className="text-xs sm:text-sm font-medium text-gray-900">{school.schoolName}</div>
+                                            <div className="text-xs sm:text-sm text-gray-500">{school.principalName}</div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">{school.city}</div>
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                            <div className="text-xs sm:text-sm text-gray-900">{school.city}</div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">{school.state}</div>
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                            <div className="text-xs sm:text-sm text-gray-900">{school.state}</div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                                            <div className="text-xs sm:text-sm text-gray-900">
                                                 {school.currentStudents || 0} / {school.maxStudents}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                                             <span className={`px-2 py-1 text-xs font-semibold rounded-full ${school.isActive
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-red-100 text-red-800'
+                                                ? 'bg-green-100 text-green-800'
+                                                : 'bg-red-100 text-red-800'
                                                 }`}>
                                                 {school.isActive ? t('schools.active') : t('schools.inactive')}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-medium">
                                             <button
                                                 onClick={() => openEditModal(school)}
-                                                className="text-blue-600 hover:text-blue-900 mr-4"
+                                                className="text-blue-600 hover:text-blue-900 active:text-blue-950 mr-3 sm:mr-4 p-1"
                                             >
-                                                <Edit className="w-5 h-5 inline" />
+                                                <Edit className="w-4 h-4 sm:w-5 sm:h-5 inline" />
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteSchool(school)}
-                                                className={`${school.isActive
-                                                        ? 'text-red-600 hover:text-red-900'
-                                                        : 'text-green-600 hover:text-green-900'
+                                                className={`p-1 ${school.isActive
+                                                    ? 'text-red-600 hover:text-red-900 active:text-red-950'
+                                                    : 'text-green-600 hover:text-green-900 active:text-green-950'
                                                     }`}
                                             >
-                                                <Trash2 className="w-5 h-5 inline" />
+                                                <Trash2 className="w-4 h-4 sm:w-5 sm:h-5 inline" />
                                             </button>
                                         </td>
                                     </tr>
@@ -487,23 +493,23 @@ const SchoolsPage = () => {
 
             {/* Create School Modal */}
             {showCreateModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-                            <h2 className="text-2xl font-bold text-gray-900">{t('schools.createSchool')}</h2>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                        <div className="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center z-10">
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{t('schools.createSchool')}</h2>
                             <button
                                 onClick={() => { setShowCreateModal(false); resetForm(); }}
-                                className="text-gray-400 hover:text-gray-600"
+                                className="text-gray-400 hover:text-gray-600 active:text-gray-800 p-1"
                             >
-                                <X className="w-6 h-6" />
+                                <X className="w-5 h-5 sm:w-6 sm:h-6" />
                             </button>
                         </div>
 
-                        <form onSubmit={handleCreateSchool} className="p-6 space-y-6">
+                        <form onSubmit={handleCreateSchool} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                             {/* School Information */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('schools.schoolInformation')}</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('schools.schoolInformation')}</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                             <Hash className="w-4 h-4 inline mr-1" />{t('schools.schoolCode')} *
@@ -512,7 +518,7 @@ const SchoolsPage = () => {
                                             type="text"
                                             value={formData.schoolCode}
                                             onChange={(e) => handleInputChange('schoolCode', e.target.value)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.schoolCode ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.schoolCode ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="SCH001"
                                         />
@@ -529,7 +535,7 @@ const SchoolsPage = () => {
                                             type="text"
                                             value={formData.schoolName}
                                             onChange={(e) => handleInputChange('schoolName', e.target.value)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.schoolName ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.schoolName ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="Sekolah Kebangsaan Example"
                                         />
@@ -542,8 +548,8 @@ const SchoolsPage = () => {
 
                             {/* Location Information */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('schools.locationInformation')}</h3>
-                                <div className="space-y-4">
+                                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('schools.locationInformation')}</h3>
+                                <div className="space-y-3 sm:space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                             <MapPin className="w-4 h-4 inline mr-1" />{t('schools.address')} *
@@ -552,7 +558,7 @@ const SchoolsPage = () => {
                                             type="text"
                                             value={formData.address}
                                             onChange={(e) => handleInputChange('address', e.target.value)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.address ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.address ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="Jalan Example 123"
                                         />
@@ -561,14 +567,14 @@ const SchoolsPage = () => {
                                         )}
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">{t('schools.city')} *</label>
                                             <input
                                                 type="text"
                                                 value={formData.city}
                                                 onChange={(e) => handleInputChange('city', e.target.value)}
-                                                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.city ? 'border-red-500' : 'border-gray-300'
+                                                className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.city ? 'border-red-500' : 'border-gray-300'
                                                     }`}
                                                 placeholder="Kuala Lumpur"
                                             />
@@ -582,7 +588,7 @@ const SchoolsPage = () => {
                                             <select
                                                 value={formData.state}
                                                 onChange={(e) => handleInputChange('state', e.target.value)}
-                                                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.state ? 'border-red-500' : 'border-gray-300'
+                                                className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.state ? 'border-red-500' : 'border-gray-300'
                                                     }`}
                                             >
                                                 <option value="">{t('schools.selectState')}</option>
@@ -601,7 +607,7 @@ const SchoolsPage = () => {
                                                 type="text"
                                                 value={formData.postalCode}
                                                 onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                                                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.postalCode ? 'border-red-500' : 'border-gray-300'
+                                                className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.postalCode ? 'border-red-500' : 'border-gray-300'
                                                     }`}
                                                 placeholder="50000"
                                                 maxLength={5}
@@ -616,8 +622,8 @@ const SchoolsPage = () => {
 
                             {/* Contact Information */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('schools.contactInformation')}</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('schools.contactInformation')}</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                             <Phone className="w-4 h-4 inline mr-1" />{t('schools.phoneNumber')} *
@@ -626,7 +632,7 @@ const SchoolsPage = () => {
                                             type="tel"
                                             value={formData.phoneNumber}
                                             onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.phoneNumber ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.phoneNumber ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="012-3456789"
                                         />
@@ -643,7 +649,7 @@ const SchoolsPage = () => {
                                             type="email"
                                             value={formData.email}
                                             onChange={(e) => handleInputChange('email', e.target.value)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.email ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.email ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="school@example.com"
                                         />
@@ -656,8 +662,8 @@ const SchoolsPage = () => {
 
                             {/* Administrative Details */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('schools.administrativeDetails')}</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('schools.administrativeDetails')}</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                             <User className="w-4 h-4 inline mr-1" />{t('schools.principalName')} *
@@ -666,7 +672,7 @@ const SchoolsPage = () => {
                                             type="text"
                                             value={formData.principalName}
                                             onChange={(e) => handleInputChange('principalName', e.target.value)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.principalName ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.principalName ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="Dr. Ahmad bin Abdullah"
                                         />
@@ -683,7 +689,7 @@ const SchoolsPage = () => {
                                             type="number"
                                             value={formData.maxStudents}
                                             onChange={(e) => handleInputChange('maxStudents', parseInt(e.target.value) || 0)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.maxStudents ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.maxStudents ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="1000"
                                             min="50"
@@ -698,18 +704,18 @@ const SchoolsPage = () => {
                             </div>
 
                             {/* Form Actions */}
-                            <div className="flex gap-3 pt-4 border-t">
+                            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4 border-t">
                                 <button
                                     type="button"
                                     onClick={() => { setShowCreateModal(false); resetForm(); }}
-                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 active:bg-gray-100 order-2 sm:order-1"
                                     disabled={isSubmitting}
                                 >
                                     {t('schools.cancel')}
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? t('schools.creating') : t('schools.save')}
@@ -722,23 +728,23 @@ const SchoolsPage = () => {
 
             {/* Edit School Modal */}
             {showEditModal && selectedSchool && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-                            <h2 className="text-2xl font-bold text-gray-900">{t('schools.editSchool')}</h2>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                        <div className="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center z-10">
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{t('schools.editSchool')}</h2>
                             <button
                                 onClick={() => { setShowEditModal(false); resetEditForm(); }}
-                                className="text-gray-400 hover:text-gray-600"
+                                className="text-gray-400 hover:text-gray-600 active:text-gray-800 p-1"
                             >
-                                <X className="w-6 h-6" />
+                                <X className="w-5 h-5 sm:w-6 sm:h-6" />
                             </button>
                         </div>
 
-                        <form onSubmit={handleEditSchool} className="p-6 space-y-6">
+                        <form onSubmit={handleEditSchool} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
                             {/* School Information */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('schools.schoolInformation')}</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('schools.schoolInformation')}</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                             <Hash className="w-4 h-4 inline mr-1" />{t('schools.schoolCode')} *
@@ -747,7 +753,7 @@ const SchoolsPage = () => {
                                             type="text"
                                             value={editFormData.schoolCode}
                                             onChange={(e) => handleEditInputChange('schoolCode', e.target.value)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.schoolCode ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.schoolCode ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="SCH001"
                                         />
@@ -764,7 +770,7 @@ const SchoolsPage = () => {
                                             type="text"
                                             value={editFormData.schoolName}
                                             onChange={(e) => handleEditInputChange('schoolName', e.target.value)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.schoolName ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.schoolName ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="Sekolah Kebangsaan Example"
                                         />
@@ -777,8 +783,8 @@ const SchoolsPage = () => {
 
                             {/* Location Information */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('schools.locationInformation')}</h3>
-                                <div className="space-y-4">
+                                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('schools.locationInformation')}</h3>
+                                <div className="space-y-3 sm:space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                             <MapPin className="w-4 h-4 inline mr-1" />{t('schools.address')} *
@@ -787,7 +793,7 @@ const SchoolsPage = () => {
                                             type="text"
                                             value={editFormData.address}
                                             onChange={(e) => handleEditInputChange('address', e.target.value)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.address ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.address ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="Jalan Example 123"
                                         />
@@ -796,14 +802,14 @@ const SchoolsPage = () => {
                                         )}
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">{t('schools.city')} *</label>
                                             <input
                                                 type="text"
                                                 value={editFormData.city}
                                                 onChange={(e) => handleEditInputChange('city', e.target.value)}
-                                                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.city ? 'border-red-500' : 'border-gray-300'
+                                                className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.city ? 'border-red-500' : 'border-gray-300'
                                                     }`}
                                                 placeholder="Kuala Lumpur"
                                             />
@@ -817,7 +823,7 @@ const SchoolsPage = () => {
                                             <select
                                                 value={editFormData.state}
                                                 onChange={(e) => handleEditInputChange('state', e.target.value)}
-                                                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.state ? 'border-red-500' : 'border-gray-300'
+                                                className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.state ? 'border-red-500' : 'border-gray-300'
                                                     }`}
                                             >
                                                 <option value="">{t('schools.selectState')}</option>
@@ -836,7 +842,7 @@ const SchoolsPage = () => {
                                                 type="text"
                                                 value={editFormData.postalCode}
                                                 onChange={(e) => handleEditInputChange('postalCode', e.target.value)}
-                                                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.postalCode ? 'border-red-500' : 'border-gray-300'
+                                                className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.postalCode ? 'border-red-500' : 'border-gray-300'
                                                     }`}
                                                 placeholder="50000"
                                                 maxLength={5}
@@ -851,8 +857,8 @@ const SchoolsPage = () => {
 
                             {/* Contact Information */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('schools.contactInformation')}</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('schools.contactInformation')}</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                             <Phone className="w-4 h-4 inline mr-1" />{t('schools.phoneNumber')} *
@@ -861,7 +867,7 @@ const SchoolsPage = () => {
                                             type="tel"
                                             value={editFormData.phoneNumber}
                                             onChange={(e) => handleEditInputChange('phoneNumber', e.target.value)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.phoneNumber ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.phoneNumber ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="012-3456789"
                                         />
@@ -878,7 +884,7 @@ const SchoolsPage = () => {
                                             type="email"
                                             value={editFormData.email}
                                             onChange={(e) => handleEditInputChange('email', e.target.value)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.email ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.email ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="school@example.com"
                                         />
@@ -891,8 +897,8 @@ const SchoolsPage = () => {
 
                             {/* Administrative Details */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('schools.administrativeDetails')}</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('schools.administrativeDetails')}</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                             <User className="w-4 h-4 inline mr-1" />{t('schools.principalName')} *
@@ -901,7 +907,7 @@ const SchoolsPage = () => {
                                             type="text"
                                             value={editFormData.principalName}
                                             onChange={(e) => handleEditInputChange('principalName', e.target.value)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.principalName ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.principalName ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="Dr. Ahmad bin Abdullah"
                                         />
@@ -918,7 +924,7 @@ const SchoolsPage = () => {
                                             type="number"
                                             value={editFormData.maxStudents}
                                             onChange={(e) => handleEditInputChange('maxStudents', parseInt(e.target.value) || 0)}
-                                            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.maxStudents ? 'border-red-500' : 'border-gray-300'
+                                            className={`w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 ${formErrors.maxStudents ? 'border-red-500' : 'border-gray-300'
                                                 }`}
                                             placeholder="1000"
                                             min="50"
@@ -933,18 +939,18 @@ const SchoolsPage = () => {
                             </div>
 
                             {/* Form Actions */}
-                            <div className="flex gap-3 pt-4 border-t">
+                            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4 border-t">
                                 <button
                                     type="button"
                                     onClick={() => { setShowEditModal(false); resetEditForm(); }}
-                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 active:bg-gray-100 order-2 sm:order-1"
                                     disabled={isSubmitting}
                                 >
                                     {t('schools.cancel')}
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? t('schools.updating') : t('schools.save')}

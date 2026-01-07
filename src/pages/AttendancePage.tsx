@@ -115,19 +115,19 @@ const AttendancePage = () => {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             {/* Header */}
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                        <Calendar className="w-8 h-8 text-blue-600" />
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+                        <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                         {t('attendance.title')}
                     </h1>
-                    <p className="text-gray-600 mt-1">{t('attendance.subtitle')}</p>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1">{t('attendance.subtitle')}</p>
                 </div>
                 <button
                     onClick={exportReport}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                    className="bg-blue-600 text-white px-4 py-2.5 sm:py-2 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
                 >
                     <Download className="w-5 h-5" />
                     {t('attendance.exportReport')}
@@ -135,24 +135,24 @@ const AttendancePage = () => {
             </div>
 
             {/* Date Picker and Filter */}
-            <div className="card flex flex-wrap gap-4 items-center">
-                <div className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-gray-600" />
+            <div className="card p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:items-center">
+                <div className="flex items-center gap-2 flex-1 sm:flex-none">
+                    <Calendar className="w-5 h-5 text-gray-600 flex-shrink-0" />
                     <input
                         type="date"
                         value={selectedDate}
                         onChange={(e) => setSelectedDate(e.target.value)}
-                        className="input-field"
+                        className="input-field flex-1 sm:flex-none py-2.5 sm:py-2 text-base sm:text-sm"
                         max={new Date().toISOString().split('T')[0]}
                     />
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <Filter className="w-5 h-5 text-gray-600" />
+                <div className="flex items-center gap-2 flex-1 sm:flex-none">
+                    <Filter className="w-5 h-5 text-gray-600 flex-shrink-0" />
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="input-field"
+                        className="input-field flex-1 sm:flex-none py-2.5 sm:py-2 text-base sm:text-sm"
                     >
                         <option value="All">{t('attendance.allStatus')}</option>
                         <option value="Present">{t('attendance.present')}</option>
@@ -163,51 +163,51 @@ const AttendancePage = () => {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="card">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-100 rounded-lg">
-                            <Users className="w-6 h-6 text-blue-600" />
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6">
+                <div className="card p-3 sm:p-6">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="p-2 sm:p-3 bg-blue-100 rounded-lg">
+                            <Users className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">{t('attendance.totalRecords')}</p>
-                            <p className="text-2xl font-bold text-gray-900">{stats.totalRecords}</p>
+                            <p className="text-xs sm:text-sm text-gray-600">{t('attendance.totalRecords')}</p>
+                            <p className="text-lg sm:text-2xl font-bold text-gray-900">{stats.totalRecords}</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="card">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-green-100 rounded-lg">
-                            <CheckCircle className="w-6 h-6 text-green-600" />
+                <div className="card p-3 sm:p-6">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="p-2 sm:p-3 bg-green-100 rounded-lg">
+                            <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">{t('attendance.present')}</p>
-                            <p className="text-2xl font-bold text-green-900">{stats.present}</p>
+                            <p className="text-xs sm:text-sm text-gray-600">{t('attendance.present')}</p>
+                            <p className="text-lg sm:text-2xl font-bold text-green-900">{stats.present}</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="card">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-yellow-100 rounded-lg">
-                            <Clock className="w-6 h-6 text-yellow-600" />
+                <div className="card p-3 sm:p-6">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="p-2 sm:p-3 bg-yellow-100 rounded-lg">
+                            <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">{t('attendance.late')}</p>
-                            <p className="text-2xl font-bold text-yellow-900">{stats.late}</p>
+                            <p className="text-xs sm:text-sm text-gray-600">{t('attendance.late')}</p>
+                            <p className="text-lg sm:text-2xl font-bold text-yellow-900">{stats.late}</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="card">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-red-100 rounded-lg">
-                            <XCircle className="w-6 h-6 text-red-600" />
+                <div className="card p-3 sm:p-6">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="p-2 sm:p-3 bg-red-100 rounded-lg">
+                            <XCircle className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
                         </div>
                         <div>
-                            <p className="text-sm text-gray-600">{t('attendance.absent')}</p>
-                            <p className="text-2xl font-bold text-red-900">{stats.absent}</p>
+                            <p className="text-xs sm:text-sm text-gray-600">{t('attendance.absent')}</p>
+                            <p className="text-lg sm:text-2xl font-bold text-red-900">{stats.absent}</p>
                         </div>
                     </div>
                 </div>
@@ -216,12 +216,12 @@ const AttendancePage = () => {
             {/* Attendance Table */}
             <div className="card overflow-hidden">
                 {filteredRecords.length === 0 ? (
-                    <div className="text-center py-12">
-                        <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    <div className="text-center py-8 sm:py-12 px-4">
+                        <Calendar className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
                             {t('attendance.noRecordsFound')}
                         </h3>
-                        <p className="text-gray-600">
+                        <p className="text-sm sm:text-base text-gray-600">
                             {t('attendance.noRecordsMessage')}
                         </p>
                     </div>
@@ -230,19 +230,19 @@ const AttendancePage = () => {
                         <table className="w-full">
                             <thead className="bg-gray-50 border-b">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         {t('attendance.student')}
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         {t('attendance.gradeClass')}
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         {t('attendance.checkInTime')}
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         {t('attendance.status')}
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         {t('attendance.camera')}
                                     </th>
                                 </tr>
@@ -250,22 +250,26 @@ const AttendancePage = () => {
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {filteredRecords.map((record) => (
                                     <tr key={record.attendanceID} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                                             <div>
                                                 <div className="text-sm font-medium text-gray-900">
                                                     {record.fullName}
                                                 </div>
-                                                <div className="text-sm text-gray-500">
+                                                <div className="text-xs sm:text-sm text-gray-500">
                                                     {record.studentCode}
+                                                </div>
+                                                {/* Show class on mobile since column is hidden */}
+                                                <div className="sm:hidden text-xs text-gray-400 mt-0.5">
+                                                    {record.class || 'N/A'}
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-900">
                                                 {record.class || 'N/A'}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                                             <div className="text-sm text-gray-900">
                                                 {record.checkInTime
                                                     ? new Date(record.checkInTime).toLocaleTimeString('en-US', {
@@ -276,12 +280,12 @@ const AttendancePage = () => {
                                                 }
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                                             <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(record.status)}`}>
                                                 {t(`attendance.${record.status.toLowerCase()}`)}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-500">
                                             {record.cameraName || '-'}
                                         </td>
                                     </tr>

@@ -242,33 +242,33 @@ const ClassesPage = () => {
     }
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center">
+        <div className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                        <BookOpen className="w-8 h-8 text-blue-600" />
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+                        <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
                         {t('classes.title')}
                     </h1>
-                    <p className="text-gray-600 mt-1">{t('classes.subtitle')}</p>
+                    <p className="text-sm sm:text-base text-gray-600 mt-1">{t('classes.subtitle')}</p>
                 </div>
                 <button onClick={() => setShowCreateModal(true)}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2">
+                    className="bg-green-600 text-white px-4 py-2.5 sm:py-2 rounded-lg hover:bg-green-700 active:bg-green-800 transition-colors flex items-center justify-center gap-2 w-full sm:w-auto">
                     <Plus className="w-5 h-5" />{t('classes.addClass')}
                 </button>
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-lg shadow p-4">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
                 <div className="flex items-center gap-2 mb-3">
                     <Filter className="w-5 h-5 text-gray-600" />
-                    <h3 className="font-semibold text-gray-900">{t('classes.filters')}</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900">{t('classes.filters')}</h3>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('classes.academicYear')}</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('classes.academicYear')}</label>
                         <select value={filterAcademicYearId || ''}
                             onChange={(e) => setFilterAcademicYearId(e.target.value ? parseInt(e.target.value) : null)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-base sm:text-sm">
                             <option value="">{t('classes.allYears')}</option>
                             {academicYears.map(year => (
                                 <option key={year.academicYearID} value={year.academicYearID}>
@@ -278,10 +278,10 @@ const ClassesPage = () => {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('classes.grade')}</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('classes.grade')}</label>
                         <select value={filterGradeId || ''}
                             onChange={(e) => setFilterGradeId(e.target.value ? parseInt(e.target.value) : null)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-base sm:text-sm">
                             <option value="">{t('classes.allGrades')}</option>
                             {grades.map(grade => (
                                 <option key={grade.gradeID} value={grade.gradeID}>{grade.gradeName}</option>
@@ -297,58 +297,58 @@ const ClassesPage = () => {
                     <table className="w-full">
                         <thead className="bg-gray-50 border-b">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('classes.className')}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('classes.grade')}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('classes.teacher')}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('classes.room')}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('classes.students')}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('classes.actions')}</th>
+                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('classes.className')}</th>
+                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('classes.grade')}</th>
+                                <th className="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('classes.teacher')}</th>
+                                <th className="hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('classes.room')}</th>
+                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('classes.students')}</th>
+                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('classes.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             {classes.length === 0 ? (
-                                <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                                <tr><td colSpan={6} className="px-4 sm:px-6 py-8 text-center text-gray-500">
                                     {t('classes.noClasses')}
                                 </td></tr>
                             ) : (
                                 classes.map((cls) => (
                                     <tr key={cls.classID} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
                                             <span className="text-sm font-medium text-gray-900">{cls.className}</span>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
                                             <span className="text-sm text-gray-900">{cls.gradeName}</span>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4">
                                             <div className="flex items-center gap-2">
                                                 <User className="w-4 h-4 text-gray-400" />
                                                 <span className="text-sm text-gray-900">{cls.classTeacherName || '-'}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4">
                                             <div className="flex items-center gap-2">
                                                 <DoorOpen className="w-4 h-4 text-gray-400" />
                                                 <span className="text-sm text-gray-900">{cls.room || '-'}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
+                                            <div className="flex items-center gap-1 sm:gap-2">
                                                 <Users className="w-4 h-4 text-gray-400" />
                                                 <span className={`text-sm font-medium ${cls.currentStudents >= cls.maxStudents ? 'text-red-600' : 'text-gray-900'}`}>
                                                     {cls.currentStudents}/{cls.maxStudents}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <div className="flex items-center gap-3">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-medium">
+                                            <div className="flex items-center gap-1 sm:gap-3">
                                                 <button onClick={() => handleEditClick(cls)}
-                                                    className="text-blue-600 hover:text-blue-900" title={t('classes.edit')}>
-                                                    <Edit className="w-4 h-4" />
+                                                    className="p-1.5 sm:p-1 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors" title={t('classes.edit')}>
+                                                    <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
                                                 </button>
                                                 <button onClick={() => handleDelete(cls)}
-                                                    className="text-red-600 hover:text-red-900" title={t('classes.delete')}
+                                                    className="p-1.5 sm:p-1 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors" title={t('classes.delete')}
                                                     disabled={cls.currentStudents > 0}>
-                                                    <Trash2 className={`w-4 h-4 ${cls.currentStudents > 0 ? 'opacity-30 cursor-not-allowed' : ''}`} />
+                                                    <Trash2 className={`w-4 h-4 sm:w-5 sm:h-5 ${cls.currentStudents > 0 ? 'opacity-30 cursor-not-allowed' : ''}`} />
                                                 </button>
                                             </div>
                                         </td>
@@ -362,22 +362,22 @@ const ClassesPage = () => {
 
             {/* Create Modal */}
             {showCreateModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                        <div className="border-b px-6 py-4 flex justify-between items-center sticky top-0 bg-white">
-                            <h2 className="text-xl font-bold text-gray-900">{t('classes.createClass')}</h2>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="border-b px-4 sm:px-6 py-4 flex justify-between items-center flex-shrink-0">
+                            <h2 className="text-lg sm:text-xl font-bold text-gray-900">{t('classes.createClass')}</h2>
                             <button onClick={() => { setShowCreateModal(false); resetForm(); }}
-                                className="text-gray-400 hover:text-gray-600">
+                                className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
-                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
+                        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('classes.academicYear')} *</label>
                                     <select value={formData.academicYearID}
                                         onChange={(e) => setFormData(prev => ({ ...prev, academicYearID: parseInt(e.target.value) }))}
-                                        className={`w-full px-3 py-2 border rounded-lg ${formErrors.academicYearID ? 'border-red-500' : 'border-gray-300'}`}>
+                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg text-base sm:text-sm ${formErrors.academicYearID ? 'border-red-500' : 'border-gray-300'}`}>
                                         <option value={0}>{t('common.selectYear')}</option>
                                         {academicYears.map(year => (
                                             <option key={year.academicYearID} value={year.academicYearID}>
@@ -391,7 +391,7 @@ const ClassesPage = () => {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('classes.grade')} *</label>
                                     <select value={formData.gradeID}
                                         onChange={(e) => setFormData(prev => ({ ...prev, gradeID: parseInt(e.target.value) }))}
-                                        className={`w-full px-3 py-2 border rounded-lg ${formErrors.gradeID ? 'border-red-500' : 'border-gray-300'}`}>
+                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg text-base sm:text-sm ${formErrors.gradeID ? 'border-red-500' : 'border-gray-300'}`}>
                                         <option value={0}>{t('common.selectGrade')}</option>
                                         {grades.map(grade => (
                                             <option key={grade.gradeID} value={grade.gradeID}>{grade.gradeName}</option>
@@ -400,12 +400,12 @@ const ClassesPage = () => {
                                     {formErrors.gradeID && <p className="text-red-500 text-xs mt-1">{formErrors.gradeID}</p>}
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('classes.className')} *</label>
                                     <input type="text" value={formData.className}
                                         onChange={(e) => setFormData(prev => ({ ...prev, className: e.target.value }))}
-                                        className={`w-full px-3 py-2 border rounded-lg ${formErrors.className ? 'border-red-500' : 'border-gray-300'}`}
+                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg text-base sm:text-sm ${formErrors.className ? 'border-red-500' : 'border-gray-300'}`}
                                         placeholder="4A, 5 Science 1" />
                                     {formErrors.className && <p className="text-red-500 text-xs mt-1">{formErrors.className}</p>}
                                 </div>
@@ -413,15 +413,15 @@ const ClassesPage = () => {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('classes.room')}</label>
                                     <input type="text" value={formData.room}
                                         onChange={(e) => setFormData(prev => ({ ...prev, room: e.target.value }))}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="A101" />
+                                        className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-base sm:text-sm" placeholder="A101" />
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('classes.classTeacher')}</label>
                                     <select value={formData.classTeacherID || ''}
                                         onChange={(e) => setFormData(prev => ({ ...prev, classTeacherID: e.target.value ? parseInt(e.target.value) : null }))}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                        className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-base sm:text-sm">
                                         <option value="">{t('classes.noTeacher')}</option>
                                         {teachers.map(teacher => (
                                             <option key={teacher.userID} value={teacher.userID}>{teacher.fullName}</option>
@@ -432,7 +432,7 @@ const ClassesPage = () => {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('classes.maxStudents')} *</label>
                                     <input type="number" value={formData.maxStudents}
                                         onChange={(e) => setFormData(prev => ({ ...prev, maxStudents: parseInt(e.target.value) || 40 }))}
-                                        className={`w-full px-3 py-2 border rounded-lg ${formErrors.maxStudents ? 'border-red-500' : 'border-gray-300'}`}
+                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg text-base sm:text-sm ${formErrors.maxStudents ? 'border-red-500' : 'border-gray-300'}`}
                                         min="1" max="50" />
                                     {formErrors.maxStudents && <p className="text-red-500 text-xs mt-1">{formErrors.maxStudents}</p>}
                                     <p className="text-xs text-gray-500 mt-1">{t('classes.capacity')}</p>
@@ -440,10 +440,10 @@ const ClassesPage = () => {
                             </div>
                             <div className="flex gap-3 pt-4">
                                 <button type="button" onClick={() => { setShowCreateModal(false); resetForm(); }}
-                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors"
                                     disabled={isSubmitting}>{t('classes.cancel')}</button>
                                 <button type="submit"
-                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 transition-colors"
                                     disabled={isSubmitting}>
                                     {isSubmitting ? t('classes.creating') : t('classes.save')}
                                 </button>
@@ -455,44 +455,46 @@ const ClassesPage = () => {
 
             {/* Edit Modal */}
             {showEditModal && selectedClass && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full">
-                        <div className="border-b px-6 py-4 flex justify-between items-center">
-                            <h2 className="text-xl font-bold text-gray-900">{t('classes.editClass')}</h2>
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+                        <div className="border-b px-4 sm:px-6 py-4 flex justify-between items-center flex-shrink-0">
+                            <h2 className="text-lg sm:text-xl font-bold text-gray-900">{t('classes.editClass')}</h2>
                             <button onClick={() => { setShowEditModal(false); setSelectedClass(null); }}
-                                className="text-gray-400 hover:text-gray-600">
+                                className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
-                        <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
+                        <form onSubmit={handleEditSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
                             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                                <p className="text-sm text-blue-800">
-                                    <strong>{t('classes.className')}:</strong> {selectedClass.className} |
-                                    <strong> {t('classes.grade')}:</strong> {selectedClass.gradeName} |
+                                <p className="text-xs sm:text-sm text-blue-800">
+                                    <strong>{t('classes.className')}:</strong> {selectedClass.className}<span className="hidden sm:inline"> |</span>
+                                    <br className="sm:hidden" />
+                                    <strong> {t('classes.grade')}:</strong> {selectedClass.gradeName}<span className="hidden sm:inline"> |</span>
+                                    <br className="sm:hidden" />
                                     <strong> {t('classes.academicYear')}:</strong> {selectedClass.academicYear}
                                 </p>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('classes.className')} *</label>
                                     <input type="text" value={editFormData.className}
                                         onChange={(e) => setEditFormData(prev => ({ ...prev, className: e.target.value }))}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                        className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-base sm:text-sm"
                                         placeholder="4A, 5 Science 1" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('classes.room')}</label>
                                     <input type="text" value={editFormData.room}
                                         onChange={(e) => setEditFormData(prev => ({ ...prev, room: e.target.value }))}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="A101" />
+                                        className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-base sm:text-sm" placeholder="A101" />
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('classes.classTeacher')}</label>
                                     <select value={editFormData.classTeacherID || ''}
                                         onChange={(e) => setEditFormData(prev => ({ ...prev, classTeacherID: e.target.value ? parseInt(e.target.value) : null }))}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                        className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-base sm:text-sm">
                                         <option value="">{t('classes.noTeacher')}</option>
                                         {teachers.map(teacher => (
                                             <option key={teacher.userID} value={teacher.userID}>{teacher.fullName}</option>
@@ -503,23 +505,23 @@ const ClassesPage = () => {
                                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('classes.maxStudents')} *</label>
                                     <input type="number" value={editFormData.maxStudents}
                                         onChange={(e) => setEditFormData(prev => ({ ...prev, maxStudents: parseInt(e.target.value) || 40 }))}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                                        className="w-full px-3 py-2.5 sm:py-2 border border-gray-300 rounded-lg text-base sm:text-sm"
                                         min="1" max="50" />
                                 </div>
                             </div>
                             {selectedClass.currentStudents > 0 && (
-                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                                    <p className="text-sm text-yellow-800">
+                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-4">
+                                    <p className="text-xs sm:text-sm text-yellow-800">
                                         ⚠️ {t('common.thisClassHas')} {selectedClass.currentStudents} {t('common.studentsEnrolled')}
                                     </p>
                                 </div>
                             )}
                             <div className="flex gap-3 pt-4">
                                 <button type="button" onClick={() => { setShowEditModal(false); setSelectedClass(null); }}
-                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors"
                                     disabled={isSubmitting}>{t('classes.cancel')}</button>
                                 <button type="submit"
-                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                                    className="flex-1 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 transition-colors"
                                     disabled={isSubmitting}>
                                     {isSubmitting ? t('classes.updating') : t('classes.save')}
                                 </button>
