@@ -48,7 +48,7 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
     const [error, setError] = useState<string>('');
     const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
     const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
-    const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
+    const [hasMultipleCameras, setHasMultipleCameras] = useState(true); // Default true for mobile
     const [faceStatus, setFaceStatus] = useState<FaceStatus>('no-face');
     const [countdown, setCountdown] = useState<number | null>(null);
     const [showTips, setShowTips] = useState(false);
@@ -117,13 +117,20 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
     }, [isCapturing, capturedImage, faceDetectorSupported]);
 
     // Check if device has multiple cameras (for flip button)
+    // This should be called AFTER camera permission is granted for accurate results
     const checkMultipleCameras = async () => {
         try {
             const devices = await navigator.mediaDevices.enumerateDevices();
             const videoDevices = devices.filter(device => device.kind === 'videoinput');
-            setHasMultipleCameras(videoDevices.length > 1);
+            console.log('Video devices found:', videoDevices.length);
+
+            // On mobile, assume multiple cameras even if detection fails
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            setHasMultipleCameras(videoDevices.length > 1 || isMobile);
         } catch {
-            setHasMultipleCameras(false);
+            // On error, assume mobile devices have multiple cameras
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            setHasMultipleCameras(isMobile);
         }
     };
 
@@ -141,7 +148,7 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
 
             const constraints: MediaStreamConstraints = {
                 video: {
-                    facingMode: facingMode,
+                    facingMode: { ideal: facingMode },
                     width: { ideal: 1280 },
                     height: { ideal: 720 },
                     aspectRatio: { ideal: 1 }
@@ -149,7 +156,22 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                 audio: false
             };
 
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            let stream: MediaStream;
+            try {
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+            } catch (constraintError) {
+                // If requested camera not available, try without facingMode constraint
+                console.warn('Camera with facingMode not available, trying default:', constraintError);
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        aspectRatio: { ideal: 1 }
+                    },
+                    audio: false
+                });
+            }
+
             streamRef.current = stream;
 
             if (videoRef.current) {
@@ -157,6 +179,9 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                 await videoRef.current.play();
             }
             setIsCapturing(true);
+
+            // Check for multiple cameras AFTER permission is granted
+            await checkMultipleCameras();
         } catch (err) {
             console.error('Camera error:', err);
             if (err instanceof Error) {
@@ -693,36 +718,48 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                 <div className="flex-shrink-0 p-4 bg-gray-900/80 backdrop-blur-sm safe-area-bottom">
                     {!capturedImage ? (
                         // Camera Mode Buttons
-                        <div className="flex items-center justify-center gap-4 sm:gap-6">
-                            {/* Flip Camera Button (if multiple cameras available) */}
+                        <div className="flex flex-col items-center gap-3">
+                            {/* Camera indicator */}
                             {hasMultipleCameras && (
-                                <button
-                                    onClick={flipCamera}
-                                    disabled={isLoading}
-                                    className="p-3 sm:p-4 bg-gray-700 hover:bg-gray-600 active:bg-gray-500 
-                                             text-white rounded-full transition-all disabled:opacity-50
-                                             touch-manipulation"
-                                    title={t('students.cameraCapture.flipCamera')}
-                                >
-                                    <FlipHorizontal className="w-5 h-5 sm:w-6 sm:h-6" />
-                                </button>
+                                <div className="text-xs text-gray-400">
+                                    {facingMode === 'user'
+                                        ? (t('students.cameraCapture.frontCamera') || '📷 Front Camera')
+                                        : (t('students.cameraCapture.backCamera') || '📷 Back Camera')
+                                    }
+                                </div>
                             )}
 
-                            {/* Capture Button */}
-                            <button
-                                onClick={startManualCapture}
-                                disabled={isLoading || !isCapturing || countdown !== null}
-                                className={`p-5 sm:p-6 rounded-full shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation ${faceStatus === 'good' || faceStatus === 'capturing'
-                                        ? 'bg-gradient-to-r from-green-500 to-green-400 hover:from-green-400 hover:to-green-300 shadow-green-500/30'
-                                        : 'bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-400 hover:to-cyan-300 shadow-cyan-500/30'
-                                    } active:scale-95`}
-                                title={t('students.cameraCapture.capture')}
-                            >
-                                <Camera className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
-                            </button>
+                            <div className="flex items-center justify-center gap-4 sm:gap-6">
+                                {/* Flip Camera Button (if multiple cameras available) */}
+                                {hasMultipleCameras && (
+                                    <button
+                                        onClick={flipCamera}
+                                        disabled={isLoading}
+                                        className="p-3 sm:p-4 bg-gray-700 hover:bg-gray-600 active:bg-gray-500 
+                                                 text-white rounded-full transition-all disabled:opacity-50
+                                                 touch-manipulation relative"
+                                        title={t('students.cameraCapture.flipCamera')}
+                                    >
+                                        <FlipHorizontal className="w-6 h-6 sm:w-7 sm:h-7" />
+                                    </button>
+                                )}
 
-                            {/* Placeholder for symmetry */}
-                            {hasMultipleCameras && <div className="w-11 h-11 sm:w-14 sm:h-14" />}
+                                {/* Capture Button */}
+                                <button
+                                    onClick={startManualCapture}
+                                    disabled={isLoading || !isCapturing || countdown !== null}
+                                    className={`p-5 sm:p-6 rounded-full shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation ${faceStatus === 'good' || faceStatus === 'capturing'
+                                            ? 'bg-gradient-to-r from-green-500 to-green-400 hover:from-green-400 hover:to-green-300 shadow-green-500/30'
+                                            : 'bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-400 hover:to-cyan-300 shadow-cyan-500/30'
+                                        } active:scale-95`}
+                                    title={t('students.cameraCapture.capture')}
+                                >
+                                    <Camera className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+                                </button>
+
+                                {/* Placeholder for symmetry */}
+                                {hasMultipleCameras && <div className="w-12 h-12 sm:w-15 sm:h-15" />}
+                            </div>
                         </div>
                     ) : (
                         // Preview Mode Buttons
