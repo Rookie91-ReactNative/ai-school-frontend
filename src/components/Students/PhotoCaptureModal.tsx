@@ -1,9 +1,9 @@
 ﻿import { useState, useRef, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Camera, X, CheckCircle, AlertCircle, RefreshCw, FlipHorizontal, Download, Lightbulb, Zap } from 'lucide-react';
+import { Camera, X, CheckCircle, AlertCircle, RefreshCw, FlipHorizontal, Download, Lightbulb } from 'lucide-react';
 import { studentService } from '../../services/studentService';
 
-// TypeScript declarations for FaceDetector API
+// TypeScript declarations for FaceDetector API (Chrome desktop only)
 declare global {
     interface Window {
         FaceDetector: new (options?: FaceDetectorOptions) => FaceDetector;
@@ -30,7 +30,7 @@ interface PhotoCaptureModalProps {
 }
 
 // Face detection status
-type FaceStatus = 'no-face' | 'too-far' | 'too-close' | 'off-center' | 'good' | 'capturing';
+type FaceStatus = 'no-face' | 'too-far' | 'too-close' | 'off-center' | 'good' | 'capturing' | 'ready';
 
 const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSuccess }: PhotoCaptureModalProps) => {
     const { t } = useTranslation();
@@ -48,19 +48,18 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
     const [error, setError] = useState<string>('');
     const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
     const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
-    const [hasMultipleCameras, setHasMultipleCameras] = useState(true); // Default true for mobile
+    const [hasMultipleCameras, setHasMultipleCameras] = useState(true);
     const [faceStatus, setFaceStatus] = useState<FaceStatus>('no-face');
     const [countdown, setCountdown] = useState<number | null>(null);
     const [showTips, setShowTips] = useState(false);
-    const [autoCapture, setAutoCapture] = useState(true);
     const [faceDetectorSupported, setFaceDetectorSupported] = useState(false);
     const [stabilityProgress, setStabilityProgress] = useState(0);
 
     // Constants for face detection
-    const GOOD_FRAMES_REQUIRED = 15; // ~1.5 seconds at 10fps detection rate
-    const MIN_FACE_SIZE_RATIO = 0.20; // Face should be at least 20% of frame
-    const MAX_FACE_SIZE_RATIO = 0.80; // Face should be at most 80% of frame
-    const CENTER_TOLERANCE = 0.25; // 25% tolerance from center
+    const GOOD_FRAMES_REQUIRED = 15;
+    const MIN_FACE_SIZE_RATIO = 0.20;
+    const MAX_FACE_SIZE_RATIO = 0.80;
+    const CENTER_TOLERANCE = 0.25;
 
     // Prevent body scroll when modal is open
     useEffect(() => {
@@ -83,13 +82,13 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                     maxDetectedFaces: 1
                 });
                 setFaceDetectorSupported(true);
-                console.log('FaceDetector API supported');
+                console.log('✅ FaceDetector API supported');
             } catch (e) {
-                console.log('FaceDetector API not available:', e);
+                console.log('⚠️ FaceDetector API not available:', e);
                 setFaceDetectorSupported(false);
             }
         } else {
-            console.log('FaceDetector API not supported in this browser');
+            console.log('⚠️ FaceDetector API not supported in this browser (normal for mobile)');
             setFaceDetectorSupported(false);
         }
     }, []);
@@ -106,29 +105,31 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
         };
     }, [isOpen, facingMode]);
 
-    // Start face detection when capturing
+    // Start face detection when capturing (only if supported)
     useEffect(() => {
-        if (isCapturing && !capturedImage && faceDetectorSupported) {
-            startFaceDetection();
+        if (isCapturing && !capturedImage) {
+            if (faceDetectorSupported) {
+                startFaceDetection();
+            } else {
+                // ⭐ KEY FIX: When face detection not available, show "ready" status immediately
+                setFaceStatus('ready');
+            }
         }
         return () => {
             stopFaceDetection();
         };
     }, [isCapturing, capturedImage, faceDetectorSupported]);
 
-    // Check if device has multiple cameras (for flip button)
-    // This should be called AFTER camera permission is granted for accurate results
+    // Check if device has multiple cameras
     const checkMultipleCameras = async () => {
         try {
             const devices = await navigator.mediaDevices.enumerateDevices();
             const videoDevices = devices.filter(device => device.kind === 'videoinput');
-            console.log('Video devices found:', videoDevices.length);
+            console.log('📷 Video devices found:', videoDevices.length);
 
-            // On mobile, assume multiple cameras even if detection fails
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             setHasMultipleCameras(videoDevices.length > 1 || isMobile);
         } catch {
-            // On error, assume mobile devices have multiple cameras
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             setHasMultipleCameras(isMobile);
         }
@@ -143,7 +144,6 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
         setStabilityProgress(0);
 
         try {
-            // Stop any existing stream
             stopCamera();
 
             const constraints: MediaStreamConstraints = {
@@ -160,7 +160,6 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
             try {
                 stream = await navigator.mediaDevices.getUserMedia(constraints);
             } catch (constraintError) {
-                // If requested camera not available, try without facingMode constraint
                 console.warn('Camera with facingMode not available, trying default:', constraintError);
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: {
@@ -180,17 +179,16 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
             }
             setIsCapturing(true);
 
-            // Check for multiple cameras AFTER permission is granted
             await checkMultipleCameras();
         } catch (err) {
             console.error('Camera error:', err);
             if (err instanceof Error) {
                 if (err.name === 'NotAllowedError') {
-                    setError(t('students.cameraCapture.permissionDenied'));
+                    setError(t('students.cameraCapture.permissionDenied', 'Camera permission denied'));
                 } else if (err.name === 'NotFoundError') {
-                    setError(t('students.cameraCapture.noCameraFound'));
+                    setError(t('students.cameraCapture.noCameraFound', 'No camera found'));
                 } else {
-                    setError(t('students.cameraCapture.cameraError') + err.message);
+                    setError(t('students.cameraCapture.cameraError', 'Camera error: ') + err.message);
                 }
             }
         } finally {
@@ -213,7 +211,7 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
 
         detectionIntervalRef.current = setInterval(async () => {
             await detectFace();
-        }, 100); // Run detection every 100ms (~10fps for detection)
+        }, 100);
     };
 
     // Stop face detection
@@ -234,7 +232,7 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
 
         try {
             const video = videoRef.current;
-            if (video.readyState !== 4) return; // Video not ready
+            if (video.readyState !== 4) return;
 
             const faces = await faceDetectorRef.current.detect(video);
 
@@ -248,26 +246,21 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
             const face = faces[0];
             const box = face.boundingBox;
 
-            // Calculate face metrics
             const videoWidth = video.videoWidth;
             const videoHeight = video.videoHeight;
             const frameSize = Math.min(videoWidth, videoHeight);
 
-            // Face size relative to frame
             const faceSize = Math.max(box.width, box.height);
             const faceSizeRatio = faceSize / frameSize;
 
-            // Face center position
             const faceCenterX = box.x + box.width / 2;
             const faceCenterY = box.y + box.height / 2;
             const frameCenterX = videoWidth / 2;
             const frameCenterY = videoHeight / 2;
 
-            // Calculate offset from center (normalized)
             const offsetX = Math.abs(faceCenterX - frameCenterX) / frameSize;
             const offsetY = Math.abs(faceCenterY - frameCenterY) / frameSize;
 
-            // Determine face status
             let status: FaceStatus = 'good';
 
             if (faceSizeRatio < MIN_FACE_SIZE_RATIO) {
@@ -280,23 +273,20 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                 status = 'off-center';
                 goodFrameCountRef.current = 0;
             } else {
-                // Good position - increment counter
                 goodFrameCountRef.current++;
                 status = 'good';
             }
 
             setFaceStatus(status);
 
-            // Update stability progress
             const progress = Math.min(100, (goodFrameCountRef.current / GOOD_FRAMES_REQUIRED) * 100);
             setStabilityProgress(progress);
 
-            // Auto-capture when stable for enough frames
-            if (autoCapture && status === 'good' && goodFrameCountRef.current >= GOOD_FRAMES_REQUIRED) {
+            // Auto-capture when stable
+            if (status === 'good' && goodFrameCountRef.current >= GOOD_FRAMES_REQUIRED) {
                 setFaceStatus('capturing');
                 goodFrameCountRef.current = 0;
 
-                // Small delay then capture
                 if (!autoCaptureTriggerRef.current) {
                     autoCaptureTriggerRef.current = setTimeout(() => {
                         capturePhoto();
@@ -305,7 +295,6 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                 }
             }
         } catch (err) {
-            // Face detection failed - silently continue
             console.debug('Face detection error:', err);
         }
     };
@@ -340,26 +329,21 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
 
         if (!ctx) return;
 
-        // Stop face detection
         stopFaceDetection();
 
-        // Set canvas size to video dimensions (square crop)
         const size = Math.min(video.videoWidth, video.videoHeight);
         canvas.width = size;
         canvas.height = size;
 
-        // Calculate crop position (center)
         const offsetX = (video.videoWidth - size) / 2;
         const offsetY = (video.videoHeight - size) / 2;
 
-        // Draw video frame to canvas (cropped to square)
         ctx.drawImage(
             video,
-            offsetX, offsetY, size, size, // Source
-            0, 0, size, size // Destination
+            offsetX, offsetY, size, size,
+            0, 0, size, size
         );
 
-        // Mirror image if using front camera
         if (facingMode === 'user') {
             ctx.save();
             ctx.scale(-1, 1);
@@ -367,12 +351,10 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
             ctx.restore();
         }
 
-        // Get image data
         const imageData = canvas.toDataURL('image/jpeg', 0.95);
         setCapturedImage(imageData);
         setCountdown(null);
 
-        // Stop camera after capture
         stopCamera();
     }, [facingMode]);
 
@@ -395,12 +377,10 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
         setError('');
 
         try {
-            // Convert base64 to File
             const response = await fetch(capturedImage);
             const blob = await response.blob();
             const file = new File([blob], `capture_${Date.now()}.jpg`, { type: 'image/jpeg' });
 
-            // Create FileList-like object
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
 
@@ -414,7 +394,7 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
         } catch (err) {
             console.error('Upload error:', err);
             setUploadStatus('error');
-            setError(err instanceof Error ? err.message : t('students.cameraCapture.uploadError'));
+            setError(err instanceof Error ? err.message : t('students.cameraCapture.uploadError', 'Upload failed'));
         } finally {
             setIsLoading(false);
         }
@@ -434,66 +414,88 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
         onClose();
     };
 
-    // Get status message and color
+    // Get status message and color based on face detection support
     const getStatusInfo = () => {
+        // ⭐ KEY FIX: When face detection not available, always show "Ready to capture"
+        if (!faceDetectorSupported) {
+            return {
+                message: t('students.cameraCapture.readyToCapture', 'Ready! Tap to capture'),
+                color: 'bg-green-500 text-white',
+                ringColor: 'border-green-400 shadow-[0_0_30px_rgba(74,222,128,0.5)]'
+            };
+        }
+
+        // Face detection is available - show appropriate status
         switch (faceStatus) {
             case 'no-face':
                 return {
-                    message: t('students.cameraCapture.positionYourFace'),
+                    message: t('students.cameraCapture.positionYourFace', 'Position your face in the circle'),
                     color: 'bg-gray-700/90 text-gray-300',
                     ringColor: 'border-gray-500 animate-pulse'
                 };
             case 'too-far':
                 return {
-                    message: t('students.cameraCapture.moveCloser') || 'Move closer',
+                    message: t('students.cameraCapture.moveCloser', 'Move closer'),
                     color: 'bg-yellow-500 text-white',
                     ringColor: 'border-yellow-400'
                 };
             case 'too-close':
                 return {
-                    message: t('students.cameraCapture.moveBack') || 'Move back',
+                    message: t('students.cameraCapture.moveBack', 'Move back'),
                     color: 'bg-yellow-500 text-white',
                     ringColor: 'border-yellow-400'
                 };
             case 'off-center':
                 return {
-                    message: t('students.cameraCapture.centerFace') || 'Center your face',
+                    message: t('students.cameraCapture.centerFace', 'Center your face'),
                     color: 'bg-orange-500 text-white',
                     ringColor: 'border-orange-400'
                 };
             case 'good':
                 return {
-                    message: autoCapture
-                        ? (t('students.cameraCapture.holdStill') || 'Hold still...')
-                        : (t('students.cameraCapture.goodHoldStill') || 'Good! Tap to capture'),
+                    message: t('students.cameraCapture.holdStill', 'Hold still...'),
                     color: 'bg-cyan-500 text-white',
                     ringColor: 'border-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.5)]'
                 };
+            case 'ready':
+                return {
+                    message: t('students.cameraCapture.readyToCapture', 'Ready! Tap to capture'),
+                    color: 'bg-green-500 text-white',
+                    ringColor: 'border-green-400 shadow-[0_0_30px_rgba(74,222,128,0.5)]'
+                };
             case 'capturing':
                 return {
-                    message: t('students.cameraCapture.capturing') || 'Capturing...',
+                    message: t('students.cameraCapture.capturing', 'Capturing...'),
                     color: 'bg-green-500 text-white',
                     ringColor: 'border-green-400 shadow-[0_0_40px_rgba(74,222,128,0.6)]'
                 };
             default:
                 return {
-                    message: t('students.cameraCapture.positionYourFace'),
-                    color: 'bg-gray-700/90 text-gray-300',
-                    ringColor: 'border-gray-500'
+                    message: t('students.cameraCapture.readyToCapture', 'Ready! Tap to capture'),
+                    color: 'bg-green-500 text-white',
+                    ringColor: 'border-green-400'
                 };
         }
     };
 
     const statusInfo = getStatusInfo();
 
+    // Get camera label with fallback
+    const getCameraLabel = () => {
+        if (facingMode === 'user') {
+            return '📷 ' + t('students.cameraCapture.frontCamera', 'Front Camera');
+        }
+        return '📷 ' + t('students.cameraCapture.backCamera', 'Back Camera');
+    };
+
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 overflow-hidden">
-            {/* Full screen dark background for camera UI */}
+            {/* Full screen dark background */}
             <div className="absolute inset-0 bg-gray-900" />
 
-            {/* Modal Container - Full screen on mobile */}
+            {/* Modal Container */}
             <div className="relative h-full flex flex-col">
 
                 {/* Header */}
@@ -504,7 +506,7 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                         </div>
                         <div>
                             <h2 className="text-base sm:text-lg font-semibold text-white">
-                                {t('students.cameraCapture.title')}
+                                {t('students.cameraCapture.title', 'Capture Photo')}
                             </h2>
                             <p className="text-xs sm:text-sm text-gray-400">
                                 {studentName}
@@ -512,23 +514,12 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        {/* Auto-capture Toggle */}
-                        {faceDetectorSupported && (
-                            <button
-                                onClick={() => setAutoCapture(!autoCapture)}
-                                className={`p-2 rounded-lg transition-colors flex items-center gap-1 ${autoCapture
-                                        ? 'bg-cyan-500/20 text-cyan-400'
-                                        : 'text-gray-400 hover:text-white hover:bg-gray-700'
-                                    }`}
-                                title={autoCapture ? 'Auto-capture ON' : 'Auto-capture OFF'}
-                            >
-                                <Zap className="w-5 h-5" />
-                            </button>
-                        )}
                         {/* Tips Toggle Button */}
                         <button
                             onClick={() => setShowTips(!showTips)}
-                            className={`p-2 rounded-lg transition-colors ${showTips ? 'bg-yellow-500/20 text-yellow-400' : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                            className={`p-2 rounded-lg transition-colors ${showTips
+                                    ? 'bg-yellow-500/20 text-yellow-400'
+                                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
                                 }`}
                         >
                             <Lightbulb className="w-5 h-5" />
@@ -542,32 +533,29 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                     </div>
                 </div>
 
-                {/* Tips Panel (Collapsible) */}
+                {/* Tips Panel */}
                 {showTips && (
                     <div className="flex-shrink-0 bg-yellow-500/10 border-b border-yellow-500/30 px-4 py-3">
                         <h4 className="text-sm font-medium text-yellow-400 mb-2">
-                            {t('students.cameraCapture.tips.title')}
+                            {t('students.cameraCapture.tips.title', 'Photo Tips')}
                         </h4>
                         <ul className="text-xs text-yellow-200/80 space-y-1">
-                            <li>• {t('students.cameraCapture.tips.tip1')}</li>
-                            <li>• {t('students.cameraCapture.tips.tip2')}</li>
-                            <li>• {t('students.cameraCapture.tips.tip3')}</li>
-                            <li>• {t('students.cameraCapture.tips.tip4')}</li>
-                            {faceDetectorSupported && autoCapture && (
-                                <li className="text-cyan-300">• {t('students.cameraCapture.tips.autoCapture') || 'Auto-capture will trigger when face is properly positioned'}</li>
-                            )}
+                            <li>• {t('students.cameraCapture.tips.tip1', 'Ensure good lighting on your face')}</li>
+                            <li>• {t('students.cameraCapture.tips.tip2', 'Remove glasses if possible')}</li>
+                            <li>• {t('students.cameraCapture.tips.tip3', 'Look directly at the camera')}</li>
+                            <li>• {t('students.cameraCapture.tips.tip4', 'Keep a neutral expression')}</li>
                         </ul>
                     </div>
                 )}
 
-                {/* Camera View - Takes remaining space */}
+                {/* Camera View */}
                 <div className="flex-1 relative overflow-hidden">
                     {/* Loading State */}
                     {isLoading && !capturedImage && (
                         <div className="absolute inset-0 flex items-center justify-center bg-gray-900 z-10">
                             <div className="text-center">
                                 <div className="animate-spin rounded-full h-12 w-12 border-4 border-cyan-500 border-t-transparent mx-auto mb-3"></div>
-                                <p className="text-gray-400 text-sm">{t('common.loading')}</p>
+                                <p className="text-gray-400 text-sm">{t('common.loading', 'Loading...')}</p>
                             </div>
                         </div>
                     )}
@@ -621,8 +609,8 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                             />
                         </div>
 
-                        {/* Stability Progress Ring (when face is good) */}
-                        {faceStatus === 'good' && autoCapture && stabilityProgress > 0 && !capturedImage && (
+                        {/* Stability Progress Ring (only when face detection works and status is good) */}
+                        {faceDetectorSupported && faceStatus === 'good' && stabilityProgress > 0 && !capturedImage && (
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <svg className="w-[72%] max-w-[312px] aspect-square -rotate-90">
                                     <circle
@@ -658,21 +646,11 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                                     : statusInfo.color
                             }`}>
                             {capturedImage
-                                ? t('students.cameraCapture.photoReady')
+                                ? t('students.cameraCapture.photoReady', 'Photo ready!')
                                 : countdown
                                     ? countdown.toString()
                                     : statusInfo.message}
                         </span>
-
-                        {/* Auto-capture indicator */}
-                        {faceDetectorSupported && autoCapture && !capturedImage && faceStatus === 'good' && (
-                            <div className="mt-2">
-                                <span className="inline-block px-3 py-1 rounded-full text-xs bg-cyan-500/30 text-cyan-300">
-                                    <Zap className="w-3 h-3 inline mr-1" />
-                                    {t('students.cameraCapture.autoCapturing') || 'Auto-capturing...'}
-                                </span>
-                            </div>
-                        )}
                     </div>
 
                     {/* Countdown Overlay */}
@@ -696,21 +674,11 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                     </div>
                 )}
 
-                {/* Face Detector Not Supported Warning */}
-                {!faceDetectorSupported && isCapturing && !capturedImage && (
-                    <div className="flex-shrink-0 mx-4 my-2 bg-yellow-500/20 border border-yellow-500/50 rounded-xl p-3 flex items-center gap-3">
-                        <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0" />
-                        <p className="text-xs text-yellow-200 flex-1">
-                            {t('students.cameraCapture.manualCaptureOnly') || 'Auto-capture not available. Please tap the capture button when ready.'}
-                        </p>
-                    </div>
-                )}
-
                 {/* Success Message */}
                 {uploadStatus === 'success' && (
                     <div className="flex-shrink-0 mx-4 my-2 bg-green-500/20 border border-green-500/50 rounded-xl p-3 flex items-center gap-3">
                         <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-                        <p className="text-sm text-green-200">{t('students.cameraCapture.uploadSuccess')}</p>
+                        <p className="text-sm text-green-200">{t('students.cameraCapture.uploadSuccess', 'Photo uploaded successfully!')}</p>
                     </div>
                 )}
 
@@ -722,43 +690,42 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                             {/* Camera indicator */}
                             {hasMultipleCameras && (
                                 <div className="text-xs text-gray-400">
-                                    {facingMode === 'user'
-                                        ? (t('students.cameraCapture.frontCamera') || '📷 Front Camera')
-                                        : (t('students.cameraCapture.backCamera') || '📷 Back Camera')
-                                    }
+                                    {getCameraLabel()}
                                 </div>
                             )}
 
                             <div className="flex items-center justify-center gap-4 sm:gap-6">
-                                {/* Flip Camera Button (if multiple cameras available) */}
+                                {/* Flip Camera Button */}
                                 {hasMultipleCameras && (
                                     <button
                                         onClick={flipCamera}
                                         disabled={isLoading}
                                         className="p-3 sm:p-4 bg-gray-700 hover:bg-gray-600 active:bg-gray-500 
                                                  text-white rounded-full transition-all disabled:opacity-50
-                                                 touch-manipulation relative"
-                                        title={t('students.cameraCapture.flipCamera')}
+                                                 touch-manipulation"
+                                        title={t('students.cameraCapture.flipCamera', 'Flip camera')}
                                     >
                                         <FlipHorizontal className="w-6 h-6 sm:w-7 sm:h-7" />
                                     </button>
                                 )}
 
-                                {/* Capture Button */}
+                                {/* Capture Button - Always green and ready */}
                                 <button
                                     onClick={startManualCapture}
                                     disabled={isLoading || !isCapturing || countdown !== null}
-                                    className={`p-5 sm:p-6 rounded-full shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation ${faceStatus === 'good' || faceStatus === 'capturing'
-                                            ? 'bg-gradient-to-r from-green-500 to-green-400 hover:from-green-400 hover:to-green-300 shadow-green-500/30'
-                                            : 'bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-400 hover:to-cyan-300 shadow-cyan-500/30'
-                                        } active:scale-95`}
-                                    title={t('students.cameraCapture.capture')}
+                                    className="p-5 sm:p-6 rounded-full shadow-lg transition-all 
+                                             disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation
+                                             bg-gradient-to-r from-green-500 to-green-400 
+                                             hover:from-green-400 hover:to-green-300 
+                                             active:from-green-600 active:to-green-500
+                                             shadow-green-500/30 active:scale-95"
+                                    title={t('students.cameraCapture.capture', 'Capture')}
                                 >
                                     <Camera className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                                 </button>
 
                                 {/* Placeholder for symmetry */}
-                                {hasMultipleCameras && <div className="w-12 h-12 sm:w-15 sm:h-15" />}
+                                {hasMultipleCameras && <div className="w-12 h-12 sm:w-14 sm:h-14" />}
                             </div>
                         </div>
                     ) : (
@@ -772,7 +739,7 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                                          flex items-center justify-center gap-2 touch-manipulation"
                             >
                                 <RefreshCw className="w-5 h-5" />
-                                <span className="text-sm sm:text-base">{t('students.cameraCapture.retake')}</span>
+                                <span className="text-sm sm:text-base">{t('students.cameraCapture.retake', 'Retake')}</span>
                             </button>
                             <button
                                 onClick={handleUpload}
@@ -786,12 +753,12 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                                 {isLoading ? (
                                     <>
                                         <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                                        <span className="text-sm sm:text-base">{t('students.cameraCapture.uploading')}</span>
+                                        <span className="text-sm sm:text-base">{t('students.cameraCapture.uploading', 'Uploading...')}</span>
                                     </>
                                 ) : (
                                     <>
                                         <Download className="w-5 h-5" />
-                                        <span className="text-sm sm:text-base">{t('students.cameraCapture.usePhoto')}</span>
+                                        <span className="text-sm sm:text-base">{t('students.cameraCapture.usePhoto', 'Use Photo')}</span>
                                     </>
                                 )}
                             </button>
@@ -805,7 +772,7 @@ const PhotoCaptureModal = ({ studentCode, studentName, isOpen, onClose, onSucces
                         className="w-full mt-3 py-2.5 text-gray-400 hover:text-white active:text-gray-300
                                  text-sm font-medium transition-colors disabled:opacity-50 touch-manipulation"
                     >
-                        {t('common.cancel')}
+                        {t('common.cancel', 'Cancel')}
                     </button>
                 </div>
             </div>

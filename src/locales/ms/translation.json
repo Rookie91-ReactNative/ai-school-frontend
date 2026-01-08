@@ -795,6 +795,8 @@
       "uploadError": "Gagal memuat naik foto",
       "manualCaptureOnly": "Auto-tangkap tidak tersedia. Sila tekan butang tangkap apabila sedia.",
       "flipCamera": "Tukar kamera",
+      "frontCamera": "Kamera Hadapan",
+      "backCamera": "Kamera Belakang",
       "capture": "Tangkap",
       "retake": "Ambil semula",
       "usePhoto": "Guna Foto",

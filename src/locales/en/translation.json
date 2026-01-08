@@ -795,6 +795,8 @@
       "uploadError": "Failed to upload photo",
       "manualCaptureOnly": "Auto-capture not available. Please tap the capture button when ready.",
       "flipCamera": "Flip camera",
+      "frontCamera": "Front Camera",
+      "backCamera": "Back Camera",
       "capture": "Capture",
       "retake": "Retake",
       "usePhoto": "Use Photo",

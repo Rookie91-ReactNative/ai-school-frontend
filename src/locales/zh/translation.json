@@ -795,6 +795,8 @@
       "uploadError": "照片上传失败",
       "manualCaptureOnly": "自动拍摄不可用，请点击拍摄按钮手动拍照。",
       "flipCamera": "切换摄像头",
+      "frontCamera": "前置摄像头",
+      "backCamera": "后置摄像头",
       "capture": "拍照",
       "retake": "重拍",
       "usePhoto": "使用照片",
