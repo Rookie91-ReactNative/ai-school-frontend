@@ -1,7 +1,7 @@
 ﻿{
   "login": {
-    "title": "AI School",
-    "subtitle": "Attendance Management System",
+    "title": "CampusAI",
+    "subtitle": "Smart Campus Platform",
     "username": "Username",
     "password": "Password",
     "loginButton": "Login",

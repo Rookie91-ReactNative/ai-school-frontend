@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
                 <div className="flex justify-between h-16">
                     <div className="flex items-center">
                         <h1 className="text-2xl font-bold text-blue-600">
-                            AI Attendance System
+                            CampusAI
                         </h1>
                     </div>
 

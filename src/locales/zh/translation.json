@@ -1,7 +1,7 @@
 ﻿{
   "login": {
-    "title": "智能校园",
-    "subtitle": "考勤管理系统",
+    "title": "CampusAI",
+    "subtitle": "智慧校园平台",
     "username": "用户名",
     "password": "密码",
     "loginButton": "登录",
