@@ -158,6 +158,13 @@ const Layout = () => {
             roles: ['SchoolAdmin']
         },
         {
+            path: '/late-check-in',
+            icon: Clock,
+            label: t('nav.lateCheckIn'),
+            permission: null,
+            roles: ['SchoolAdmin', 'Teacher']
+        },
+        {
             path: '/events',
             icon: Calendar,
             label: t('nav.events'),

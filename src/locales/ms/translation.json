@@ -99,7 +99,8 @@
     "events": "Peristiwa",
     "eventsReport": "Laporan peristiwa",
     "importStudents": "Import Pelajar",
-    "lateReport": "Laporan Lewat"
+    "lateReport": "Laporan Lewat",
+    "lateCheckIn": "Daftar Masuk Lewat"
   },
   "unauthorized": {
     "title": "Akses Ditolak",
@@ -1600,7 +1601,36 @@
     "uploadPhoto": "Muat Naik Foto",
     "checkInSuccess": "Daftar masuk lewat berjaya direkodkan",
     "checkInFailed": "Gagal merekodkan daftar masuk lewat",
-    "multipleFaces": "Berbilang muka dikesan. Sila pastikan hanya satu muka kelihatan."
+    "multipleFaces": "Berbilang muka dikesan. Sila pastikan hanya satu muka kelihatan.",
+
+    "positionFace": "Letakkan muka anda dalam bulatan",
+    "photoReady": "Foto sedia untuk daftar masuk",
+    "checkIn": "Daftar Masuk",
+    "checking": "Memeriksa...",
+    "retake": "Ambil Semula",
+    "tryAgain": "Cuba Lagi",
+    "checkInAnother": "Daftar Masuk Pelajar Lain",
+    "backToDashboard": "Kembali ke Papan Pemuka",
+
+    "success": "Daftar Masuk Berjaya!",
+    "checkedInAt": "Daftar masuk pada",
+    "confidenceLevel": "Keyakinan",
+    "tryAgainMessage": "Sila cuba lagi dengan pencahayaan atau kedudukan yang lebih baik.",
+
+    "frontCamera": "Kamera Hadapan",
+    "backCamera": "Kamera Belakang",
+    "permissionDenied": "Kebenaran kamera ditolak. Sila benarkan akses kamera.",
+    "noCameraFound": "Kamera tidak ditemui pada peranti ini.",
+    "cameraError": "Ralat kamera: ",
+    "remarkText": "Daftar masuk lewat melalui kiosk",
+
+    "tips": {
+      "title": "Petua untuk Hasil Terbaik",
+      "tip1": "Pastikan pencahayaan yang baik pada muka anda",
+      "tip2": "Pandang terus ke kamera",
+      "tip3": "Tanggalkan cermin mata hitam atau topi",
+      "tip4": "Kekalkan ekspresi neutral"
+    }
   },
 
   "sidebar": {

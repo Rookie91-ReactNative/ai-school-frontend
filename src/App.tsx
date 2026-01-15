@@ -22,6 +22,7 @@ import EventsPage from './pages/EventsPage';
 import EventReportPage from './pages/EventReportPage';
 import ImportStudentsPage from './pages/ImportStudentsPage';
 import LateStudentsReportPage from './pages/LateStudentsReportPage';
+import LateCheckInPage from './pages/LateCheckInPage';
 
 function App() {
     return (
@@ -176,7 +177,7 @@ function App() {
                         }
                     />
 
-                    {/* Late Students Report - NEW */}
+                    {/* Late Students Report */}
                     <Route
                         path="/late-report"
                         element={
@@ -186,6 +187,16 @@ function App() {
                                 requiredRole={['SchoolAdmin', 'Teacher', 'Staff']}
                             >
                                 <LateStudentsReportPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* Late Students check in */}
+                    <Route
+                        path="/late-check-in"
+                        element={
+                            <ProtectedRoute>
+                                <LateCheckInPage />
                             </ProtectedRoute>
                         }
                     />

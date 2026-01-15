@@ -99,7 +99,8 @@
     "events": "Events",
     "eventsReport": "Events Report",
     "importStudents": "Import Students",
-    "lateReport": "Late Report"
+    "lateReport": "Late Report",
+    "lateCheckIn": "Late Check-in"
   },
   "unauthorized": {
     "title": "Access Denied",
@@ -1696,7 +1697,36 @@
     "uploadPhoto": "Upload Photo",
     "checkInSuccess": "Late check-in recorded successfully",
     "checkInFailed": "Failed to record late check-in",
-    "multipleFaces": "Multiple faces detected. Please ensure only one face is visible."
+    "multipleFaces": "Multiple faces detected. Please ensure only one face is visible.",
+
+    "positionFace": "Position your face in the circle",
+    "photoReady": "Photo ready for check-in",
+    "checkIn": "Check In",
+    "checking": "Checking...",
+    "retake": "Retake",
+    "tryAgain": "Try Again",
+    "checkInAnother": "Check In Another Student",
+    "backToDashboard": "Back to Dashboard",
+
+    "success": "Check-In Successful!",
+    "checkedInAt": "Checked in at",
+    "confidenceLevel": "Confidence",
+    "tryAgainMessage": "Please try again with better lighting or positioning.",
+
+    "frontCamera": "Front Camera",
+    "backCamera": "Back Camera",
+    "permissionDenied": "Camera permission denied. Please allow camera access.",
+    "noCameraFound": "No camera found on this device.",
+    "cameraError": "Camera error: ",
+    "remarkText": "Late check-in via kiosk",
+
+    "tips": {
+      "title": "Tips for Best Results",
+      "tip1": "Ensure good lighting on your face",
+      "tip2": "Look directly at the camera",
+      "tip3": "Remove sunglasses or hats",
+      "tip4": "Keep a neutral expression"
+    }
   },
 
   "sidebar": {

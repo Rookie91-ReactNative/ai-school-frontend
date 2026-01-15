@@ -99,7 +99,8 @@
     "events": "活动",
     "eventsReport": "活动报告",
     "importStudents": "输入学生",
-    "lateReport": "迟到报告"
+    "lateReport": "迟到报告",
+    "lateCheckIn": "迟到签到"
   },
   "unauthorized": {
     "title": "访问被拒绝",
@@ -1596,7 +1597,36 @@
     "uploadPhoto": "上传照片",
     "checkInSuccess": "迟到签到记录成功",
     "checkInFailed": "迟到签到记录失败",
-    "multipleFaces": "检测到多个人脸。请确保只有一个人脸可见。"
+    "multipleFaces": "检测到多个人脸。请确保只有一个人脸可见。",
+
+    "positionFace": "请将脸部置于圆圈内",
+    "photoReady": "照片已准备好，可以签到",
+    "checkIn": "签到",
+    "checking": "签到中...",
+    "retake": "重拍",
+    "tryAgain": "重试",
+    "checkInAnother": "为另一位学生签到",
+    "backToDashboard": "返回仪表板",
+
+    "success": "签到成功！",
+    "checkedInAt": "签到时间",
+    "confidenceLevel": "识别置信度",
+    "tryAgainMessage": "请调整光线或位置后重试。",
+
+    "frontCamera": "前置摄像头",
+    "backCamera": "后置摄像头",
+    "permissionDenied": "摄像头权限被拒绝，请允许摄像头访问。",
+    "noCameraFound": "此设备未找到摄像头。",
+    "cameraError": "摄像头错误：",
+    "remarkText": "通过自助终端迟到签到",
+
+    "tips": {
+      "title": "最佳效果提示",
+      "tip1": "确保面部光线充足",
+      "tip2": "直视摄像头",
+      "tip3": "请摘下太阳镜或帽子",
+      "tip4": "保持自然表情"
+    }
   },
 
   "sidebar": {
