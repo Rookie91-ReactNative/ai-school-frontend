@@ -2,6 +2,7 @@
 import { GraduationCap, Plus, Edit, Trash2, X, Users, BookOpen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
+import { authService } from '../services/authService';
 import axios from 'axios';
 
 interface Grade {
@@ -32,10 +33,9 @@ const GradesPage = () => {
     const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Get schoolID from auth context
-    const userStr = localStorage.getItem('user');
-    const user = userStr ? JSON.parse(userStr) : null;
-    const schoolID = user?.schoolID || 1;
+    // Get schoolID from authService (reads from correct 'user_data' key)
+    const user = authService.getCurrentUser();
+    const schoolID = user?.schoolID;
 
     const [formData, setFormData] = useState<GradeFormData>({
         schoolID: schoolID,
@@ -54,6 +54,15 @@ const GradesPage = () => {
 
     useEffect(() => {
         fetchGrades();
+    }, [schoolID]);
+
+    useEffect(() => {
+        if (schoolID) {
+            setFormData(prev => ({
+                ...prev,
+                schoolID: schoolID
+            }));
+        }
     }, [schoolID]);
 
     const fetchGrades = async () => {

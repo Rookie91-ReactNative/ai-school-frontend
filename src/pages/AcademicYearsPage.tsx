@@ -48,11 +48,11 @@ const AcademicYearsPage = () => {
 
     // Debug logging
     useEffect(() => {
-        if (!schoolID) {
-            console.error('❌ CRITICAL: SchoolID not found in user object!', { user });
-        } else {
-            console.log('✅ AcademicYearsPage - Current User SchoolID:', schoolID);
-        }
+        //if (!schoolID) {
+        //    console.error('❌ CRITICAL: SchoolID not found in user object!', { user });
+        //} else {
+        //    console.log('✅ AcademicYearsPage - Current User SchoolID:', schoolID);
+        //}
     }, [schoolID, user]);
 
     const [formData, setFormData] = useState<AcademicYearFormData>({
