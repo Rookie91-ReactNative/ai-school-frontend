@@ -654,10 +654,12 @@ const AcademicYearsPage = () => {
             )}
 
             {/* Enrollment Preview Modal */}
-            {showEnrollmentModal && enrollmentTargetYear && (
+            {enrollmentTargetYear && (
                 <EnrollmentPreviewModal
-                    targetYear={enrollmentTargetYear}
+                    isOpen={showEnrollmentModal}
                     onClose={() => setShowEnrollmentModal(false)}
+                    academicYearId={enrollmentTargetYear.academicYearID}
+                    academicYearName={enrollmentTargetYear.yearName}
                     onEnrollmentComplete={handleEnrollmentComplete}
                 />
             )}
