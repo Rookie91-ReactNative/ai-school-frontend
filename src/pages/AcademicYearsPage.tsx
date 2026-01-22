@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import axios from 'axios';
 import EnrollmentPreviewModal from '../components/AcademicYear/EnrollmentPreviewModal';
-import { authService } from '../services/authService';  // ✅ ADD THIS IMPORT
+import { authService } from '../services/authService';
 
 interface AcademicYear {
     academicYearID: number;
@@ -42,11 +42,11 @@ const AcademicYearsPage = () => {
     const [showEnrollmentModal, setShowEnrollmentModal] = useState(false);
     const [enrollmentTargetYear, setEnrollmentTargetYear] = useState<AcademicYear | null>(null);
 
-    // ✅ FIX: Use authService to get user data (reads from correct 'user_data' key)
+    // Get user data from authService
     const user = authService.getCurrentUser();
     const schoolID = user?.schoolID;
 
-    // Debug logging (can be removed in production)
+    // Debug logging
     useEffect(() => {
         if (!schoolID) {
             console.error('❌ CRITICAL: SchoolID not found in user object!', { user });
@@ -81,7 +81,7 @@ const AcademicYearsPage = () => {
         }
     }, [schoolID]);
 
-    // ✅ ADD: Sync formData.schoolID when schoolID changes
+    // Sync formData.schoolID when schoolID changes
     useEffect(() => {
         if (schoolID) {
             setFormData(prev => ({
@@ -165,7 +165,6 @@ const AcademicYearsPage = () => {
             ...prev,
             [field]: value
         }));
-        // Clear error for this field
         if (formErrors[field]) {
             setFormErrors(prev => {
                 const newErrors = { ...prev };
@@ -180,7 +179,6 @@ const AcademicYearsPage = () => {
             ...prev,
             [field]: value
         }));
-        // Clear error for this field
         if (formErrors[field]) {
             setFormErrors(prev => {
                 const newErrors = { ...prev };
@@ -207,38 +205,24 @@ const AcademicYearsPage = () => {
             return;
         }
 
-        // ✅ FIX: Validate schoolID before submitting
         if (!formData.schoolID || formData.schoolID === 0) {
             console.error('❌ Cannot create academic year: Invalid schoolID', formData.schoolID);
-            alert(t('academicYears.errors.invalidSchoolId') || 'Error: Invalid school ID. Please log in again.');
+            alert(t('academicYears.errorCreate'));
             return;
         }
 
-        // ✅ FIX: Log submission data for debugging
-        console.log('📤 Submitting academic year:', {
-            schoolID: formData.schoolID,
-            yearName: formData.yearName,
-            startDate: formData.startDate,
-            endDate: formData.endDate,
-            autoCreateClasses
-        });
-
         try {
             setIsSubmitting(true);
-            // Add autoCreateClasses as query parameter
             await api.post(`/academic-year?autoCreateClasses=${autoCreateClasses}`, formData);
-
-            console.log('✅ Academic year created successfully for schoolID:', formData.schoolID);
-
             await fetchAcademicYears();
             setShowCreateModal(false);
             resetForm();
-            setAutoCreateClasses(true); // Reset to default
+            setAutoCreateClasses(true);
         } catch (error) {
             console.error('❌ Error creating academic year:', error);
             if (axios.isAxiosError(error)) {
                 const message = error.response?.data?.message || error.message;
-                alert(t('academicYears.errors.createFailed') || `Error: ${message}`);
+                alert(`${t('academicYears.errorCreate')}: ${message}`);
             }
         } finally {
             setIsSubmitting(false);
@@ -262,7 +246,7 @@ const AcademicYearsPage = () => {
             console.error('Error updating academic year:', error);
             if (axios.isAxiosError(error)) {
                 const message = error.response?.data?.message || error.message;
-                alert(`Error: ${message}`);
+                alert(`${t('academicYears.errorUpdate')}: ${message}`);
             }
         } finally {
             setIsSubmitting(false);
@@ -270,7 +254,7 @@ const AcademicYearsPage = () => {
     };
 
     const handleDelete = async (id: number) => {
-        if (!window.confirm(t('academicYears.confirmDelete') || 'Are you sure you want to delete this academic year?')) {
+        if (!window.confirm(t('academicYears.confirmDelete'))) {
             return;
         }
 
@@ -281,7 +265,7 @@ const AcademicYearsPage = () => {
             console.error('Error deleting academic year:', error);
             if (axios.isAxiosError(error)) {
                 const message = error.response?.data?.message || error.message;
-                alert(`Error: ${message}`);
+                alert(`${t('academicYears.errorDelete')}: ${message}`);
             }
         }
     };
@@ -294,7 +278,7 @@ const AcademicYearsPage = () => {
             console.error('Error activating academic year:', error);
             if (axios.isAxiosError(error)) {
                 const message = error.response?.data?.message || error.message;
-                alert(`Error: ${message}`);
+                alert(`${t('academicYears.errorSetActive')}: ${message}`);
             }
         }
     };
@@ -329,14 +313,14 @@ const AcademicYearsPage = () => {
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">{t('academicYears.title')}</h1>
-                    <p className="text-sm text-gray-600 mt-1">{t('academicYears.description')}</p>
+                    <p className="text-sm text-gray-600 mt-1">{t('academicYears.subtitle')}</p>
                 </div>
                 <button
                     onClick={handleCreate}
                     className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                 >
                     <Plus className="w-5 h-5" />
-                    {t('academicYears.createNew')}
+                    {t('academicYears.addYear')}
                 </button>
             </div>
 
@@ -349,20 +333,17 @@ const AcademicYearsPage = () => {
                         </div>
                         <div className="flex-1">
                             <h3 className="text-lg font-semibold text-blue-900 mb-2">
-                                {t('academicYears.enrollment.readyTitle')}
+                                {t('enrollment.title')}
                             </h3>
                             <p className="text-blue-700 mb-4">
-                                {t('academicYears.enrollment.readyDescription', {
-                                    activeYear: activeYear.yearName,
-                                    nextYear: futureYear.yearName
-                                })}
+                                {t('enrollment.subtitle')} {activeYear.yearName} → {futureYear.yearName}
                             </p>
                             <button
                                 onClick={handleOpenEnrollmentModal}
                                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                             >
                                 <GraduationCap className="w-5 h-5" />
-                                {t('academicYears.enrollment.previewButton')}
+                                {t('enrollment.enrollButton')}
                                 <ArrowRight className="w-4 h-4" />
                             </button>
                         </div>
@@ -381,7 +362,7 @@ const AcademicYearsPage = () => {
                             className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
                         >
                             <Plus className="w-5 h-5" />
-                            {t('academicYears.createFirst')}
+                            {t('academicYears.addYear')}
                         </button>
                     </div>
                 ) : (
@@ -390,22 +371,22 @@ const AcademicYearsPage = () => {
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {t('academicYears.table.yearName')}
+                                        {t('academicYears.yearName')}
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {t('academicYears.table.period')}
+                                        {t('academicYears.dateRange')}
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {t('academicYears.table.status')}
+                                        {t('academicYears.status')}
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {t('academicYears.table.students')}
+                                        {t('academicYears.students')}
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {t('academicYears.table.classes')}
+                                        {t('academicYears.classes')}
                                     </th>
                                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        {t('academicYears.table.actions')}
+                                        {t('academicYears.actions')}
                                     </th>
                                 </tr>
                             </thead>
@@ -427,11 +408,11 @@ const AcademicYearsPage = () => {
                                             {year.isActive ? (
                                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                                     <CheckCircle className="w-4 h-4 mr-1" />
-                                                    {t('academicYears.status.active')}
+                                                    {t('academicYears.active')}
                                                 </span>
                                             ) : (
                                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                                    {t('academicYears.status.inactive')}
+                                                    {t('academicYears.inactive')}
                                                 </span>
                                             )}
                                         </td>
@@ -447,7 +428,7 @@ const AcademicYearsPage = () => {
                                                     <button
                                                         onClick={() => handleSetActive(year.academicYearID)}
                                                         className="text-green-600 hover:text-green-900"
-                                                        title={t('academicYears.actions.setActive')}
+                                                        title={t('academicYears.setActive')}
                                                     >
                                                         <CheckCircle className="w-5 h-5" />
                                                     </button>
@@ -455,14 +436,14 @@ const AcademicYearsPage = () => {
                                                 <button
                                                     onClick={() => handleEdit(year)}
                                                     className="text-indigo-600 hover:text-indigo-900"
-                                                    title={t('academicYears.actions.edit')}
+                                                    title={t('academicYears.edit')}
                                                 >
                                                     <Edit className="w-5 h-5" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(year.academicYearID)}
                                                     className="text-red-600 hover:text-red-900"
-                                                    title={t('academicYears.actions.delete')}
+                                                    title={t('academicYears.delete')}
                                                 >
                                                     <Trash2 className="w-5 h-5" />
                                                 </button>
@@ -482,7 +463,7 @@ const AcademicYearsPage = () => {
                     <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
                         <div className="flex justify-between items-center p-6 border-b">
                             <h3 className="text-xl font-semibold text-gray-900">
-                                {t('academicYears.modal.createTitle')}
+                                {t('academicYears.createYear')}
                             </h3>
                             <button
                                 onClick={() => setShowCreateModal(false)}
@@ -495,7 +476,7 @@ const AcademicYearsPage = () => {
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    {t('academicYears.modal.yearName')}
+                                    {t('academicYears.yearName')}
                                 </label>
                                 <input
                                     type="text"
@@ -505,6 +486,7 @@ const AcademicYearsPage = () => {
                                         }`}
                                     placeholder="2024/2025"
                                 />
+                                <p className="mt-1 text-xs text-gray-500">{t('academicYears.formatHint')}</p>
                                 {formErrors.yearName && (
                                     <p className="mt-1 text-sm text-red-600">{formErrors.yearName}</p>
                                 )}
@@ -512,7 +494,7 @@ const AcademicYearsPage = () => {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    {t('academicYears.modal.startDate')}
+                                    {t('academicYears.startDate')}
                                 </label>
                                 <input
                                     type="date"
@@ -528,7 +510,7 @@ const AcademicYearsPage = () => {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    {t('academicYears.modal.endDate')}
+                                    {t('academicYears.endDate')}
                                 </label>
                                 <input
                                     type="date"
@@ -542,17 +524,27 @@ const AcademicYearsPage = () => {
                                 )}
                             </div>
 
-                            <div className="flex items-center">
+                            <div className="flex items-start">
                                 <input
                                     type="checkbox"
                                     id="autoCreateClasses"
                                     checked={autoCreateClasses}
                                     onChange={(e) => setAutoCreateClasses(e.target.checked)}
-                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                    className="h-4 w-4 mt-1 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                                 />
-                                <label htmlFor="autoCreateClasses" className="ml-2 block text-sm text-gray-900">
-                                    {t('academicYears.modal.autoCreateClasses')}
-                                </label>
+                                <div className="ml-2">
+                                    <label htmlFor="autoCreateClasses" className="block text-sm text-gray-900">
+                                        {t('academicYears.autoCreateClasses')}
+                                    </label>
+                                    <p className="text-xs text-gray-500">{t('academicYears.autoCreateClassesHint')}</p>
+                                </div>
+                            </div>
+
+                            {/* Tip Message */}
+                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                <p className="text-sm text-blue-800">
+                                    <span className="font-medium">{t('academicYears.tipTitle')}</span> {t('academicYears.tipMessage')}
+                                </p>
                             </div>
 
                             <div className="flex gap-3 pt-4">
@@ -561,14 +553,14 @@ const AcademicYearsPage = () => {
                                     onClick={() => setShowCreateModal(false)}
                                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                                 >
-                                    {t('common.cancel')}
+                                    {t('academicYears.cancel')}
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
                                     className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
                                 >
-                                    {isSubmitting ? t('common.creating') : t('common.create')}
+                                    {isSubmitting ? t('academicYears.creating') : t('academicYears.save')}
                                 </button>
                             </div>
                         </form>
@@ -582,7 +574,7 @@ const AcademicYearsPage = () => {
                     <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
                         <div className="flex justify-between items-center p-6 border-b">
                             <h3 className="text-xl font-semibold text-gray-900">
-                                {t('academicYears.modal.editTitle')}
+                                {t('academicYears.editYear')}
                             </h3>
                             <button
                                 onClick={() => setShowEditModal(false)}
@@ -595,7 +587,7 @@ const AcademicYearsPage = () => {
                         <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    {t('academicYears.modal.yearName')}
+                                    {t('academicYears.yearName')}
                                 </label>
                                 <input
                                     type="text"
@@ -611,7 +603,7 @@ const AcademicYearsPage = () => {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    {t('academicYears.modal.startDate')}
+                                    {t('academicYears.startDate')}
                                 </label>
                                 <input
                                     type="date"
@@ -627,7 +619,7 @@ const AcademicYearsPage = () => {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    {t('academicYears.modal.endDate')}
+                                    {t('academicYears.endDate')}
                                 </label>
                                 <input
                                     type="date"
@@ -647,14 +639,14 @@ const AcademicYearsPage = () => {
                                     onClick={() => setShowEditModal(false)}
                                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                                 >
-                                    {t('common.cancel')}
+                                    {t('academicYears.cancel')}
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
                                     className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
                                 >
-                                    {isSubmitting ? t('common.updating') : t('common.update')}
+                                    {isSubmitting ? t('academicYears.updating') : t('academicYears.save')}
                                 </button>
                             </div>
                         </form>
