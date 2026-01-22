@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import axios from 'axios';
 import EnrollmentPreviewModal from '../components/AcademicYear/EnrollmentPreviewModal';
+import { authService } from '../services/authService';  // ✅ ADD THIS IMPORT
 
 interface AcademicYear {
     academicYearID: number;
@@ -41,20 +42,18 @@ const AcademicYearsPage = () => {
     const [showEnrollmentModal, setShowEnrollmentModal] = useState(false);
     const [enrollmentTargetYear, setEnrollmentTargetYear] = useState<AcademicYear | null>(null);
 
-    // ✅ FIX: Get schoolID from auth context without default value
-    const userStr = localStorage.getItem('user');
-    const user = userStr ? JSON.parse(userStr) : null;
+    // ✅ FIX: Use authService to get user data (reads from correct 'user_data' key)
+    const user = authService.getCurrentUser();
+    const schoolID = user?.schoolID;
 
-    // Support multiple property name variations (schoolID, schoolId, SchoolID)
-    const schoolID = user?.schoolID || user?.schoolId || user?.SchoolID;
-
-    // Validate schoolID exists
-    if (!schoolID) {
-        console.error('❌ CRITICAL: SchoolID not found in user object!', { user });
-    }
-
-    // Log for debugging
-    console.log('✅ AcademicYearsPage - Current User SchoolID:', schoolID);
+    // Debug logging (can be removed in production)
+    useEffect(() => {
+        if (!schoolID) {
+            console.error('❌ CRITICAL: SchoolID not found in user object!', { user });
+        } else {
+            console.log('✅ AcademicYearsPage - Current User SchoolID:', schoolID);
+        }
+    }, [schoolID, user]);
 
     const [formData, setFormData] = useState<AcademicYearFormData>({
         schoolID: schoolID || 0,
@@ -79,6 +78,16 @@ const AcademicYearsPage = () => {
     useEffect(() => {
         if (schoolID) {
             fetchAcademicYears();
+        }
+    }, [schoolID]);
+
+    // ✅ ADD: Sync formData.schoolID when schoolID changes
+    useEffect(() => {
+        if (schoolID) {
+            setFormData(prev => ({
+                ...prev,
+                schoolID: schoolID
+            }));
         }
     }, [schoolID]);
 
