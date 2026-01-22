@@ -41,13 +41,23 @@ const AcademicYearsPage = () => {
     const [showEnrollmentModal, setShowEnrollmentModal] = useState(false);
     const [enrollmentTargetYear, setEnrollmentTargetYear] = useState<AcademicYear | null>(null);
 
-    // Get schoolID from auth context (assuming user is logged in)
+    // ✅ FIX: Get schoolID from auth context without default value
     const userStr = localStorage.getItem('user');
     const user = userStr ? JSON.parse(userStr) : null;
-    const schoolID = user?.schoolID || 1; // Default to 1 for testing
+
+    // Support multiple property name variations (schoolID, schoolId, SchoolID)
+    const schoolID = user?.schoolID || user?.schoolId || user?.SchoolID;
+
+    // Validate schoolID exists
+    if (!schoolID) {
+        console.error('❌ CRITICAL: SchoolID not found in user object!', { user });
+    }
+
+    // Log for debugging
+    console.log('✅ AcademicYearsPage - Current User SchoolID:', schoolID);
 
     const [formData, setFormData] = useState<AcademicYearFormData>({
-        schoolID: schoolID,
+        schoolID: schoolID || 0,
         yearName: '',
         startDate: '',
         endDate: ''
@@ -67,7 +77,9 @@ const AcademicYearsPage = () => {
     const futureYear = academicYears.find(year => !year.isActive && year.yearName > (activeYear?.yearName || ''));
 
     useEffect(() => {
-        fetchAcademicYears();
+        if (schoolID) {
+            fetchAcademicYears();
+        }
     }, [schoolID]);
 
     const fetchAcademicYears = async () => {
@@ -98,8 +110,6 @@ const AcademicYearsPage = () => {
 
         if (!formData.yearName.trim()) {
             errors.yearName = t('academicYears.validation.yearNameRequired');
-        } else if (!/^\d{4}\/\d{4}$/.test(formData.yearName)) {
-            errors.yearName = t('academicYears.validation.yearNameFormat');
         }
 
         if (!formData.startDate) {
@@ -123,8 +133,6 @@ const AcademicYearsPage = () => {
 
         if (!editFormData.yearName.trim()) {
             errors.yearName = t('academicYears.validation.yearNameRequired');
-        } else if (!/^\d{4}\/\d{4}$/.test(editFormData.yearName)) {
-            errors.yearName = t('academicYears.validation.yearNameFormat');
         }
 
         if (!editFormData.startDate) {
@@ -175,7 +183,7 @@ const AcademicYearsPage = () => {
 
     const resetForm = () => {
         setFormData({
-            schoolID: schoolID,
+            schoolID: schoolID || 0,
             yearName: '',
             startDate: '',
             endDate: ''
@@ -190,35 +198,42 @@ const AcademicYearsPage = () => {
             return;
         }
 
+        // ✅ FIX: Validate schoolID before submitting
+        if (!formData.schoolID || formData.schoolID === 0) {
+            console.error('❌ Cannot create academic year: Invalid schoolID', formData.schoolID);
+            alert(t('academicYears.errors.invalidSchoolId') || 'Error: Invalid school ID. Please log in again.');
+            return;
+        }
+
+        // ✅ FIX: Log submission data for debugging
+        console.log('📤 Submitting academic year:', {
+            schoolID: formData.schoolID,
+            yearName: formData.yearName,
+            startDate: formData.startDate,
+            endDate: formData.endDate,
+            autoCreateClasses
+        });
+
         try {
             setIsSubmitting(true);
             // Add autoCreateClasses as query parameter
             await api.post(`/academic-year?autoCreateClasses=${autoCreateClasses}`, formData);
+
+            console.log('✅ Academic year created successfully for schoolID:', formData.schoolID);
+
             await fetchAcademicYears();
             setShowCreateModal(false);
             resetForm();
             setAutoCreateClasses(true); // Reset to default
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                alert(error.response.data.message || t('academicYears.errorCreate'));
-            } else {
-                alert(t('academicYears.errorCreate'));
+            console.error('❌ Error creating academic year:', error);
+            if (axios.isAxiosError(error)) {
+                const message = error.response?.data?.message || error.message;
+                alert(t('academicYears.errors.createFailed') || `Error: ${message}`);
             }
-            console.error('Error creating academic year:', error);
         } finally {
             setIsSubmitting(false);
         }
-    };
-
-    const handleEditClick = (year: AcademicYear) => {
-        setSelectedYear(year);
-        setEditFormData({
-            yearName: year.yearName,
-            startDate: year.startDate.split('T')[0],
-            endDate: year.endDate.split('T')[0]
-        });
-        setFormErrors({});
-        setShowEditModal(true);
     };
 
     const handleEditSubmit = async (e: React.FormEvent) => {
@@ -235,419 +250,316 @@ const AcademicYearsPage = () => {
             setShowEditModal(false);
             setSelectedYear(null);
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                alert(error.response.data.message || t('academicYears.errorUpdate'));
-            } else {
-                alert(t('academicYears.errorUpdate'));
-            }
             console.error('Error updating academic year:', error);
+            if (axios.isAxiosError(error)) {
+                const message = error.response?.data?.message || error.message;
+                alert(`Error: ${message}`);
+            }
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    const handleSetActive = async (year: AcademicYear) => {
-        if (year.isActive) {
-            alert(t('academicYears.alreadyActive'));
+    const handleDelete = async (id: number) => {
+        if (!window.confirm(t('academicYears.confirmDelete') || 'Are you sure you want to delete this academic year?')) {
             return;
         }
 
-        if (window.confirm(t('academicYears.confirmSetActive') + ' ' + year.yearName + ' ' + t('academicYears.asActive'))) {
-            try {
-                await api.put(`/academic-year/${year.academicYearID}/activate`);
-                await fetchAcademicYears();
-            } catch (error) {
-                if (axios.isAxiosError(error) && error.response) {
-                    alert(error.response.data.message || t('academicYears.errorSetActive'));
-                } else {
-                    alert(t('academicYears.errorSetActive'));
-                }
-                console.error('Error setting active academic year:', error);
+        try {
+            await api.delete(`/academic-year/${id}`);
+            await fetchAcademicYears();
+        } catch (error) {
+            console.error('Error deleting academic year:', error);
+            if (axios.isAxiosError(error)) {
+                const message = error.response?.data?.message || error.message;
+                alert(`Error: ${message}`);
             }
         }
     };
 
-    const handleDelete = async (year: AcademicYear) => {
-        if (year.isActive) {
-            alert(t('academicYears.cannotDeleteActive'));
-            return;
-        }
-
-        // Soft delete confirmation - no longer checking for students since we're not permanently deleting
-        if (window.confirm(t('academicYears.confirmDelete') + ' ' + year.yearName + '?')) {
-            try {
-                await api.delete(`/academic-year/${year.academicYearID}`);
-                await fetchAcademicYears();
-            } catch (error) {
-                if (axios.isAxiosError(error) && error.response) {
-                    alert(error.response.data.message || t('academicYears.errorDelete'));
-                } else {
-                    alert(t('academicYears.errorDelete'));
-                }
-                console.error('Error deleting academic year:', error);
+    const handleSetActive = async (id: number) => {
+        try {
+            await api.post(`/academic-year/${id}/activate`);
+            await fetchAcademicYears();
+        } catch (error) {
+            console.error('Error activating academic year:', error);
+            if (axios.isAxiosError(error)) {
+                const message = error.response?.data?.message || error.message;
+                alert(`Error: ${message}`);
             }
         }
     };
 
-    const formatDate = (dateStr: string) => {
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
+    const handleEdit = (year: AcademicYear) => {
+        setSelectedYear(year);
+        setEditFormData({
+            yearName: year.yearName,
+            startDate: year.startDate.split('T')[0],
+            endDate: year.endDate.split('T')[0]
         });
+        setFormErrors({});
+        setShowEditModal(true);
+    };
+
+    const handleCreate = () => {
+        resetForm();
+        setShowCreateModal(true);
     };
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
             </div>
         );
     }
 
     return (
-        <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
-                        <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
-                        {t('academicYears.title')}
-                    </h1>
-                    <p className="text-sm sm:text-base text-gray-600 mt-1">{t('academicYears.subtitle')}</p>
+                    <h1 className="text-2xl font-bold text-gray-900">{t('academicYears.title')}</h1>
+                    <p className="text-sm text-gray-600 mt-1">{t('academicYears.description')}</p>
                 </div>
                 <button
-                    onClick={() => setShowCreateModal(true)}
-                    className="bg-green-600 text-white px-4 py-2.5 sm:py-2 rounded-lg hover:bg-green-700 active:bg-green-800 transition-colors flex items-center justify-center gap-2 w-full sm:w-auto"
+                    onClick={handleCreate}
+                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                 >
                     <Plus className="w-5 h-5" />
-                    {t('academicYears.addYear')}
+                    {t('academicYears.createNew')}
                 </button>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="p-2.5 sm:p-3 bg-blue-100 rounded-lg">
-                            <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+            {/* Enrollment Banner (if applicable) */}
+            {activeYear && futureYear && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                    <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0">
+                            <Users className="w-8 h-8 text-blue-600" />
                         </div>
-                        <div>
-                            <p className="text-xs sm:text-sm text-gray-600">{t('academicYears.totalYears')}</p>
-                            <p className="text-xl sm:text-2xl font-bold text-gray-900">{academicYears.length}</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="p-2.5 sm:p-3 bg-green-100 rounded-lg">
-                            <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
-                        </div>
-                        <div>
-                            <p className="text-xs sm:text-sm text-gray-600">{t('academicYears.activeYear')}</p>
-                            <p className="text-xl sm:text-2xl font-bold text-green-900">
-                                {activeYear ? activeYear.yearName : t('common.none')}
+                        <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-blue-900 mb-2">
+                                {t('academicYears.enrollment.readyTitle')}
+                            </h3>
+                            <p className="text-blue-700 mb-4">
+                                {t('academicYears.enrollment.readyDescription', {
+                                    activeYear: activeYear.yearName,
+                                    nextYear: futureYear.yearName
+                                })}
                             </p>
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="p-2.5 sm:p-3 bg-purple-100 rounded-lg">
-                            <Users className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
-                        </div>
-                        <div>
-                            <p className="text-xs sm:text-sm text-gray-600">{t('academicYears.totalEnrollment')}</p>
-                            <p className="text-xl sm:text-2xl font-bold text-purple-900">
-                                {activeYear ? activeYear.totalStudents : 0}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Enrollment Banner - Shows when active year exists and future year has no students yet */}
-            {activeYear && activeYear.totalStudents > 0 && futureYear && futureYear.totalStudents === 0 && (
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-lg shadow-md overflow-hidden">
-                    <div className="p-4 sm:p-6">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                            <div className="flex items-start sm:items-center gap-3 sm:gap-4">
-                                <div className="p-3 sm:p-4 bg-blue-500 rounded-full flex-shrink-0">
-                                    <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg sm:text-xl font-bold text-gray-900">
-                                        {t('enrollment.enrollButton')}
-                                    </h3>
-                                    <p className="text-sm sm:text-base text-gray-600 mt-1">
-                                        {t('enrollment.enrollButtonSubtitle', { year: futureYear.yearName })}
-                                    </p>
-                                    <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-2 text-xs sm:text-sm text-gray-700">
-                                        <span className="flex items-center gap-1">
-                                            <Users className="w-4 h-4" />
-                                            {activeYear.totalStudents} {t('enrollment.students')}
-                                        </span>
-                                        <span className="flex items-center gap-1">
-                                            <ArrowRight className="w-4 h-4" />
-                                            {t('enrollment.toPromote')}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
                             <button
                                 onClick={handleOpenEnrollmentModal}
-                                className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-lg w-full sm:w-auto"
+                                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                             >
-                                <Users className="w-5 h-5" />
-                                {t('enrollment.enrollStudents')}
+                                <GraduationCap className="w-5 h-5" />
+                                {t('academicYears.enrollment.previewButton')}
+                                <ArrowRight className="w-4 h-4" />
                             </button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Enrollment Already Completed Message */}
-            {activeYear && activeYear.totalStudents > 0 && futureYear && futureYear.totalStudents > 0 && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4">
-                    <div className="flex items-start sm:items-center gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5 sm:mt-0" />
-                        <div>
-                            <p className="text-sm sm:text-base text-green-900 font-semibold">
-                                {t('enrollment.alreadyCompleted')}
-                            </p>
-                            <p className="text-green-700 text-xs sm:text-sm mt-1">
-                                {t('enrollment.alreadyCompletedMessage', {
-                                    from: activeYear.yearName,
-                                    to: futureYear.yearName,
-                                    count: futureYear.totalStudents
-                                })}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Academic Years Table */}
+            {/* Academic Years List */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50 border-b">
-                            <tr>
-                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                    {t('academicYears.yearName')}
-                                </th>
-                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                    {t('academicYears.dateRange')}
-                                </th>
-                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                    {t('academicYears.students')}
-                                </th>
-                                <th className="hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                    {t('academicYears.classes')}
-                                </th>
-                                <th className="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                    {t('academicYears.status')}
-                                </th>
-                                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                                    {t('academicYears.actions')}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                            {academicYears.length === 0 ? (
+                {academicYears.length === 0 ? (
+                    <div className="p-12 text-center">
+                        <Calendar className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                        <p className="text-gray-500 mb-4">{t('academicYears.noYears')}</p>
+                        <button
+                            onClick={handleCreate}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                        >
+                            <Plus className="w-5 h-5" />
+                            {t('academicYears.createFirst')}
+                        </button>
+                    </div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
                                 <tr>
-                                    <td colSpan={6} className="px-4 sm:px-6 py-8 sm:py-12 text-center">
-                                        <Calendar className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-3" />
-                                        <p className="text-sm sm:text-base text-gray-500">{t('academicYears.noYears')}</p>
-                                    </td>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {t('academicYears.table.yearName')}
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {t('academicYears.table.period')}
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {t('academicYears.table.status')}
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {t('academicYears.table.students')}
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {t('academicYears.table.classes')}
+                                    </th>
+                                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {t('academicYears.table.actions')}
+                                    </th>
                                 </tr>
-                            ) : (
-                                academicYears.map((year) => (
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {academicYears.map((year) => (
                                     <tr key={year.academicYearID} className="hover:bg-gray-50">
-                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-sm font-medium text-gray-900">{year.yearName}</span>
-                                                {year.isActive && (
-                                                    <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs bg-green-100 text-green-800 rounded-full font-semibold">
-                                                        {t('academicYears.active')}
-                                                    </span>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center">
+                                                <Calendar className="w-5 h-5 text-gray-400 mr-3" />
+                                                <div className="text-sm font-medium text-gray-900">
+                                                    {year.yearName}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {new Date(year.startDate).toLocaleDateString()} - {new Date(year.endDate).toLocaleDateString()}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            {year.isActive ? (
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <CheckCircle className="w-4 h-4 mr-1" />
+                                                    {t('academicYears.status.active')}
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                    {t('academicYears.status.inactive')}
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {year.totalStudents || 0}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {year.totalClasses || 0}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <div className="flex justify-end gap-2">
+                                                {!year.isActive && (
+                                                    <button
+                                                        onClick={() => handleSetActive(year.academicYearID)}
+                                                        className="text-green-600 hover:text-green-900"
+                                                        title={t('academicYears.actions.setActive')}
+                                                    >
+                                                        <CheckCircle className="w-5 h-5" />
+                                                    </button>
                                                 )}
-                                            </div>
-                                        </td>
-                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
-                                            <div className="text-xs sm:text-sm text-gray-900">
-                                                {formatDate(year.startDate)} - {formatDate(year.endDate)}
-                                            </div>
-                                        </td>
-                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
-                                            <div className="flex items-center gap-1 sm:gap-2">
-                                                <Users className="w-4 h-4 text-gray-400" />
-                                                <span className="text-sm text-gray-900">{year.totalStudents}</span>
-                                            </div>
-                                        </td>
-                                        <td className="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4">
-                                            <div className="flex items-center gap-1 sm:gap-2">
-                                                <GraduationCap className="w-4 h-4 text-gray-400" />
-                                                <span className="text-sm text-gray-900">{year.totalClasses}</span>
-                                            </div>
-                                        </td>
-                                        <td className="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${year.isActive
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-gray-100 text-gray-800'
-                                                }`}>
-                                                {year.isActive ? t('academicYears.active') : t('academicYears.inactive')}
-                                            </span>
-                                        </td>
-                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-medium">
-                                            <div className="flex items-center gap-1 sm:gap-3">
                                                 <button
-                                                    onClick={() => handleEditClick(year)}
-                                                    className="p-1.5 sm:p-1 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors"
-                                                    title={t('academicYears.edit')}
+                                                    onClick={() => handleEdit(year)}
+                                                    className="text-indigo-600 hover:text-indigo-900"
+                                                    title={t('academicYears.actions.edit')}
                                                 >
                                                     <Edit className="w-5 h-5" />
                                                 </button>
-                                                {!year.isActive && (
-                                                    <>
-                                                        <button
-                                                            onClick={() => handleSetActive(year)}
-                                                            className="p-1.5 sm:p-1 text-green-600 hover:text-green-900 hover:bg-green-50 rounded-lg transition-colors"
-                                                            title={t('academicYears.setActive')}
-                                                        >
-                                                            <CheckCircle className="w-5 h-5" />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleDelete(year)}
-                                                            className="p-1.5 sm:p-1 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
-                                                            title={t('academicYears.delete')}
-                                                        >
-                                                            <Trash2 className="w-5 h-5" />
-                                                        </button>
-                                                    </>
-                                                )}
+                                                <button
+                                                    onClick={() => handleDelete(year.academicYearID)}
+                                                    className="text-red-600 hover:text-red-900"
+                                                    title={t('academicYears.actions.delete')}
+                                                >
+                                                    <Trash2 className="w-5 h-5" />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
 
-            {/* Create Academic Year Modal */}
+            {/* Create Modal */}
             {showCreateModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white w-full rounded-2xl shadow-xl max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-                        <div className="border-b px-4 sm:px-6 py-4 flex justify-between items-center flex-shrink-0">
-                            <h2 className="text-lg sm:text-xl font-bold text-gray-900">{t('academicYears.createYear')}</h2>
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+                    <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                        <div className="flex justify-between items-center p-6 border-b">
+                            <h3 className="text-xl font-semibold text-gray-900">
+                                {t('academicYears.modal.createTitle')}
+                            </h3>
                             <button
-                                onClick={() => { setShowCreateModal(false); resetForm(); }}
-                                className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                                onClick={() => setShowCreateModal(false)}
+                                className="text-gray-400 hover:text-gray-600"
                             >
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
+                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    <Calendar className="w-4 h-4 inline mr-1" />{t('academicYears.yearName')} *
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    {t('academicYears.modal.yearName')}
                                 </label>
                                 <input
                                     type="text"
                                     value={formData.yearName}
                                     onChange={(e) => handleInputChange('yearName', e.target.value)}
-                                    className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.yearName ? 'border-red-500' : 'border-gray-300'
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 ${formErrors.yearName ? 'border-red-500' : 'border-gray-300'
                                         }`}
                                     placeholder="2024/2025"
                                 />
                                 {formErrors.yearName && (
-                                    <p className="text-red-500 text-xs mt-1">{formErrors.yearName}</p>
+                                    <p className="mt-1 text-sm text-red-600">{formErrors.yearName}</p>
                                 )}
-                                <p className="text-xs text-gray-500 mt-1">{t('academicYears.formatHint')}</p>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        {t('academicYears.startDate')} *
-                                    </label>
-                                    <input
-                                        type="date"
-                                        value={formData.startDate}
-                                        onChange={(e) => handleInputChange('startDate', e.target.value)}
-                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.startDate ? 'border-red-500' : 'border-gray-300'
-                                            }`}
-                                    />
-                                    {formErrors.startDate && (
-                                        <p className="text-red-500 text-xs mt-1">{formErrors.startDate}</p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        {t('academicYears.endDate')} *
-                                    </label>
-                                    <input
-                                        type="date"
-                                        value={formData.endDate}
-                                        onChange={(e) => handleInputChange('endDate', e.target.value)}
-                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.endDate ? 'border-red-500' : 'border-gray-300'
-                                            }`}
-                                    />
-                                    {formErrors.endDate && (
-                                        <p className="text-red-500 text-xs mt-1">{formErrors.endDate}</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Auto-Create Classes Toggle */}
-                            <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4">
-                                <label className="flex items-start gap-3 cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={autoCreateClasses}
-                                        onChange={(e) => setAutoCreateClasses(e.target.checked)}
-                                        className="mt-1 w-5 h-5 sm:w-4 sm:h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
-                                    />
-                                    <div className="flex-1">
-                                        <p className="text-sm font-semibold text-green-900">
-                                            {t('academicYears.autoCreateClasses')}
-                                        </p>
-                                        <p className="text-xs text-green-700 mt-1">
-                                            {t('academicYears.autoCreateClassesHint')}
-                                        </p>
-                                        <p className="text-xs text-green-600 mt-1">
-                                            {t('academicYears.autoCreateClassesExample')}
-                                        </p>
-                                    </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    {t('academicYears.modal.startDate')}
                                 </label>
+                                <input
+                                    type="date"
+                                    value={formData.startDate}
+                                    onChange={(e) => handleInputChange('startDate', e.target.value)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 ${formErrors.startDate ? 'border-red-500' : 'border-gray-300'
+                                        }`}
+                                />
+                                {formErrors.startDate && (
+                                    <p className="mt-1 text-sm text-red-600">{formErrors.startDate}</p>
+                                )}
                             </div>
 
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
-                                <p className="text-xs sm:text-sm text-blue-800">
-                                    <strong>{t('academicYears.tipTitle')}</strong> {t('academicYears.tipMessage')}
-                                </p>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    {t('academicYears.modal.endDate')}
+                                </label>
+                                <input
+                                    type="date"
+                                    value={formData.endDate}
+                                    onChange={(e) => handleInputChange('endDate', e.target.value)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 ${formErrors.endDate ? 'border-red-500' : 'border-gray-300'
+                                        }`}
+                                />
+                                {formErrors.endDate && (
+                                    <p className="mt-1 text-sm text-red-600">{formErrors.endDate}</p>
+                                )}
+                            </div>
+
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    id="autoCreateClasses"
+                                    checked={autoCreateClasses}
+                                    onChange={(e) => setAutoCreateClasses(e.target.checked)}
+                                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                />
+                                <label htmlFor="autoCreateClasses" className="ml-2 block text-sm text-gray-900">
+                                    {t('academicYears.modal.autoCreateClasses')}
+                                </label>
                             </div>
 
                             <div className="flex gap-3 pt-4">
                                 <button
                                     type="button"
-                                    onClick={() => { setShowCreateModal(false); resetForm(); }}
-                                    className="flex-1 px-4 py-2.5 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors"
-                                    disabled={isSubmitting}
+                                    onClick={() => setShowCreateModal(false)}
+                                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                                 >
-                                    {t('academicYears.cancel')}
+                                    {t('common.cancel')}
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 transition-colors"
                                     disabled={isSubmitting}
+                                    className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
                                 >
-                                    {isSubmitting ? t('academicYears.creating') : t('academicYears.save')}
+                                    {isSubmitting ? t('common.creating') : t('common.create')}
                                 </button>
                             </div>
                         </form>
@@ -655,95 +567,85 @@ const AcademicYearsPage = () => {
                 </div>
             )}
 
-            {/* Edit Academic Year Modal */}
+            {/* Edit Modal */}
             {showEditModal && selectedYear && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white w-full rounded-2xl shadow-xl max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-                        <div className="border-b px-4 sm:px-6 py-4 flex justify-between items-center flex-shrink-0">
-                            <h2 className="text-lg sm:text-xl font-bold text-gray-900">{t('academicYears.editYear')}</h2>
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
+                    <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                        <div className="flex justify-between items-center p-6 border-b">
+                            <h3 className="text-xl font-semibold text-gray-900">
+                                {t('academicYears.modal.editTitle')}
+                            </h3>
                             <button
-                                onClick={() => { setShowEditModal(false); setSelectedYear(null); }}
-                                className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                                onClick={() => setShowEditModal(false)}
+                                className="text-gray-400 hover:text-gray-600"
                             >
                                 <X className="w-6 h-6" />
                             </button>
                         </div>
 
-                        <form onSubmit={handleEditSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1">
+                        <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    <Calendar className="w-4 h-4 inline mr-1" />{t('academicYears.yearName')} *
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    {t('academicYears.modal.yearName')}
                                 </label>
                                 <input
                                     type="text"
                                     value={editFormData.yearName}
                                     onChange={(e) => handleEditInputChange('yearName', e.target.value)}
-                                    className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.yearName ? 'border-red-500' : 'border-gray-300'
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 ${formErrors.yearName ? 'border-red-500' : 'border-gray-300'
                                         }`}
-                                    placeholder="2024/2025"
                                 />
                                 {formErrors.yearName && (
-                                    <p className="text-red-500 text-xs mt-1">{formErrors.yearName}</p>
+                                    <p className="mt-1 text-sm text-red-600">{formErrors.yearName}</p>
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        {t('academicYears.startDate')} *
-                                    </label>
-                                    <input
-                                        type="date"
-                                        value={editFormData.startDate}
-                                        onChange={(e) => handleEditInputChange('startDate', e.target.value)}
-                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.startDate ? 'border-red-500' : 'border-gray-300'
-                                            }`}
-                                    />
-                                    {formErrors.startDate && (
-                                        <p className="text-red-500 text-xs mt-1">{formErrors.startDate}</p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        {t('academicYears.endDate')} *
-                                    </label>
-                                    <input
-                                        type="date"
-                                        value={editFormData.endDate}
-                                        onChange={(e) => handleEditInputChange('endDate', e.target.value)}
-                                        className={`w-full px-3 py-2.5 sm:py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-base sm:text-sm ${formErrors.endDate ? 'border-red-500' : 'border-gray-300'
-                                            }`}
-                                    />
-                                    {formErrors.endDate && (
-                                        <p className="text-red-500 text-xs mt-1">{formErrors.endDate}</p>
-                                    )}
-                                </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    {t('academicYears.modal.startDate')}
+                                </label>
+                                <input
+                                    type="date"
+                                    value={editFormData.startDate}
+                                    onChange={(e) => handleEditInputChange('startDate', e.target.value)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 ${formErrors.startDate ? 'border-red-500' : 'border-gray-300'
+                                        }`}
+                                />
+                                {formErrors.startDate && (
+                                    <p className="mt-1 text-sm text-red-600">{formErrors.startDate}</p>
+                                )}
                             </div>
 
-                            {selectedYear.isActive && (
-                                <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4">
-                                    <p className="text-xs sm:text-sm text-green-800">
-                                        <strong>ℹ️</strong> {t('academicYears.currentlyActive')}
-                                    </p>
-                                </div>
-                            )}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    {t('academicYears.modal.endDate')}
+                                </label>
+                                <input
+                                    type="date"
+                                    value={editFormData.endDate}
+                                    onChange={(e) => handleEditInputChange('endDate', e.target.value)}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 ${formErrors.endDate ? 'border-red-500' : 'border-gray-300'
+                                        }`}
+                                />
+                                {formErrors.endDate && (
+                                    <p className="mt-1 text-sm text-red-600">{formErrors.endDate}</p>
+                                )}
+                            </div>
 
                             <div className="flex gap-3 pt-4">
                                 <button
                                     type="button"
-                                    onClick={() => { setShowEditModal(false); setSelectedYear(null); }}
-                                    className="flex-1 px-4 py-2.5 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors"
-                                    disabled={isSubmitting}
+                                    onClick={() => setShowEditModal(false)}
+                                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                                 >
-                                    {t('academicYears.cancel')}
+                                    {t('common.cancel')}
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2.5 sm:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 transition-colors"
                                     disabled={isSubmitting}
+                                    className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
                                 >
-                                    {isSubmitting ? t('academicYears.updating') : t('academicYears.save')}
+                                    {isSubmitting ? t('common.updating') : t('common.update')}
                                 </button>
                             </div>
                         </form>
@@ -752,12 +654,10 @@ const AcademicYearsPage = () => {
             )}
 
             {/* Enrollment Preview Modal */}
-            {enrollmentTargetYear && (
+            {showEnrollmentModal && enrollmentTargetYear && (
                 <EnrollmentPreviewModal
-                    isOpen={showEnrollmentModal}
+                    targetYear={enrollmentTargetYear}
                     onClose={() => setShowEnrollmentModal(false)}
-                    academicYearId={enrollmentTargetYear.academicYearID}
-                    academicYearName={enrollmentTargetYear.yearName}
                     onEnrollmentComplete={handleEnrollmentComplete}
                 />
             )}
