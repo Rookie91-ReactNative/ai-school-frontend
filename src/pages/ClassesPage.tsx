@@ -2,6 +2,7 @@
 import { BookOpen, Plus, Edit, Trash2, X, Users, User, DoorOpen, Filter } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
+import { authService } from '../services/authService';
 import axios from 'axios';
 
 interface Class {
@@ -65,9 +66,9 @@ const ClassesPage = () => {
     const [filterAcademicYearId, setFilterAcademicYearId] = useState<number | null>(null);
     const [filterGradeId, setFilterGradeId] = useState<number | null>(null);
 
-    const userStr = localStorage.getItem('user');
-    const user = userStr ? JSON.parse(userStr) : null;
-    const schoolID = user?.schoolID || 1;
+    // Get schoolID from authService
+    const user = authService.getCurrentUser();
+    const schoolID = user?.schoolID;
 
     const [formData, setFormData] = useState<ClassFormData>({
         schoolID: schoolID,
@@ -95,6 +96,15 @@ const ClassesPage = () => {
     useEffect(() => {
         fetchClasses();
     }, [filterAcademicYearId, filterGradeId]);
+
+    useEffect(() => {
+        if (schoolID) {
+            setFormData(prev => ({
+                ...prev,
+                schoolID: schoolID
+            }));
+        }
+    }, [schoolID]);
 
     const fetchInitialData = async () => {
         try {
