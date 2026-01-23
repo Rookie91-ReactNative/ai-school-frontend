@@ -714,7 +714,7 @@ const StudentsPage = () => {
                         >
                             <option value="">{t('students.selectClass')}</option>
                             {allClasses
-                                .filter(c => !filterGradeId || c.gradeID === filterGradeId)
+                                .filter(c => (!filterGradeId || c.gradeID === filterGradeId) && (!filterAcademicYearId || filterAcademicYearId === -1 || c.academicYearID === filterAcademicYearId))
                                 .map(cls => (
                                     <option key={cls.classID} value={cls.classID}>{cls.className}</option>
                                 ))}
