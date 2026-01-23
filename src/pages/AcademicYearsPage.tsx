@@ -272,7 +272,7 @@ const AcademicYearsPage = () => {
 
     const handleSetActive = async (id: number) => {
         try {
-            await api.post(`/academic-year/${id}/activate`);
+            await api.put(`/academic-year/${id}/activate`);
             await fetchAcademicYears();
         } catch (error) {
             console.error('Error activating academic year:', error);
