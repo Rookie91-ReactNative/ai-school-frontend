@@ -722,7 +722,8 @@
       "cancel": "Batal",
       "save": "Muat Naik Foto",
       "uploading": "Memuat naik...",
-      "title": "Muat Naik Foto"
+      "title": "Muat Naik Foto",
+      "selectedPhotos": "Foto yang dipilih"
     },
 
     "managePhotoModal": {

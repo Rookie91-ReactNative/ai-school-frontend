@@ -722,7 +722,8 @@
       "cancel": "取消",
       "save": "上传照片",
       "uploading": "正在上传...",
-      "title": "上传照片"
+      "title": "上传照片",
+      "selectedPhotos": "已选照片"
     },
 
     "managePhotoModal": {

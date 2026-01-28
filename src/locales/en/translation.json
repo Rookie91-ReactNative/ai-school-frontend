@@ -722,7 +722,8 @@
       "cancel": "Cancel",
       "save": "Upload Photo",
       "uploading": "Uploading...",
-      "title": "Upload Photos"
+      "title": "Upload Photos",
+      "selectedPhotos": "Selected photos"
     },
 
     "managePhotoModal": {
