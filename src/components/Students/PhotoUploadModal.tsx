@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+ï»¿import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Upload, X, Camera, CheckCircle, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import { studentService } from '../../services/studentService';
@@ -168,11 +168,11 @@ const PhotoUploadModal = ({ studentCode, studentName, isOpen, onClose, onSuccess
                                 {t('students.uploadPhotoModal.photoGuidelines')}
                             </h3>
                             <ul className="text-xs sm:text-sm text-blue-800 space-y-1">
-                                <li>• {t('students.uploadPhotoModal.photoGuideline1')}</li>
-                                <li>• {t('students.uploadPhotoModal.photoGuideline2')}</li>
-                                <li>• {t('students.uploadPhotoModal.photoGuideline3')}</li>
-                                <li>• {t('students.uploadPhotoModal.photoGuideline4')}</li>
-                                <li>• {t('students.uploadPhotoModal.photoGuideline5')}</li>
+                                <li>ï¿½ {t('students.uploadPhotoModal.photoGuideline1')}</li>
+                                <li>ï¿½ {t('students.uploadPhotoModal.photoGuideline2')}</li>
+                                <li>ï¿½ {t('students.uploadPhotoModal.photoGuideline3')}</li>
+                                <li>ï¿½ {t('students.uploadPhotoModal.photoGuideline4')}</li>
+                                <li>ï¿½ {t('students.uploadPhotoModal.photoGuideline5')}</li>
                             </ul>
                         </div>
 
@@ -191,7 +191,7 @@ const PhotoUploadModal = ({ studentCode, studentName, isOpen, onClose, onSuccess
                                     {t('students.uploadPhotoModal.clickToUpload')}
                                 </span>
                                 <span className="hidden sm:inline">
-                                    {t('students.uploadPhotoModal.orDragAndDrop')}
+                                    {t('students.uploadPhotoModal.orDragandDrop')}
                                 </span>
                             </p>
                             <p className="text-xs sm:text-sm text-gray-500">
