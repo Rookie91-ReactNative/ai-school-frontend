@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Calendar, Download, Filter, Users, CheckCircle, XCircle, Clock } from 'lucide-react';
+﻿import { useState, useEffect } from 'react';
+import { Calendar, Download, Filter, Users, CheckCircle, XCircle, Clock, Eye } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 
@@ -14,6 +14,7 @@ interface AttendanceRecord {
     status: string;
     cameraName: string;
     cameraLocation?: string;
+    snapshotPath?: string;  // ✅ Added for snapshot preview
 }
 
 interface AttendanceResponse {
@@ -36,6 +37,9 @@ const AttendancePage = () => {
     });
     const [isLoading, setIsLoading] = useState(true);
     const [filterStatus, setFilterStatus] = useState<string>('All');
+
+    // ✅ Added for snapshot preview modal
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
 
     useEffect(() => {
         fetchAttendance();
@@ -245,6 +249,10 @@ const AttendancePage = () => {
                                     <th className="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         {t('attendance.camera')}
                                     </th>
+                                    {/* ✅ Added Snapshot column header */}
+                                    <th className="px-3 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {t('attendance.snapshot', 'Snapshot')}
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
@@ -288,6 +296,20 @@ const AttendancePage = () => {
                                         <td className="hidden md:table-cell px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-500">
                                             {record.cameraName || '-'}
                                         </td>
+                                        {/* ✅ Added Snapshot column with Eye icon */}
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-center">
+                                            {record.snapshotPath ? (
+                                                <button
+                                                    onClick={() => setPreviewImage(record.snapshotPath!)}
+                                                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    title={t('attendance.viewSnapshot', 'View Snapshot')}
+                                                >
+                                                    <Eye className="w-5 h-5" />
+                                                </button>
+                                            ) : (
+                                                <span className="text-gray-400">-</span>
+                                            )}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -295,6 +317,28 @@ const AttendancePage = () => {
                     </div>
                 )}
             </div>
+
+            {/* ✅ Image Preview Modal */}
+            {previewImage && (
+                <div
+                    className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+                    onClick={() => setPreviewImage(null)}
+                >
+                    <div className="max-w-2xl max-h-[80vh] relative">
+                        <img
+                            src={previewImage}
+                            alt="Attendance snapshot"
+                            className="max-w-full max-h-[80vh] object-contain rounded-lg"
+                        />
+                        <button
+                            onClick={() => setPreviewImage(null)}
+                            className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
