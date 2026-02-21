@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Image as ImageIcon, CheckCircle, AlertCircle, Eye, EyeOff, /*Trash2,*/ RefreshCw, Download } from 'lucide-react';
+import { X, Image as ImageIcon, CheckCircle, AlertCircle, Eye, EyeOff, /*Trash2,*/ RefreshCw, ExternalLink } from 'lucide-react';
 import { studentService } from '../../services/studentService';
 import LoadingSpinner from '../Common/LoadingSpinner';
 
@@ -36,7 +36,6 @@ const PhotoManagementModal = ({
     const [successMessage, setSuccessMessage] = useState('');
     const [showInactive, setShowInactive] = useState(false);
     const [selectedPhotos, setSelectedPhotos] = useState<Set<number>>(new Set());
-    const [isDownloading, setIsDownloading] = useState(false);
 
     // Prevent body scroll when modal is open
     useEffect(() => {
@@ -183,92 +182,33 @@ const PhotoManagementModal = ({
     };
 
     /**
-     * ⭐ NEW: Download a single photo - Named as StudentCode.jpg
+     * ⭐ UPDATED: Open single photo in new tab (bypasses CORS)
+     * User can right-click and save the image
      */
-    const handleDownloadSingle = async (photo: FaceImage) => {
-        try {
-            setIsDownloading(true);
-            const imageUrl = getImageUrl(photo.imagePath);
-
-            const response = await fetch(imageUrl);
-            if (!response.ok) throw new Error('Failed to fetch image');
-
-            const blob = await response.blob();
-            const originalExt = photo.imagePath.split('.').pop()?.toLowerCase() || 'jpg';
-
-            // Single photo: just StudentCode.jpg (no index number)
-            const fileName = `${studentCode}.${originalExt}`;
-
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-
-            setSuccessMessage(`Downloaded: ${fileName}`);
-            setTimeout(() => setSuccessMessage(''), 3000);
-        } catch (err) {
-            console.error('Error downloading photo:', err);
-            setError('Failed to download photo');
-        } finally {
-            setIsDownloading(false);
-        }
+    const handleOpenPhoto = (photo: FaceImage) => {
+        const imageUrl = getImageUrl(photo.imagePath);
+        window.open(imageUrl, '_blank');
+        setSuccessMessage('Photo opened in new tab. Right-click to save.');
+        setTimeout(() => setSuccessMessage(''), 3000);
     };
 
     /**
-     * ⭐ NEW: Download selected photos - Named as StudentCode_001.jpg, StudentCode_002.jpg...
+     * ⭐ UPDATED: Open selected photos in new tabs (bypasses CORS)
      */
-    const handleDownloadSelected = async () => {
+    const handleOpenSelected = () => {
         if (selectedPhotos.size === 0) return;
 
-        setIsDownloading(true);
+        const selectedPhotosList = photos.filter(p => selectedPhotos.has(p.imageID));
 
-        try {
-            const selectedPhotosList = photos.filter(p => selectedPhotos.has(p.imageID));
-
-            for (let i = 0; i < selectedPhotosList.length; i++) {
-                const photo = selectedPhotosList[i];
+        selectedPhotosList.forEach((photo, index) => {
+            setTimeout(() => {
                 const imageUrl = getImageUrl(photo.imagePath);
+                window.open(imageUrl, '_blank');
+            }, index * 500); // Delay each by 500ms to prevent popup blocker
+        });
 
-                try {
-                    const response = await fetch(imageUrl);
-                    if (!response.ok) continue;
-
-                    const blob = await response.blob();
-                    const originalExt = photo.imagePath.split('.').pop()?.toLowerCase() || 'jpg';
-
-                    // Multiple photos: StudentCode_001.jpg, StudentCode_002.jpg...
-                    const paddedIndex = String(i + 1).padStart(3, '0');
-                    const fileName = `${studentCode}_${paddedIndex}.${originalExt}`;
-
-                    const url = window.URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = fileName;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    window.URL.revokeObjectURL(url);
-
-                    if (i < selectedPhotosList.length - 1) {
-                        await new Promise(resolve => setTimeout(resolve, 300));
-                    }
-                } catch (err) {
-                    console.error(`Error downloading photo ${photo.imageID}:`, err);
-                }
-            }
-
-            setSuccessMessage(`Downloaded ${selectedPhotosList.length} photo(s)`);
-            setTimeout(() => setSuccessMessage(''), 3000);
-        } catch (err) {
-            console.error('Error downloading photos:', err);
-            setError('Failed to download photos');
-        } finally {
-            setIsDownloading(false);
-        }
+        setSuccessMessage(`Opening ${selectedPhotosList.length} photo(s) in new tabs. Right-click to save.`);
+        setTimeout(() => setSuccessMessage(''), 4000);
     };
 
     if (!isOpen) return null;
@@ -335,15 +275,14 @@ const PhotoManagementModal = ({
                                 </button>
                             )}
 
-                            {/* ⭐ NEW: Download Selected Button */}
+                            {/* ⭐ UPDATED: Open Selected Button */}
                             {selectedPhotos.size > 0 && (
                                 <button
-                                    onClick={handleDownloadSelected}
-                                    disabled={isDownloading}
-                                    className="px-3 sm:px-4 py-1.5 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm disabled:opacity-50"
+                                    onClick={handleOpenSelected}
+                                    className="px-3 sm:px-4 py-1.5 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
                                 >
-                                    <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                                    {isDownloading ? '...' : <>Download ({selectedPhotos.size})</>}
+                                    <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                    Open ({selectedPhotos.size})
                                 </button>
                             )}
 
@@ -445,14 +384,13 @@ const PhotoManagementModal = ({
                                     {/* Action Buttons - Always visible on mobile, hover on desktop */}
                                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2 sm:p-3 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                         <div className="flex gap-1.5 sm:gap-2 justify-center flex-wrap">
-                                            {/* ⭐ NEW: Download Single Photo Button */}
+                                            {/* ⭐ UPDATED: Open Photo Button (bypasses CORS) */}
                                             <button
-                                                onClick={() => handleDownloadSingle(photo)}
-                                                disabled={isDownloading}
-                                                className="px-2 sm:px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 active:bg-green-800 transition-colors text-[10px] sm:text-xs flex items-center gap-1 disabled:opacity-50"
+                                                onClick={() => handleOpenPhoto(photo)}
+                                                className="px-2 sm:px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 active:bg-green-800 transition-colors text-[10px] sm:text-xs flex items-center gap-1"
                                             >
-                                                <Download className="w-3 h-3" />
-                                                <span className="hidden sm:inline">Download</span>
+                                                <ExternalLink className="w-3 h-3" />
+                                                <span className="hidden sm:inline">Open</span>
                                             </button>
 
                                             {photo.isActive ? (
