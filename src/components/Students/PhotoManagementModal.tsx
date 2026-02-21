@@ -202,7 +202,7 @@ const PhotoManagementModal = ({
             const downloadUrl = `${apiBaseUrl}/api/Student/download-photo/${photo.imageID}?fileName=${encodeURIComponent(fileName)}`;
 
             // Get auth token from localStorage
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('auth_token');
 
             // Fetch with authorization header
             const response = await fetch(downloadUrl, {
@@ -249,7 +249,7 @@ const PhotoManagementModal = ({
 
         // Use full backend API URL
         const apiBaseUrl = import.meta.env.VITE_API_URL || 'https://ai-school.azurewebsites.net';
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('auth_token');
 
         const selectedPhotosList = photos.filter(p => selectedPhotos.has(p.imageID));
 
