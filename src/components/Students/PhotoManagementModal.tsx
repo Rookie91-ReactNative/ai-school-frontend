@@ -187,29 +187,54 @@ const PhotoManagementModal = ({
      * Uses backend endpoint to bypass CORS and set filename
      * Single photo: StudentCode.jpg (no index number)
      */
-    const handleDownloadSingle = (photo: FaceImage) => {
-        setIsDownloading(true);
+    const handleDownloadSingle = async (photo: FaceImage) => {
+        try {
+            setIsDownloading(true);
 
-        // Get file extension from image path
-        const originalExt = photo.imagePath.split('.').pop()?.toLowerCase() || 'jpg';
+            // Get file extension from image path
+            const originalExt = photo.imagePath.split('.').pop()?.toLowerCase() || 'jpg';
 
-        // Single photo: just StudentCode.jpg (no index number)
-        const fileName = `${studentCode}.${originalExt}`;
+            // Single photo: just StudentCode.jpg (no index number)
+            const fileName = `${studentCode}.${originalExt}`;
 
-        // Use backend proxy endpoint - bypasses CORS!
-        const downloadUrl = `/api/Student/download-photo/${photo.imageID}?fileName=${encodeURIComponent(fileName)}`;
+            // Use full backend API URL with authorization
+            const apiBaseUrl = import.meta.env.VITE_API_URL || 'https://ai-school.azurewebsites.net';
+            const downloadUrl = `${apiBaseUrl}/api/Student/download-photo/${photo.imageID}?fileName=${encodeURIComponent(fileName)}`;
 
-        // Create hidden link and trigger download
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+            // Get auth token from localStorage
+            const token = localStorage.getItem('token');
 
-        setSuccessMessage(`Downloading: ${fileName}`);
-        setTimeout(() => setSuccessMessage(''), 3000);
-        setIsDownloading(false);
+            // Fetch with authorization header
+            const response = await fetch(downloadUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to download photo');
+            }
+
+            // Create blob and download
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            setSuccessMessage(`Downloaded: ${fileName}`);
+            setTimeout(() => setSuccessMessage(''), 3000);
+        } catch (err) {
+            console.error('Error downloading photo:', err);
+            setError('Failed to download photo');
+        } finally {
+            setIsDownloading(false);
+        }
     };
 
     /**
@@ -222,35 +247,62 @@ const PhotoManagementModal = ({
         setIsDownloading(true);
         setSuccessMessage(`Downloading ${selectedPhotos.size} photo(s)...`);
 
+        // Use full backend API URL
+        const apiBaseUrl = import.meta.env.VITE_API_URL || 'https://ai-school.azurewebsites.net';
+        const token = localStorage.getItem('token');
+
         const selectedPhotosList = photos.filter(p => selectedPhotos.has(p.imageID));
 
-        for (let i = 0; i < selectedPhotosList.length; i++) {
-            const photo = selectedPhotosList[i];
-            const originalExt = photo.imagePath.split('.').pop()?.toLowerCase() || 'jpg';
+        try {
+            for (let i = 0; i < selectedPhotosList.length; i++) {
+                const photo = selectedPhotosList[i];
+                const originalExt = photo.imagePath.split('.').pop()?.toLowerCase() || 'jpg';
 
-            // Multiple photos: StudentCode_001.jpg, StudentCode_002.jpg...
-            const paddedIndex = String(i + 1).padStart(3, '0');
-            const fileName = `${studentCode}_${paddedIndex}.${originalExt}`;
+                // Multiple photos: StudentCode_001.jpg, StudentCode_002.jpg...
+                const paddedIndex = String(i + 1).padStart(3, '0');
+                const fileName = `${studentCode}_${paddedIndex}.${originalExt}`;
 
-            // Use backend proxy endpoint
-            const downloadUrl = `/api/Student/download-photo/${photo.imageID}?fileName=${encodeURIComponent(fileName)}`;
+                const downloadUrl = `${apiBaseUrl}/api/Student/download-photo/${photo.imageID}?fileName=${encodeURIComponent(fileName)}`;
 
-            const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+                try {
+                    // Fetch with authorization header
+                    const response = await fetch(downloadUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
 
-            // Small delay between downloads to prevent browser blocking
-            if (i < selectedPhotosList.length - 1) {
-                await new Promise(resolve => setTimeout(resolve, 500));
+                    if (!response.ok) continue;
+
+                    // Create blob and download
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+
+                    // Small delay between downloads
+                    if (i < selectedPhotosList.length - 1) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+                } catch (err) {
+                    console.error(`Error downloading photo ${photo.imageID}:`, err);
+                }
             }
-        }
 
-        setSuccessMessage(`Downloaded ${selectedPhotosList.length} photo(s)`);
-        setTimeout(() => setSuccessMessage(''), 3000);
-        setIsDownloading(false);
+            setSuccessMessage(`Downloaded ${selectedPhotosList.length} photo(s)`);
+            setTimeout(() => setSuccessMessage(''), 3000);
+        } catch (err) {
+            console.error('Error downloading photos:', err);
+            setError('Failed to download photos');
+        } finally {
+            setIsDownloading(false);
+        }
     };
 
     if (!isOpen) return null;
