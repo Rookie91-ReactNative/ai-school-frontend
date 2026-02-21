@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Image as ImageIcon, CheckCircle, AlertCircle, Eye, EyeOff, /*Trash2,*/ RefreshCw, ExternalLink } from 'lucide-react';
+import { X, Image as ImageIcon, CheckCircle, AlertCircle, Eye, EyeOff, /*Trash2,*/ RefreshCw, Download } from 'lucide-react';
 import { studentService } from '../../services/studentService';
 import LoadingSpinner from '../Common/LoadingSpinner';
 
@@ -36,6 +36,7 @@ const PhotoManagementModal = ({
     const [successMessage, setSuccessMessage] = useState('');
     const [showInactive, setShowInactive] = useState(false);
     const [selectedPhotos, setSelectedPhotos] = useState<Set<number>>(new Set());
+    const [isDownloading, setIsDownloading] = useState(false);
 
     // Prevent body scroll when modal is open
     useEffect(() => {
@@ -182,33 +183,74 @@ const PhotoManagementModal = ({
     };
 
     /**
-     * ⭐ UPDATED: Open single photo in new tab (bypasses CORS)
-     * User can right-click and save the image
+     * ⭐ NEW: Download single photo via backend proxy
+     * Uses backend endpoint to bypass CORS and set filename
+     * Single photo: StudentCode.jpg (no index number)
      */
-    const handleOpenPhoto = (photo: FaceImage) => {
-        const imageUrl = getImageUrl(photo.imagePath);
-        window.open(imageUrl, '_blank');
-        setSuccessMessage('Photo opened in new tab. Right-click to save.');
+    const handleDownloadSingle = (photo: FaceImage) => {
+        setIsDownloading(true);
+
+        // Get file extension from image path
+        const originalExt = photo.imagePath.split('.').pop()?.toLowerCase() || 'jpg';
+
+        // Single photo: just StudentCode.jpg (no index number)
+        const fileName = `${studentCode}.${originalExt}`;
+
+        // Use backend proxy endpoint - bypasses CORS!
+        const downloadUrl = `/api/Student/download-photo/${photo.imageID}?fileName=${encodeURIComponent(fileName)}`;
+
+        // Create hidden link and trigger download
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setSuccessMessage(`Downloading: ${fileName}`);
         setTimeout(() => setSuccessMessage(''), 3000);
+        setIsDownloading(false);
     };
 
     /**
-     * ⭐ UPDATED: Open selected photos in new tabs (bypasses CORS)
+     * ⭐ NEW: Download selected photos via backend proxy
+     * Multiple photos: StudentCode_001.jpg, StudentCode_002.jpg...
      */
-    const handleOpenSelected = () => {
+    const handleDownloadSelected = async () => {
         if (selectedPhotos.size === 0) return;
+
+        setIsDownloading(true);
+        setSuccessMessage(`Downloading ${selectedPhotos.size} photo(s)...`);
 
         const selectedPhotosList = photos.filter(p => selectedPhotos.has(p.imageID));
 
-        selectedPhotosList.forEach((photo, index) => {
-            setTimeout(() => {
-                const imageUrl = getImageUrl(photo.imagePath);
-                window.open(imageUrl, '_blank');
-            }, index * 500); // Delay each by 500ms to prevent popup blocker
-        });
+        for (let i = 0; i < selectedPhotosList.length; i++) {
+            const photo = selectedPhotosList[i];
+            const originalExt = photo.imagePath.split('.').pop()?.toLowerCase() || 'jpg';
 
-        setSuccessMessage(`Opening ${selectedPhotosList.length} photo(s) in new tabs. Right-click to save.`);
-        setTimeout(() => setSuccessMessage(''), 4000);
+            // Multiple photos: StudentCode_001.jpg, StudentCode_002.jpg...
+            const paddedIndex = String(i + 1).padStart(3, '0');
+            const fileName = `${studentCode}_${paddedIndex}.${originalExt}`;
+
+            // Use backend proxy endpoint
+            const downloadUrl = `/api/Student/download-photo/${photo.imageID}?fileName=${encodeURIComponent(fileName)}`;
+
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Small delay between downloads to prevent browser blocking
+            if (i < selectedPhotosList.length - 1) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+        }
+
+        setSuccessMessage(`Downloaded ${selectedPhotosList.length} photo(s)`);
+        setTimeout(() => setSuccessMessage(''), 3000);
+        setIsDownloading(false);
     };
 
     if (!isOpen) return null;
@@ -275,14 +317,15 @@ const PhotoManagementModal = ({
                                 </button>
                             )}
 
-                            {/* ⭐ UPDATED: Open Selected Button */}
+                            {/* ⭐ Download Selected Button */}
                             {selectedPhotos.size > 0 && (
                                 <button
-                                    onClick={handleOpenSelected}
-                                    className="px-3 sm:px-4 py-1.5 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm"
+                                    onClick={handleDownloadSelected}
+                                    disabled={isDownloading}
+                                    className="px-3 sm:px-4 py-1.5 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm disabled:opacity-50"
                                 >
-                                    <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                                    Open ({selectedPhotos.size})
+                                    <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                    {isDownloading ? '...' : <>Download ({selectedPhotos.size})</>}
                                 </button>
                             )}
 
@@ -384,13 +427,14 @@ const PhotoManagementModal = ({
                                     {/* Action Buttons - Always visible on mobile, hover on desktop */}
                                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2 sm:p-3 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                                         <div className="flex gap-1.5 sm:gap-2 justify-center flex-wrap">
-                                            {/* ⭐ UPDATED: Open Photo Button (bypasses CORS) */}
+                                            {/* ⭐ Download Single Photo Button */}
                                             <button
-                                                onClick={() => handleOpenPhoto(photo)}
-                                                className="px-2 sm:px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 active:bg-green-800 transition-colors text-[10px] sm:text-xs flex items-center gap-1"
+                                                onClick={() => handleDownloadSingle(photo)}
+                                                disabled={isDownloading}
+                                                className="px-2 sm:px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 active:bg-green-800 transition-colors text-[10px] sm:text-xs flex items-center gap-1 disabled:opacity-50"
                                             >
-                                                <ExternalLink className="w-3 h-3" />
-                                                <span className="hidden sm:inline">Open</span>
+                                                <Download className="w-3 h-3" />
+                                                <span className="hidden sm:inline">Download</span>
                                             </button>
 
                                             {photo.isActive ? (
