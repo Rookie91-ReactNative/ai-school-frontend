@@ -745,7 +745,10 @@
       "aboutPhotoManagement2": " dikecualikan daripada latihan tetapi disimpan dalam pangkalan data",
       "aboutPhotoManagement3": "Nyahaktifkan foto yang salah/berkualiti buruk untuk meningkatkan ketepatan pengecaman",
       "aboutPhotoManagement4": "Anda boleh mengaktifkan semula foto pada bila-bila masa jika perlu",
-      "close": "Tutup"
+      "close": "Tutup",
+      "download": "Muat Turun",
+      "downloadSuccess": "Dimuat turun: {{fileName}}",
+      "downloadError": "Gagal memuat turun foto"
     },
 
     "validation": {

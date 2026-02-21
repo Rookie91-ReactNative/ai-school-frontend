@@ -745,7 +745,10 @@
       "aboutPhotoManagement2": " are excluded from training but kept in database",
       "aboutPhotoManagement3": "Deactivate wrong/poor quality photos to improve recognition accuracy",
       "aboutPhotoManagement4": "You can reactivate photos anytime if needed",
-      "close": "Close"
+      "close": "Close",
+      "download": "Download",
+      "downloadSuccess": "Downloaded: {{fileName}}",
+      "downloadError": "Failed to download photo"
     },
 
     "validation": {

@@ -745,7 +745,10 @@
       "aboutPhotoManagement2": "不参与训练但保留在数据库中",
       "aboutPhotoManagement3": "停用错误/低质量照片以提高识别准确率",
       "aboutPhotoManagement4": "如有需要，您可以随时重新激活照片",
-      "close": "关闭"
+      "close": "关闭",
+      "download": "下载",
+      "downloadSuccess": "已下载: {{fileName}}",
+      "downloadError": "下载照片失败"
     },
 
     "validation": {
