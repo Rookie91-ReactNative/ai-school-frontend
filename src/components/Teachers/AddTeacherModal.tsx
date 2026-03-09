@@ -56,9 +56,13 @@ const AddTeacherModal = ({ onClose, onSuccess }: AddTeacherModalProps) => {
             }
         } catch (error: unknown) {
             console.error('Error creating teacher:', error);
-            const errorMessage = error instanceof Error
-                ? error.message
-                : t('teachers.createError');
+            // Extract server-side error message if available
+            const axiosError = error as { response?: { data?: { errors?: string[], message?: string } } };
+            const serverErrors = axiosError?.response?.data?.errors;
+            const errorMessage = serverErrors && serverErrors.length > 0
+                ? serverErrors[0]
+                : axiosError?.response?.data?.message
+                ?? (error instanceof Error ? error.message : t('teachers.createError'));
             alert(errorMessage);
             setSubmitting(false);
         }
