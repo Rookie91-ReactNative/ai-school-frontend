@@ -51,11 +51,11 @@ const TeachersPage = () => {
         if (searchTerm) {
             const search = searchTerm.toLowerCase();
             filtered = filtered.filter(teacher =>
-                teacher.fullName.toLowerCase().includes(search) ||
-                teacher.teacherCode.toLowerCase().includes(search) ||
-                teacher.email?.toLowerCase().includes(search) ||
-                teacher.subject?.toLowerCase().includes(search) ||
-                teacher.specialization?.toLowerCase().includes(search)
+                (teacher.fullName ?? '').toLowerCase().includes(search) ||
+                (teacher.teacherCode ?? '').toLowerCase().includes(search) ||
+                (teacher.email ?? '').toLowerCase().includes(search) ||
+                (teacher.subject ?? '').toLowerCase().includes(search) ||
+                (teacher.specialization ?? '').toLowerCase().includes(search)
             );
         }
 
@@ -162,9 +162,9 @@ const TeachersPage = () => {
                         <input
                             type="text"
                             placeholder={t('teachers.searchPlaceholder')}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
@@ -272,7 +272,7 @@ const TeachersPage = () => {
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center gap-2 text-sm text-gray-600">
                                                 <Calendar className="w-4 h-4" />
-                                                {new Date(teacher.joinDate).toLocaleDateString()}
+                                                {teacher.joinDate ? new Date(teacher.joinDate).toLocaleDateString() : '-'}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
@@ -318,7 +318,7 @@ const TeachersPage = () => {
                                                     onClick={() => setSearchTerm('')}
                                                     className="text-blue-600 hover:text-blue-700 text-sm"
                                                 >
-                                                  {t('common.clearSearch')}
+                                                    {t('common.clearSearch')}
                                                 </button>
                                             )}
                                         </div>
@@ -387,9 +387,11 @@ const EditTeacherModal = ({
         fullName: teacher.fullName,
         email: teacher.email,
         phoneNumber: teacher.phoneNumber,
-        subject: teacher.subject || '', // Handle null
-        specialization: teacher.specialization || '', // Handle null
-        isActive: teacher.isActive
+        subject: teacher.subject || '',
+        specialization: teacher.specialization || '',
+        isActive: teacher.isActive,
+        isAdmin: teacher.isAdmin ?? false,
+        adminPosition: teacher.adminPosition || '',
     });
     const [submitting, setSubmitting] = useState(false);
 
@@ -503,6 +505,33 @@ const EditTeacherModal = ({
                                 <span className="text-sm font-medium text-gray-700">{t('teachers.active')}</span>
                             </label>
                         </div>
+
+                        <div className="md:col-span-2">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={formData.isAdmin}
+                                    onChange={(e) => setFormData({ ...formData, isAdmin: e.target.checked, adminPosition: e.target.checked ? formData.adminPosition : '' })}
+                                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                />
+                                <span className="text-sm font-medium text-gray-700">{t('teachers.isAdmin')}</span>
+                            </label>
+                        </div>
+
+                        {formData.isAdmin && (
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {t('teachers.adminPosition')}
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.adminPosition}
+                                    onChange={(e) => setFormData({ ...formData, adminPosition: e.target.value })}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    placeholder={t('teachers.adminPositionPlaceholder')}
+                                />
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">

@@ -9,6 +9,8 @@ export interface Teacher {
     subject: string;
     specialization: string;
     isActive: boolean;
+    isAdmin: boolean;
+    adminPosition?: string;
     joinDate: string;
     resignDate?: string;
     remarks?: string;
@@ -27,6 +29,8 @@ export interface CreateTeacherWithUserDto {
     subject: string;
     specialization: string;
     joinDate: string;
+    isAdmin: boolean;
+    adminPosition?: string;
 
     // User Account (Optional)
     createUserAccount: boolean;
@@ -41,6 +45,8 @@ export interface UpdateTeacherDto {
     subject: string;
     specialization: string;
     isActive: boolean;
+    isAdmin: boolean;
+    adminPosition?: string;
 }
 
 export interface CreateUserForTeacherDto {

@@ -78,7 +78,13 @@
     "allClasses": "All Classes",
     "showing": "Showing",
     "of": "of",
-    "upload": "Upload"
+    "upload": "Upload",
+    "all": "All",
+    "clear": "Clear",
+    "deleting": "Deleting...",
+    "filter": "Filter",
+    "saving": "Saving...",
+    "view": "View"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -100,7 +106,9 @@
     "eventsReport": "Events Report",
     "importStudents": "Import Students",
     "lateReport": "Late Report",
-    "lateCheckIn": "Late Check-in"
+    "lateCheckIn": "Late Check-in",
+    "reports": "Reports",
+    "pencerapan": "Observation Reports"
   },
   "unauthorized": {
     "title": "Access Denied",
@@ -883,7 +891,10 @@
     "userAccountMsg2": "If password is auto-generated, it will be shown once after creation. Make sure to save it!",
     "userAccountMsg3": "ℹ️ Teacher will be created without login access. You can create a user account later.",
     "createTeacherUserAcct": "Create Teacher & User Account",
-    "usingCustomPassword": "Using custom password"
+    "usingCustomPassword": "Using custom password",
+    "isAdmin": "School Administrator",
+    "adminPosition": "Admin Position",
+    "adminPositionPlaceholder": "e.g. Penolong Kanan"
   },
   "teams": {
     "title": "Teams & Activities",
@@ -1755,5 +1766,87 @@
     "samePassword": "New password must be different from current password",
     "success": "Password changed successfully!",
     "failed": "Failed to change password"
+  },
+
+  "pencerapan": {
+    "title": "Pencerapan Reports",
+    "subtitle": "Manage classroom observation reports (Laporan Bergambar Pencerapan)",
+    "newReport": "New Report",
+    "createTitle": "Create Pencerapan Report",
+    "editTitle": "Edit Pencerapan Report",
+    "detailTitle": "Report Details",
+    "deleteTitle": "Delete Report",
+    "deleteConfirm": "This action cannot be undone. The report and all its photos will be deleted permanently.",
+    "downloadWord": "Download Word",
+    "downloading": "Downloading...",
+    "searchPlaceholder": "Search by teacher, subject or class...",
+    "noReports": "No reports found",
+    "noReportsHint": "Create a new Pencerapan report to get started.",
+    "showing": "Showing {{count}} of {{total}} reports",
+
+    "stats": {
+      "total": "Total Reports",
+      "draft": "Draft",
+      "finalized": "Finalized"
+    },
+
+    "fields": {
+      "teacher": "Teacher",
+      "academicYear": "Academic Year",
+      "pencerapanNo": "Pencerapan No.",
+      "subject": "Subject",
+      "date": "Date",
+      "time": "Time",
+      "timeStart": "Time Start",
+      "timeEnd": "Time End",
+      "class": "Class",
+      "status": "Status",
+      "preparedBy": "Prepared By",
+      "photos": "Photos"
+    },
+
+    "placeholders": {
+      "teacher": "Select teacher...",
+      "year": "Select academic year...",
+      "class": "Select class (optional)",
+      "subject": "e.g. Mathematics",
+      "preparedBy": "Name of preparer"
+    },
+
+    "photos": {
+      "title": "Photos",
+      "upload": "Upload Photo",
+      "uploading": "Uploading...",
+      "caption": "Caption (optional)",
+      "captionPlaceholder": "Enter caption for this photo...",
+      "addCaption": "Click to add caption",
+      "hint": "JPEG, PNG or WebP · Max 10MB per photo",
+      "noPhotos": "No photos yet. Upload photos to include them in the report.",
+      "moveUp": "Move up",
+      "moveDown": "Move down"
+    },
+
+    "success": {
+      "created": "Report created successfully.",
+      "updated": "Report updated successfully.",
+      "deleted": "Report deleted successfully.",
+      "downloaded": "Word document downloaded.",
+      "photoUploaded": "Photo uploaded successfully.",
+      "photoDeleted": "Photo deleted."
+    },
+
+    "errors": {
+      "loadFailed": "Failed to load report data.",
+      "saveFailed": "Failed to save report.",
+      "deleteFailed": "Failed to delete report.",
+      "downloadFailed": "Failed to generate Word document.",
+      "photoUploadFailed": "Failed to upload photo.",
+      "photoDeleteFailed": "Failed to delete photo.",
+      "reorderFailed": "Failed to reorder photos.",
+      "teacherRequired": "Please select a teacher.",
+      "yearRequired": "Please select an academic year.",
+      "subjectRequired": "Subject is required.",
+      "dateRequired": "Date of observation is required."
+    }
   }
 }

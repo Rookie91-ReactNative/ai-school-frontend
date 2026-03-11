@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+﻿import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import UnauthorizedPage from './pages/UnauthorizedPage';
@@ -23,6 +23,7 @@ import EventReportPage from './pages/EventReportPage';
 import ImportStudentsPage from './pages/ImportStudentsPage';
 import LateStudentsReportPage from './pages/LateStudentsReportPage';
 import LateCheckInPage from './pages/LateCheckInPage';
+import PencerapanPage from './pages/PencerapanPage';
 
 function App() {
     return (
@@ -34,7 +35,8 @@ function App() {
 
                 {/* Protected Routes */}
                 <Route element={<Layout />}>
-                    {/* Dashboard - Accessible to all authenticated users */}
+
+                    {/* Dashboard — Accessible to all authenticated users */}
                     <Route
                         path="/dashboard"
                         element={
@@ -44,7 +46,7 @@ function App() {
                         }
                     />
 
-                    {/* SuperAdmin Only Routes */}
+                    {/* ── SuperAdmin Only ─────────────────────────────── */}
                     <Route
                         path="/schools"
                         element={
@@ -68,7 +70,7 @@ function App() {
                         }
                     />
 
-                    {/* School Management Routes */}
+                    {/* ── School Management ───────────────────────────── */}
                     <Route
                         path="/teachers"
                         element={
@@ -85,15 +87,6 @@ function App() {
                         element={
                             <ProtectedRoute requiredPermission="ManageTeams">
                                 <TeamsPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route path="/event-report"
-                        element={
-                            <ProtectedRoute
-                                requiredPermission="EventReports"
-                                requiredRole={['SchoolAdmin']}>
-                                <EventReportPage />
                             </ProtectedRoute>
                         }
                     />
@@ -176,41 +169,6 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
-
-                    {/* Late Students Report */}
-                    <Route
-                        path="/late-report"
-                        element={
-                            <ProtectedRoute
-                                requiredPermission="ViewAttendance"
-                                alternativePermission="ViewAttendanceRecords"
-                                requiredRole={['SchoolAdmin', 'Teacher', 'Staff']}
-                            >
-                                <LateStudentsReportPage />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    {/* Late Students check in */}
-                    <Route
-                        path="/late-check-in"
-                        element={
-                            <ProtectedRoute>
-                                <LateCheckInPage />
-                            </ProtectedRoute>
-                        }
-                    />
-
-                    {/* Page can access by all users. */}
-                    <Route
-                        path="/events"
-                        element={
-                            <ProtectedRoute>
-                                <EventsPage />
-                            </ProtectedRoute>
-                        }
-                    />
-
                     <Route
                         path="/import-students"
                         element={
@@ -223,7 +181,59 @@ function App() {
                         }
                     />
 
-                    {/* Settings - Accessible to all authenticated users */}
+                    {/* ── Reports ─────────────────────────────────────── */}
+                    <Route
+                        path="/event-report"
+                        element={
+                            <ProtectedRoute
+                                requiredPermission="EventReports"
+                                requiredRole={['SchoolAdmin']}
+                            >
+                                <EventReportPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/late-report"
+                        element={
+                            <ProtectedRoute
+                                requiredPermission="ViewAttendance"
+                                alternativePermission="ViewAttendanceRecords"
+                                requiredRole={['SchoolAdmin', 'Teacher', 'Staff']}
+                            >
+                                <LateStudentsReportPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/pencerapan"
+                        element={
+                            <ProtectedRoute
+                                requiredPermission="ViewReports"
+                                requiredRole={['SchoolAdmin']}
+                            >
+                                <PencerapanPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* ── General ─────────────────────────────────────── */}
+                    <Route
+                        path="/events"
+                        element={
+                            <ProtectedRoute>
+                                <EventsPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/late-check-in"
+                        element={
+                            <ProtectedRoute>
+                                <LateCheckInPage />
+                            </ProtectedRoute>
+                        }
+                    />
                     <Route
                         path="/settings"
                         element={
@@ -232,12 +242,13 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
+
                 </Route>
 
                 {/* Redirect root to dashboard */}
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-                {/* 404 - Not Found */}
+                {/* 404 — fallback to dashboard */}
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
         </BrowserRouter>

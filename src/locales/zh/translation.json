@@ -78,7 +78,13 @@
     "allClasses": "所有班级",
     "showing": "显示",
     "of": "共",
-    "upload": "上传"
+    "upload": "上传",
+    "all": "全部",
+    "clear": "清除",
+    "deleting": "删除中...",
+    "filter": "筛选",
+    "saving": "保存中...",
+    "view": "查看"
   },
   "nav": {
     "dashboard": "仪表板",
@@ -100,7 +106,9 @@
     "eventsReport": "活动报告",
     "importStudents": "输入学生",
     "lateReport": "迟到报告",
-    "lateCheckIn": "迟到签到"
+    "lateCheckIn": "迟到签到",
+    "reports": "报告",
+    "pencerapan": "课堂观察报告"
   },
   "unauthorized": {
     "title": "访问被拒绝",
@@ -882,7 +890,10 @@
     "userAccountMsg2": "如果密码是自动生成的，则会在创建后显示一次。请务必保存！",
     "userAccountMsg3": "ℹ️ 教师账号将默认创建，无需登录权限。您可以稍后创建用户账号。",
     "createTeacherUserAcct": "创建教师和用户帐户",
-    "usingCustomPassword": "使用自定义密码"
+    "usingCustomPassword": "使用自定义密码",
+    "isAdmin": "学校行政人员",
+    "adminPosition": "行政职位",
+    "adminPositionPlaceholder": "例：副校长"
   },
   "teams": {
     "title": "团队与活动",
@@ -1655,5 +1666,81 @@
     "samePassword": "新密码不能与当前密码相同",
     "success": "密码修改成功！",
     "failed": "密码修改失败"
+  },
+
+  "pencerapan": {
+    "title": "课堂观察报告",
+    "subtitle": "管理课堂观察图文报告（Laporan Bergambar Pencerapan）",
+    "newReport": "新增报告",
+    "createTitle": "创建课堂观察报告",
+    "editTitle": "编辑课堂观察报告",
+    "detailTitle": "报告详情",
+    "deleteTitle": "删除报告",
+    "deleteConfirm": "此操作无法撤销，报告及其所有照片将被永久删除。",
+    "downloadWord": "下载 Word",
+    "downloading": "下载中...",
+    "searchPlaceholder": "按教师、科目或班级搜索...",
+    "noReports": "没有找到报告",
+    "noReportsHint": "创建一份新的课堂观察报告以开始使用。",
+    "showing": "显示 {{count}} / 共 {{total}} 份报告",
+    "stats": {
+      "total": "报告总数",
+      "draft": "草稿",
+      "finalized": "已完成"
+    },
+    "fields": {
+      "teacher": "教师",
+      "academicYear": "学年",
+      "pencerapanNo": "观察编号",
+      "subject": "科目",
+      "date": "日期",
+      "time": "时间",
+      "timeStart": "开始时间",
+      "timeEnd": "结束时间",
+      "class": "班级",
+      "status": "状态",
+      "preparedBy": "填报人",
+      "photos": "照片"
+    },
+    "placeholders": {
+      "teacher": "请选择教师...",
+      "year": "请选择学年...",
+      "class": "选择班级（可选）",
+      "subject": "例如：数学",
+      "preparedBy": "填报人姓名"
+    },
+    "photos": {
+      "title": "照片",
+      "upload": "上传照片",
+      "uploading": "上传中...",
+      "caption": "说明（可选）",
+      "captionPlaceholder": "为这张照片输入说明...",
+      "addCaption": "点击添加说明",
+      "hint": "JPEG、PNG 或 WebP · 每张最大 10MB",
+      "noPhotos": "暂无照片，请上传照片以加入报告。",
+      "moveUp": "上移",
+      "moveDown": "下移"
+    },
+    "success": {
+      "created": "报告创建成功。",
+      "updated": "报告更新成功。",
+      "deleted": "报告删除成功。",
+      "downloaded": "Word 文档已下载。",
+      "photoUploaded": "照片上传成功。",
+      "photoDeleted": "照片已删除。"
+    },
+    "errors": {
+      "loadFailed": "加载报告数据失败。",
+      "saveFailed": "保存报告失败。",
+      "deleteFailed": "删除报告失败。",
+      "downloadFailed": "生成 Word 文档失败。",
+      "photoUploadFailed": "照片上传失败。",
+      "photoDeleteFailed": "照片删除失败。",
+      "reorderFailed": "照片排序更新失败。",
+      "teacherRequired": "请选择教师。",
+      "yearRequired": "请选择学年。",
+      "subjectRequired": "科目为必填项。",
+      "dateRequired": "观察日期为必填项。"
+    }
   }
 }

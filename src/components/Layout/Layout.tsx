@@ -3,14 +3,36 @@ import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
     LogOut, LayoutDashboard, Users, ClipboardList, Video,
     Brain, Settings, Building, UserPlus, Calendar, GraduationCap,
-    BookOpen, UserCircle, Proportions, Clock, KeyRound,
-    Menu, X, ChevronRight
+    BookOpen, UserCircle, Clock, KeyRound,
+    Menu, X, ChevronRight, BarChart2, FileText, ChevronDown,
+    ClipboardCheck, ScrollText
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 import { authService } from '../../services/authService';
 import LanguageSwitcher from '../LanguageSwitcher';
 import ChangePasswordModal from '../modals/ChangePasswordModal';
+
+// ─────────────────────────────────────────────────────────────
+//  TYPES
+// ─────────────────────────────────────────────────────────────
+
+interface NavItemDef {
+    path: string;
+    icon: React.ElementType;
+    label: string;
+    permission: string | null;
+    alternativePermission?: string;
+    roles: string[];
+    activeClassName?: string;
+}
+
+interface NavGroupDef {
+    groupKey: string;
+    icon: React.ElementType;
+    label: string;
+    children: NavItemDef[];
+}
 
 const Layout = () => {
     const { logout } = useAuth();
@@ -25,6 +47,9 @@ const Layout = () => {
 
     // Change Password Modal state
     const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+
+    // Reports group open/closed state
+    const [isReportsOpen, setIsReportsOpen] = useState(false);
 
     // Close mobile menu on route change
     useEffect(() => {
@@ -53,8 +78,11 @@ const Layout = () => {
         return userPermissions.includes(permission);
     };
 
-    // Define navigation items with their required permissions
-    const allNavigationItems = [
+    // ─────────────────────────────────────────────────────────
+    //  FLAT NAVIGATION ITEMS (non-report pages)
+    // ─────────────────────────────────────────────────────────
+
+    const allNavigationItems: NavItemDef[] = [
         {
             path: '/dashboard',
             icon: LayoutDashboard,
@@ -128,15 +156,6 @@ const Layout = () => {
             roles: ['SchoolAdmin', 'Teacher', 'Staff']
         },
         {
-            path: '/late-report',
-            icon: Clock,
-            label: t('nav.lateReport', 'Late Report'),
-            permission: 'ViewAttendance',
-            alternativePermission: 'ViewAttendanceRecords',
-            roles: ['SchoolAdmin', 'Teacher', 'Staff'],
-            activeClassName: 'bg-amber-500'
-        },
-        {
             path: '/cameras',
             icon: Video,
             label: t('nav.cameras'),
@@ -172,13 +191,6 @@ const Layout = () => {
             roles: ['SchoolAdmin', 'Teacher']
         },
         {
-            path: '/event-report',
-            icon: Proportions,
-            label: t('nav.eventsReport'),
-            permission: 'EventReports',
-            roles: ['SchoolAdmin', 'Teacher']
-        },
-        {
             path: '/settings',
             icon: Settings,
             label: t('nav.settings'),
@@ -187,32 +199,83 @@ const Layout = () => {
         },
     ];
 
-    // Filter navigation items based on role and permissions
-    const getFilteredNavigation = () => {
-        return allNavigationItems.filter(item => {
-            const hasRole = item.roles.includes(currentUser?.userRole || '');
-            if (!hasRole) return false;
-            if (!item.permission) return true;
-            const hasPrimaryPermission = hasPermission(item.permission);
-            const hasAlternativePermission = item.alternativePermission
-                ? hasPermission(item.alternativePermission)
-                : false;
-            return hasPrimaryPermission || hasAlternativePermission;
-        });
+    // ─────────────────────────────────────────────────────────
+    //  REPORTS GROUP DEFINITION
+    // ─────────────────────────────────────────────────────────
+
+    const reportsGroup: NavGroupDef = {
+        groupKey: 'reports',
+        icon: BarChart2,
+        label: t('nav.reports', 'Reports'),
+        children: [
+            {
+                path: '/event-report',
+                icon: ScrollText,
+                label: t('nav.eventsReport'),
+                permission: 'EventReports',
+                roles: ['SchoolAdmin', 'Teacher'],
+            },
+            {
+                path: '/late-report',
+                icon: ClipboardCheck,
+                label: t('nav.lateReport', 'Late Report'),
+                permission: 'ViewAttendance',
+                alternativePermission: 'ViewAttendanceRecords',
+                roles: ['SchoolAdmin', 'Teacher', 'Staff'],
+            },
+            {
+                path: '/pencerapan',
+                icon: FileText,
+                label: t('nav.pencerapan', 'Pencerapan'),
+                permission: 'ViewReports',
+                roles: ['SchoolAdmin'],
+            },
+        ],
     };
 
-    const navigationItems = getFilteredNavigation();
+    // ─────────────────────────────────────────────────────────
+    //  FILTER HELPERS
+    // ─────────────────────────────────────────────────────────
 
-    // Navigation Item Component
-    const NavItem = ({ item, isMobile = false }: { item: typeof allNavigationItems[0], isMobile?: boolean }) => (
+    const canSeeItem = (item: NavItemDef): boolean => {
+        const hasRole = item.roles.includes(currentUser?.userRole || '');
+        if (!hasRole) return false;
+        if (!item.permission) return true;
+        const hasPrimary = hasPermission(item.permission);
+        const hasAlt = item.alternativePermission
+            ? hasPermission(item.alternativePermission)
+            : false;
+        return hasPrimary || hasAlt;
+    };
+
+    const navigationItems = allNavigationItems.filter(canSeeItem);
+
+    // Visible children of the Reports group
+    const visibleReportItems = reportsGroup.children.filter(canSeeItem);
+
+    // Auto-expand reports group when current route is a report page
+    const isAnyReportActive = visibleReportItems.some(c =>
+        location.pathname.startsWith(c.path)
+    );
+    const reportsGroupOpen = isReportsOpen || isAnyReportActive;
+
+    // ─────────────────────────────────────────────────────────
+    //  NAV ITEM COMPONENT (flat)
+    // ─────────────────────────────────────────────────────────
+
+    const NavItem = ({
+        item,
+        isMobile = false,
+    }: {
+        item: NavItemDef;
+        isMobile?: boolean;
+    }) => (
         <NavLink
             to={item.path}
             onClick={() => isMobile && setIsMobileMenuOpen(false)}
             className={({ isActive }) =>
                 `flex items-center gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-all duration-200 ${isActive
-                    ? item.path === '/late-report'
-                        ? 'bg-amber-500 text-white shadow-sm'
-                        : 'bg-blue-600 text-white shadow-sm'
+                    ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
                 }`
             }
@@ -223,8 +286,64 @@ const Layout = () => {
         </NavLink>
     );
 
+    // ─────────────────────────────────────────────────────────
+    //  REPORTS GROUP COMPONENT
+    // ─────────────────────────────────────────────────────────
+
+    const ReportsGroup = ({ isMobile = false }: { isMobile?: boolean }) => {
+        if (visibleReportItems.length === 0) return null;
+
+        return (
+            <div>
+                {/* Group header */}
+                <button
+                    onClick={() => setIsReportsOpen(prev => !prev)}
+                    className={`w-full flex items-center gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-all duration-200 font-medium text-sm sm:text-base ${isAnyReportActive
+                            ? 'text-blue-700 bg-blue-50'
+                            : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
+                        }`}
+                >
+                    <BarChart2 className="w-5 h-5 flex-shrink-0" />
+                    <span className="flex-1 text-left">{reportsGroup.label}</span>
+                    {reportsGroupOpen
+                        ? <ChevronDown className="w-4 h-4 flex-shrink-0 text-gray-400" />
+                        : <ChevronRight className="w-4 h-4 flex-shrink-0 text-gray-400" />
+                    }
+                </button>
+
+                {/* Children */}
+                {reportsGroupOpen && (
+                    <div className="ml-3 mt-0.5 mb-1 pl-3 border-l-2 border-gray-100 space-y-0.5">
+                        {visibleReportItems.map(child => (
+                            <NavLink
+                                key={child.path}
+                                to={child.path}
+                                onClick={() => isMobile && setIsMobileMenuOpen(false)}
+                                className={({ isActive }) =>
+                                    `flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${isActive
+                                        ? 'bg-blue-600 text-white shadow-sm'
+                                        : 'text-gray-600 hover:bg-gray-100 active:bg-gray-200'
+                                    }`
+                                }
+                            >
+                                <child.icon className="w-4 h-4 flex-shrink-0" />
+                                <span className="font-medium flex-1">{child.label}</span>
+                                {isMobile && <ChevronRight className="w-4 h-4 text-gray-400" />}
+                            </NavLink>
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    // ─────────────────────────────────────────────────────────
+    //  RENDER
+    // ─────────────────────────────────────────────────────────
+
     return (
         <div className="flex h-screen h-[100dvh] bg-gray-50">
+
             {/* ==================== DESKTOP SIDEBAR ==================== */}
             <aside className="hidden lg:flex w-64 bg-white border-r border-gray-200 flex-col flex-shrink-0">
                 {/* Logo */}
@@ -239,14 +358,17 @@ const Layout = () => {
 
                 {/* Navigation */}
                 <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto scrollbar-thin">
-                    {navigationItems.length > 0 ? (
-                        navigationItems.map((item) => (
-                            <NavItem key={item.path} item={item} />
-                        ))
-                    ) : (
+                    {navigationItems.length === 0 && visibleReportItems.length === 0 ? (
                         <div className="text-center text-gray-500 text-sm py-4">
                             {t('nav.noAccess')}
                         </div>
+                    ) : (
+                        <>
+                            {navigationItems.map((item) => (
+                                <NavItem key={item.path} item={item} />
+                            ))}
+                            <ReportsGroup />
+                        </>
                     )}
                 </nav>
 
@@ -344,14 +466,17 @@ const Layout = () => {
 
                 {/* Mobile Navigation */}
                 <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-                    {navigationItems.length > 0 ? (
-                        navigationItems.map((item) => (
-                            <NavItem key={item.path} item={item} isMobile={true} />
-                        ))
-                    ) : (
+                    {navigationItems.length === 0 && visibleReportItems.length === 0 ? (
                         <div className="text-center text-gray-500 text-sm py-4">
                             {t('nav.noAccess')}
                         </div>
+                    ) : (
+                        <>
+                            {navigationItems.map((item) => (
+                                <NavItem key={item.path} item={item} isMobile={true} />
+                            ))}
+                            <ReportsGroup isMobile={true} />
+                        </>
                     )}
                 </nav>
 
