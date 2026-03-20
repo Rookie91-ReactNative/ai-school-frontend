@@ -3,7 +3,7 @@ import { CheckCircle, AlertCircle, Loader, Upload, X } from 'lucide-react';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://ai-school.azurewebsites.net/api'; //'http://localhost:5001/api';
 const AUTH_HEADER = '9B3F7D33-9681-CA49-98B5-465021004D38';
 
 const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx', '.png', '.jpg', '.jpeg',
