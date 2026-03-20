@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
-import { X, Shield, Check, Info, Users, BookOpen, BarChart2, Settings, Brain } from 'lucide-react';
+import { X, Shield, Check, Info, Users, BookOpen, BarChart2, Settings, Brain, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 
@@ -83,6 +83,16 @@ const FRONTEND_GROUPS: FrontendGroup[] = [
             'ManageSchoolStaff',
             'ManageTeams',
             'ManageUsers',
+        ],
+    },
+    {
+        label: 'Leave & Homework',
+        icon: FileText,
+        color: 'bg-teal-50',
+        textColor: 'text-teal-800',
+        permissions: [
+            'ViewLeave',
+            'ViewHomework',
         ],
     },
     {

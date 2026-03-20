@@ -191,20 +191,20 @@ const Layout = () => {
             permission: null,
             roles: ['SchoolAdmin', 'Teacher']
         },
-        //{
-        //    path: '/leave',
-        //    icon: FileText,
-        //    label: t('nav.leave'),
-        //    permission: null,
-        //    roles: ['SuperAdmin', 'SchoolAdmin', 'Teacher', 'Staff']
-        //},
-        //{
-        //    path: '/homework',
-        //    icon: BookOpen,
-        //    label: t('nav.homework'),
-        //    permission: null,
-        //    roles: ['SchoolAdmin', 'Teacher']
-        //},
+        {
+            path: '/leave',
+            icon: FileText,
+            label: t('nav.leave'),
+            permission: 'ViewLeave',
+            roles: ['SchoolAdmin', 'Teacher']
+        },
+        {
+            path: '/homework',
+            icon: BookOpen,
+            label: t('nav.homework'),
+            permission: 'ViewHomework',
+            roles: ['SchoolAdmin', 'Teacher']
+        },
         {
             path: '/gallery',
             icon: Images,

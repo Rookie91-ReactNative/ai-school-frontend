@@ -228,21 +228,27 @@ function App() {
                     />
 
                     {/* ── General ─────────────────────────────────────── */}
-                    {/* ✅ NEW — Leave Management (all authenticated users can view; admin can edit) */}
+                    {/* Leave — SchoolAdmin + Teacher with ViewLeave permission */}
                     <Route
                         path="/leave"
                         element={
-                            <ProtectedRoute>
+                            <ProtectedRoute
+                                requiredPermission="ViewLeave"
+                                requiredRole={['SchoolAdmin', 'Teacher']}
+                            >
                                 <LeavePage />
                             </ProtectedRoute>
                         }
                     />
 
-                    {/* ✅ NEW — Homework Management (all authenticated users can view; admin can edit) */}
+                    {/* Homework — SchoolAdmin + Teacher with ViewHomework permission */}
                     <Route
                         path="/homework"
                         element={
-                            <ProtectedRoute>
+                            <ProtectedRoute
+                                requiredPermission="ViewHomework"
+                                requiredRole={['SchoolAdmin', 'Teacher']}
+                            >
                                 <HomeWorkPage />
                             </ProtectedRoute>
                         }
