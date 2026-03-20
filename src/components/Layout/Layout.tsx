@@ -3,9 +3,10 @@ import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
     LogOut, LayoutDashboard, Users, ClipboardList, Video,
     Brain, Settings, Building, UserPlus, Calendar, GraduationCap,
-    BookOpen, UserCircle, Clock, KeyRound,
+    BookOpen, UserCircle, /*Clock,*/ KeyRound,
     Menu, X, ChevronRight, BarChart2, FileText, ChevronDown,
-    ClipboardCheck, ScrollText
+    ClipboardCheck, ScrollText,
+    Images, Upload, FolderOpen, FileClock
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
@@ -176,19 +177,54 @@ const Layout = () => {
             permission: 'ImportData',
             roles: ['SchoolAdmin']
         },
-        {
-            path: '/late-check-in',
-            icon: Clock,
-            label: t('nav.lateCheckIn'),
-            permission: null,
-            roles: ['SchoolAdmin', 'Teacher']
-        },
+        //{
+        //    path: '/late-check-in',
+        //    icon: Clock,
+        //    label: t('nav.lateCheckIn'),
+        //    permission: null,
+        //    roles: ['SchoolAdmin', 'Teacher']
+        //},
         {
             path: '/events',
             icon: Calendar,
             label: t('nav.events'),
             permission: null,
             roles: ['SchoolAdmin', 'Teacher']
+        },
+        //{
+        //    path: '/leave',
+        //    icon: FileText,
+        //    label: t('nav.leave'),
+        //    permission: null,
+        //    roles: ['SuperAdmin', 'SchoolAdmin', 'Teacher', 'Staff']
+        //},
+        //{
+        //    path: '/homework',
+        //    icon: BookOpen,
+        //    label: t('nav.homework'),
+        //    permission: null,
+        //    roles: ['SchoolAdmin', 'Teacher']
+        //},
+        {
+            path: '/gallery',
+            icon: Images,
+            label: t('nav.gallery'),
+            permission: null,
+            roles: ['SuperAdmin', 'SchoolAdmin', 'Teacher', 'Staff']
+        },
+        {
+            path: '/laporan',
+            icon: Upload,
+            label: t('nav.laporanUpload'),
+            permission: null,
+            roles: ['SchoolAdmin', 'Teacher']
+        },
+        {
+            path: '/laporan-list',
+            icon: FolderOpen,
+            label: t('nav.laporanList'),
+            permission: null,
+            roles: ['SuperAdmin', 'SchoolAdmin', 'Teacher', 'Staff']
         },
         {
             path: '/settings',
@@ -227,7 +263,14 @@ const Layout = () => {
                 path: '/pencerapan',
                 icon: FileText,
                 label: t('nav.pencerapan', 'Pencerapan'),
-                permission: 'ViewReports',
+                permission: 'ViewPencerapan',
+                roles: ['SchoolAdmin'],
+            },
+            {
+                path: '/leave-report',
+                icon: FileClock,
+                label: t('nav.leaveReport'),
+                permission: 'ViewLeaveReport',
                 roles: ['SchoolAdmin'],
             },
         ],
@@ -299,8 +342,8 @@ const Layout = () => {
                 <button
                     onClick={() => setIsReportsOpen(prev => !prev)}
                     className={`w-full flex items-center gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg transition-all duration-200 font-medium text-sm sm:text-base ${isAnyReportActive
-                            ? 'text-blue-700 bg-blue-50'
-                            : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
+                        ? 'text-blue-700 bg-blue-50'
+                        : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
                         }`}
                 >
                     <BarChart2 className="w-5 h-5 flex-shrink-0" />

@@ -92,7 +92,8 @@ const FRONTEND_GROUPS: FrontendGroup[] = [
         textColor: 'text-amber-800',
         permissions: [
             'EventReports',
-            'ViewReports',
+            'ViewPencerapan',
+            'ViewLeaveReport',
         ],
     },
     {

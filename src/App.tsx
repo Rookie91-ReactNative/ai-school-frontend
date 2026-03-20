@@ -24,6 +24,16 @@ import ImportStudentsPage from './pages/ImportStudentsPage';
 import LateStudentsReportPage from './pages/LateStudentsReportPage';
 import LateCheckInPage from './pages/LateCheckInPage';
 import PencerapanPage from './pages/PencerapanPage';
+import HomeWorkPage from './pages/HomeWorkPage';
+import LeavePage from './pages/LeavePage';
+import LaporanPage from './pages/LaporanPage';
+import LaporanListPage from './pages/LaporanListPage';
+import LeaveReportPage from './pages/LeaveReportPage';
+import GalleryPage from './pages/GalleryPage';
+import TelegramLeavePage from './pages/TelegramWebApp/TelegramLeavePage';
+import TelegramHomeWorkPage from './pages/TelegramWebApp/TelegramHomeWorkPage';
+import TelegramUploadLaporanPage from './pages/TelegramWebApp/TelegramUploadLaporanPage';
+import TelegramViewLaporanPage from './pages/TelegramWebApp/TelegramViewLaporanPage';
 
 function App() {
     return (
@@ -218,6 +228,25 @@ function App() {
                     />
 
                     {/* ── General ─────────────────────────────────────── */}
+                    {/* ✅ NEW — Leave Management (all authenticated users can view; admin can edit) */}
+                    <Route
+                        path="/leave"
+                        element={
+                            <ProtectedRoute>
+                                <LeavePage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* ✅ NEW — Homework Management (all authenticated users can view; admin can edit) */}
+                    <Route
+                        path="/homework"
+                        element={
+                            <ProtectedRoute>
+                                <HomeWorkPage />
+                            </ProtectedRoute>
+                        }
+                    />
                     <Route
                         path="/events"
                         element={
@@ -234,6 +263,46 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
+                    {/* ✅ NEW — Laporan upload (all authenticated users) */}
+                    <Route
+                        path="/laporan"
+                        element={
+                            <ProtectedRoute>
+                                <LaporanPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* ✅ NEW — Laporan list/view */}
+                    <Route
+                        path="/laporan-list"
+                        element={
+                            <ProtectedRoute>
+                                <LaporanListPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* ✅ NEW — Leave report */}
+                    <Route
+                        path="/leave-report"
+                        element={
+                            <ProtectedRoute>
+                                <LeaveReportPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* ✅ NEW — Photo Gallery */}
+                    <Route
+                        path="/gallery"
+                        element={
+                            <ProtectedRoute>
+                                <GalleryPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
                     <Route
                         path="/settings"
                         element={
@@ -244,6 +313,13 @@ function App() {
                     />
 
                 </Route>
+
+                {/* ── Telegram Web App Routes — no Layout, no auth redirect ── */}
+                <Route path="/telegram/leave" element={<TelegramLeavePage />} />
+                <Route path="/telegram/homework" element={<TelegramHomeWorkPage />} />
+
+                <Route path="/telegram/upload-laporan" element={<TelegramUploadLaporanPage />} />
+                <Route path="/telegram/view-laporan" element={<TelegramViewLaporanPage />} />
 
                 {/* Redirect root to dashboard */}
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />

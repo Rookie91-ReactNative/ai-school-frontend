@@ -108,7 +108,13 @@
     "lateReport": "Laporan Lewat",
     "lateCheckIn": "Daftar Masuk Lewat",
     "reports": "Laporan",
-    "pencerapan": "Laporan Pencerapan"
+    "pencerapan": "Laporan Pencerapan",
+    "leave": "Rekod Cuti",
+    "homework": "Kerja Rumah",
+    "gallery": "Galeri",
+    "laporanUpload": "Muat Naik Laporan",
+    "laporanList": "Fail Laporan",
+    "leaveReport": "Laporan Cuti"
   },
   "unauthorized": {
     "title": "Akses Ditolak",
@@ -1746,5 +1752,113 @@
       "subjectRequired": "Mata pelajaran wajib diisi.",
       "dateRequired": "Tarikh pemerhatian wajib diisi."
     }
+  },
+
+  "leave": {
+    "title": "Rekod Cuti",
+    "subtitle": "Urus rekod cuti dan pemberitahuan ketidakhadiran guru",
+    "addRecord": "Tambah Rekod",
+    "editRecord": "Kemaskini Rekod",
+    "searchPlaceholder": "Cari nama, perkara atau tempat...",
+    "allTypes": "Semua Jenis",
+    "showing": "Menunjukkan {{count}} daripada {{total}} rekod",
+    "noRecords": "Tiada rekod cuti dijumpai",
+    "nama": "Nama",
+    "tarikh": "Tarikh",
+    "perkara": "Perkara",
+    "masa": "Masa",
+    "tempat": "Tempat",
+    "anjuran": "Anjuran",
+    "leaveType": "Jenis Cuti",
+    "applyDate": "Tarikh Permohonan",
+    "validationRequired": "Nama, Tarikh dan Perkara adalah wajib",
+    "confirmDelete": "Padam Rekod Cuti",
+    "confirmDeleteMsg": "Adakah anda pasti mahu memadamkan rekod cuti ini? Tindakan ini tidak boleh dibatalkan.",
+    "selectName": "Pilih Nama"
+  },
+
+  "homework": {
+    "title": "Kerja Rumah",
+    "subtitle": "Urus tugasan kerja rumah untuk setiap kelas",
+    "addRecord": "Tambah Kerja Rumah",
+    "editRecord": "Kemaskini Kerja Rumah",
+    "searchPlaceholder": "Cari kandungan atau mata pelajaran...",
+    "allClasses": "Semua Kelas",
+    "selectClass": "Pilih kelas...",
+    "showing": "Menunjukkan {{count}} daripada {{total}} rekod",
+    "noRecords": "Tiada rekod kerja rumah dijumpai",
+    "class": "Kelas",
+    "subject": "Mata Pelajaran",
+    "content": "Kandungan",
+    "date": "Tarikh",
+    "photo": "Foto",
+    "photoUrl": "URL Foto",
+    "photoUrlHint": "Tampal URL Azure Blob foto yang dimuat naik melalui Telegram",
+    "viewPhoto": "Lihat Foto",
+    "validationRequired": "Kelas, Mata Pelajaran dan Kandungan adalah wajib",
+    "confirmDelete": "Padam Kerja Rumah",
+    "confirmDeleteMsg": "Adakah anda pasti mahu memadamkan rekod kerja rumah ini? Tindakan ini tidak boleh dibatalkan."
+  },
+
+  "laporan": {
+    "uploadTitle": "Muat Naik Laporan",
+    "uploadSubtitle": "Muat naik fail laporan guru ke Azure Blob Storage",
+    "category": "Kategori",
+    "selectCategory": "Pilih kategori...",
+    "selectCategoryFirst": "Sila pilih kategori terlebih dahulu",
+    "selectFilesFirst": "Sila pilih sekurang-kurangnya satu fail",
+    "dropZoneTitle": "Klik atau seret fail ke sini untuk muat naik",
+    "dropZoneHint": "Maksimum {{max}}MB setiap fail",
+    "selectedFiles": "{{count}} fail dipilih",
+    "uploading": "Memuat naik...",
+    "uploadButton": "Muat Naik Fail",
+    "uploadComplete": "Muat Naik Selesai",
+    "filesUploaded": "{{count}} fail berjaya dimuat naik",
+    "filesReplaced": "{{count}} fail digantikan (nama fail sama sudah wujud)",
+    "errorFileType": "jenis fail tidak dibenarkan",
+    "errorFileSize": "melebihi had {{max}}MB"
+  },
+
+  "laporanList": {
+    "title": "Fail Laporan",
+    "subtitle": "Lihat dan urus fail laporan yang dimuat naik",
+    "selectCategory": "Tapis mengikut kategori:",
+    "allCategories": "Semua",
+    "allYears": "Semua Tahun",
+    "searchPlaceholder": "Cari nama fail atau kategori...",
+    "showing": "Menunjukkan {{count}} daripada {{total}} fail",
+    "noFiles": "Tiada fail laporan dijumpai",
+    "fileName": "Nama Fail",
+    "category": "Kategori",
+    "year": "Tahun",
+    "fileSize": "Saiz",
+    "uploadedOn": "Tarikh Muat Naik",
+    "download": "Muat Turun",
+    "confirmDelete": "Padam Fail",
+    "confirmDeleteMsg": "Adakah anda pasti mahu memadamkan fail ini? Tindakan ini tidak boleh dibatalkan.",
+    "statsFiles": "Fail",
+    "statsTotalSize": "Jumlah Saiz",
+    "statsYear": "Tahun"
+  },
+
+  "leaveReport": {
+    "title": "Laporan Cuti",
+    "subtitle": "Lihat semua rekod cuti guru dengan penapis tarikh dan jenis",
+    "searchPlaceholder": "Cari nama atau perkara...",
+    "showing": "Menunjukkan {{count}} daripada {{total}} rekod",
+    "noRecords": "Tiada rekod cuti dijumpai untuk penapis yang dipilih"
+  },
+
+  "gallery": {
+    "title": "Galeri Foto",
+    "subtitle": "{{count}} album",
+    "backToAlbums": "Kembali ke Album",
+    "searchAlbums": "Cari album...",
+    "noAlbums": "Tiada album foto dijumpai",
+    "noPhotos": "Tiada foto dalam album ini",
+    "photos": "{{count}} foto",
+    "photoCount": "{{count}} foto",
+    "confirmDelete": "Padam Foto",
+    "confirmDeleteMsg": "Adakah anda pasti mahu memadamkan foto ini? Tindakan ini tidak boleh dibatalkan."
   }
 }

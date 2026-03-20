@@ -108,7 +108,13 @@
     "lateReport": "迟到报告",
     "lateCheckIn": "迟到签到",
     "reports": "报告",
-    "pencerapan": "课堂观察报告"
+    "pencerapan": "课堂观察报告",
+    "leave": "请假记录",
+    "homework": "作业",
+    "gallery": "相册",
+    "laporanUpload": "上传报告",
+    "laporanList": "查看报告",
+    "leaveReport": "请假报告"
   },
   "unauthorized": {
     "title": "访问被拒绝",
@@ -1742,5 +1748,113 @@
       "subjectRequired": "科目为必填项。",
       "dateRequired": "观察日期为必填项。"
     }
+  },
+
+  "leave": {
+    "title": "请假记录",
+    "subtitle": "管理老师的请假及外出通知",
+    "addRecord": "添加记录",
+    "editRecord": "编辑记录",
+    "searchPlaceholder": "搜索姓名、事项或地点...",
+    "allTypes": "全部类型",
+    "showing": "显示 {{count}} / {{total}} 条记录",
+    "noRecords": "没有请假记录",
+    "nama": "姓名",
+    "tarikh": "日期",
+    "perkara": "事项",
+    "masa": "时间",
+    "tempat": "地点",
+    "anjuran": "主办单位",
+    "leaveType": "假期类型",
+    "applyDate": "申请日期",
+    "validationRequired": "姓名、日期和事项为必填项",
+    "confirmDelete": "删除请假记录",
+    "confirmDeleteMsg": "确定要删除此请假记录吗？此操作无法撤销。",
+    "selectName": "请选择姓名"
+  },
+
+  "homework": {
+    "title": "作业",
+    "subtitle": "管理各班级作业",
+    "addRecord": "添加作业",
+    "editRecord": "编辑作业",
+    "searchPlaceholder": "搜索内容或科目...",
+    "allClasses": "全部班级",
+    "selectClass": "选择班级...",
+    "showing": "显示 {{count}} / {{total}} 条记录",
+    "noRecords": "没有作业记录",
+    "class": "班级",
+    "subject": "科目",
+    "content": "内容",
+    "date": "日期",
+    "photo": "照片",
+    "photoUrl": "照片链接",
+    "photoUrlHint": "粘贴通过 Telegram 上传的照片 Azure Blob 链接",
+    "viewPhoto": "查看照片",
+    "validationRequired": "班级、科目和内容为必填项",
+    "confirmDelete": "删除作业",
+    "confirmDeleteMsg": "确定要删除此作业记录吗？此操作无法撤销。"
+  },
+
+  "laporan": {
+    "uploadTitle": "上传报告",
+    "uploadSubtitle": "上传老师报告文件至 Azure Blob Storage",
+    "category": "类别",
+    "selectCategory": "请选择类别...",
+    "selectCategoryFirst": "请先选择类别",
+    "selectFilesFirst": "请选择至少一个文件",
+    "dropZoneTitle": "点击或拖拽文件到此处上传",
+    "dropZoneHint": "每个文件最大 {{max}}MB",
+    "selectedFiles": "已选择 {{count}} 个文件",
+    "uploading": "上传中...",
+    "uploadButton": "上传文件",
+    "uploadComplete": "上传完成",
+    "filesUploaded": "成功上传 {{count}} 个文件",
+    "filesReplaced": "{{count}} 个文件已替换（同名文件已存在）",
+    "errorFileType": "不支持此文件类型",
+    "errorFileSize": "超过 {{max}}MB 限制"
+  },
+
+  "laporanList": {
+    "title": "报告文件",
+    "subtitle": "查看和管理已上传的报告文件",
+    "selectCategory": "按类别筛选：",
+    "allCategories": "全部",
+    "allYears": "全部年份",
+    "searchPlaceholder": "搜索文件名或类别...",
+    "showing": "显示 {{count}} / {{total}} 个文件",
+    "noFiles": "没有找到报告文件",
+    "fileName": "文件名",
+    "category": "类别",
+    "year": "年份",
+    "fileSize": "大小",
+    "uploadedOn": "上传日期",
+    "download": "下载",
+    "confirmDelete": "删除文件",
+    "confirmDeleteMsg": "确定要删除此文件吗？此操作无法撤销。",
+    "statsFiles": "文件数量",
+    "statsTotalSize": "总大小",
+    "statsYear": "年份"
+  },
+
+  "leaveReport": {
+    "title": "请假报告",
+    "subtitle": "查看所有老师请假记录，支持日期和类型筛选",
+    "searchPlaceholder": "搜索姓名或事项...",
+    "showing": "显示 {{count}} / {{total}} 条记录",
+    "noRecords": "所选筛选条件下没有请假记录"
+  },
+
+  "gallery": {
+    "title": "相册",
+    "subtitle": "共 {{count}} 个相册",
+    "backToAlbums": "返回相册",
+    "searchAlbums": "搜索相册...",
+    "noAlbums": "没有找到相册",
+    "noPhotos": "此相册没有照片",
+    "photos": "{{count}} 张照片",
+    "photoCount": "共 {{count}} 张照片",
+    "confirmDelete": "删除照片",
+    "confirmDeleteMsg": "确定要删除此照片吗？此操作无法撤销。"
   }
 }

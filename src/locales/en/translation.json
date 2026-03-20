@@ -108,7 +108,13 @@
     "lateReport": "Late Report",
     "lateCheckIn": "Late Check-in",
     "reports": "Reports",
-    "pencerapan": "Observation Reports"
+    "pencerapan": "Observation Reports",
+    "leave": "Leave Records",
+    "homework": "Homework",
+    "gallery": "Gallery",
+    "laporanUpload": "Upload Report",
+    "laporanList": "Report Files",
+    "leaveReport": "Leave Report"
   },
   "unauthorized": {
     "title": "Access Denied",
@@ -1848,5 +1854,113 @@
       "subjectRequired": "Subject is required.",
       "dateRequired": "Date of observation is required."
     }
+  },
+
+  "leave": {
+    "title": "Leave Records",
+    "subtitle": "Manage teacher leave and absence notifications",
+    "addRecord": "Add Record",
+    "editRecord": "Edit Record",
+    "searchPlaceholder": "Search by name, matter or venue...",
+    "allTypes": "All Types",
+    "showing": "Showing {{count}} of {{total}} records",
+    "noRecords": "No leave records found",
+    "nama": "Name",
+    "tarikh": "Date",
+    "perkara": "Matter",
+    "masa": "Time",
+    "tempat": "Venue",
+    "anjuran": "Organiser",
+    "leaveType": "Leave Type",
+    "applyDate": "Applied Date",
+    "validationRequired": "Name, Date and Matter are required",
+    "confirmDelete": "Delete Leave Record",
+    "confirmDeleteMsg": "Are you sure you want to delete this leave record? This action cannot be undone.",
+    "selectName": "Select Name"
+  },
+
+  "homework": {
+    "title": "Homework",
+    "subtitle": "Manage class homework assignments",
+    "addRecord": "Add Homework",
+    "editRecord": "Edit Homework",
+    "searchPlaceholder": "Search by content or subject...",
+    "allClasses": "All Classes",
+    "selectClass": "Select class...",
+    "showing": "Showing {{count}} of {{total}} records",
+    "noRecords": "No homework records found",
+    "class": "Class",
+    "subject": "Subject",
+    "content": "Content",
+    "date": "Date",
+    "photo": "Photo",
+    "photoUrl": "Photo URL",
+    "photoUrlHint": "Paste the Azure Blob URL of the uploaded photo (uploaded via Telegram)",
+    "viewPhoto": "View Photo",
+    "validationRequired": "Class, Subject and Content are required",
+    "confirmDelete": "Delete Homework",
+    "confirmDeleteMsg": "Are you sure you want to delete this homework record? This action cannot be undone."
+  },
+
+  "laporan": {
+    "uploadTitle": "Upload Report",
+    "uploadSubtitle": "Upload teacher reports to Azure Blob Storage",
+    "category": "Category",
+    "selectCategory": "Select a category...",
+    "selectCategoryFirst": "Please select a category first",
+    "selectFilesFirst": "Please select at least one file",
+    "dropZoneTitle": "Click or drag files here to upload",
+    "dropZoneHint": "Maximum {{max}}MB per file",
+    "selectedFiles": "{{count}} file(s) selected",
+    "uploading": "Uploading...",
+    "uploadButton": "Upload Files",
+    "uploadComplete": "Upload Complete",
+    "filesUploaded": "{{count}} file(s) uploaded successfully",
+    "filesReplaced": "{{count}} file(s) replaced (same filename already existed)",
+    "errorFileType": "file type not allowed",
+    "errorFileSize": "exceeds {{max}}MB limit"
+  },
+
+  "laporanList": {
+    "title": "Report Files",
+    "subtitle": "View and manage uploaded report files",
+    "selectCategory": "Filter by category:",
+    "allCategories": "All",
+    "allYears": "All Years",
+    "searchPlaceholder": "Search by filename or category...",
+    "showing": "Showing {{count}} of {{total}} files",
+    "noFiles": "No report files found",
+    "fileName": "File Name",
+    "category": "Category",
+    "year": "Year",
+    "fileSize": "Size",
+    "uploadedOn": "Uploaded On",
+    "download": "Download",
+    "confirmDelete": "Delete File",
+    "confirmDeleteMsg": "Are you sure you want to delete this file? This action cannot be undone.",
+    "statsFiles": "FILES",
+    "statsTotalSize": "TOTAL SIZE",
+    "statsYear": "SHOWING YEAR"
+  },
+
+  "leaveReport": {
+    "title": "Leave Report",
+    "subtitle": "View all teacher leave records with date and type filters",
+    "searchPlaceholder": "Search by name or matter...",
+    "showing": "Showing {{count}} of {{total}} records",
+    "noRecords": "No leave records found for the selected filters"
+  },
+
+  "gallery": {
+    "title": "Photo Gallery",
+    "subtitle": "{{count}} albums",
+    "backToAlbums": "Back to Albums",
+    "searchAlbums": "Search albums...",
+    "noAlbums": "No photo albums found",
+    "noPhotos": "No photos in this album",
+    "photos": "{{count}} photos",
+    "photoCount": "{{count}} photos",
+    "confirmDelete": "Delete Photo",
+    "confirmDeleteMsg": "Are you sure you want to delete this photo? This action cannot be undone."
   }
 }

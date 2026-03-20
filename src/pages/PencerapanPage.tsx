@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SUBJECTS, getSubjectLabel } from '../utils/subjects';
 import {
     FileText, Plus, Search, Filter, Download, Edit, Trash2,
     X, Upload, Image, Eye, CheckCircle,
@@ -37,26 +38,8 @@ type ModalMode = 'create' | 'edit' | 'detail' | 'delete' | null;
 // value = Malay name  → saved to DB, printed in Word doc
 // en/zh/ms = display label per UI language
 
-interface SubjectOption { value: string; en: string; zh: string; ms: string; }
 
-const SUBJECTS: SubjectOption[] = [
-    { value: 'Bahasa Malaysia', en: 'Malay Language', zh: '国语', ms: 'Bahasa Malaysia' },
-    { value: 'Bahasa Cina', en: 'Chinese Language', zh: '华文', ms: 'Bahasa Cina' },
-    { value: 'Bahasa Inggeris', en: 'English Language', zh: '英文', ms: 'Bahasa Inggeris' },
-    { value: 'Matematik', en: 'Mathematics', zh: '数学', ms: 'Matematik' },
-    { value: 'Sains', en: 'Science', zh: '科学', ms: 'Sains' },
-    { value: 'Pendidikan Islam', en: 'Islamic Education', zh: '伊斯兰教育', ms: 'Pendidikan Islam' },
-    { value: 'Pendidikan Moral', en: 'Moral Education', zh: '道德教育', ms: 'Pendidikan Moral' },
-    { value: 'Sejarah', en: 'History', zh: '历史', ms: 'Sejarah' },
-    { value: 'Geografi', en: 'Geography', zh: '地理', ms: 'Geografi' },
-    { value: 'Pendidikan Jasmani & Kesihatan', en: 'Physical & Health Education', zh: '体育与健康', ms: 'Pendidikan Jasmani & Kesihatan' },
-    { value: 'Pendidikan Seni Visual', en: 'Visual Art Education', zh: '美术教育', ms: 'Pendidikan Seni Visual' },
-    { value: 'Muzik', en: 'Music', zh: '音乐', ms: 'Muzik' },
-    { value: 'Reka Bentuk & Teknologi', en: 'Design & Technology', zh: '设计与技术', ms: 'Reka Bentuk & Teknologi' },
-    { value: 'Pendidikan Kesenian', en: 'Arts Education', zh: '艺术教育', ms: 'Pendidikan Kesenian' },
-    { value: 'Teknologi Maklumat & Komunikasi', en: 'ICT', zh: '信息科技', ms: 'Teknologi Maklumat & Komunikasi' },
-    { value: 'Sivik', en: 'Civic Studies', zh: '公民教育', ms: 'Sivik' },
-];
+// SUBJECTS imported from '../utils/subjects'
 
 // ─── 6 Fixed photo sections (matches Word report layout) ──────────────────────
 // sortBase: photos in this section use sortOrder range [sortBase .. sortBase+99]
@@ -77,11 +60,7 @@ const getSectionPhotos = (photos: PencerapanPhoto[], section: PhotoSection): Pen
         .filter(p => p.caption === section.label)
         .sort((a, b) => a.sortOrder - b.sortOrder);
 
-const getSubjectLabel = (s: SubjectOption, lang: string): string => {
-    if (lang.startsWith('zh')) return s.zh;
-    if (lang.startsWith('ms') || lang.startsWith('my')) return s.ms;
-    return s.en;
-};
+// getSubjectLabel imported from '../utils/subjects'
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
