@@ -103,6 +103,7 @@ const FRONTEND_GROUPS: FrontendGroup[] = [
         permissions: [
             'EventReports',
             'ViewPencerapan',
+            'ViewMyPDP',
             'ViewLeaveReport',
         ],
     },

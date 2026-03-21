@@ -114,7 +114,8 @@
     "gallery": "Gallery",
     "laporanUpload": "Upload Report",
     "laporanList": "Report Files",
-    "leaveReport": "Leave Report"
+    "leaveReport": "Leave Report",
+    "mypdp": "MyPDP Assessment"
   },
   "unauthorized": {
     "title": "Access Denied",
@@ -1966,5 +1967,59 @@
     "photoCount": "{{count}} photos",
     "confirmDelete": "Delete Photo",
     "confirmDeleteMsg": "Are you sure you want to delete this photo? This action cannot be undone."
+  },
+
+  "mypdp": {
+    "title": "MyPDP Assessments",
+    "subtitle": "SKPM Standard 4 PdPc classroom observation assessments",
+    "newAssessment": "New Assessment",
+    "selfAssess": "Self Assessment (Pertama)",
+    "createTitle": "New PdPc Assessment",
+    "editTitle": "Edit Assessment",
+    "viewTitle": "Assessment Details",
+    "deleteTitle": "Delete Assessment",
+    "deleteConfirm": "Are you sure you want to delete this assessment? This action cannot be undone.",
+    "searchPlaceholder": "Search by teacher, subject or class...",
+    "noAssessments": "No assessments found",
+    "noAssessmentsHint": "Create a new PdPc assessment to get started.",
+    "scoring": "Scoring (0 = tidak mengambil kira, 4 = highest)",
+    "exportWord": "Export Word",
+    "exportPdf": "Export PDF",
+    "fields": {
+      "teacher": "Teacher",
+      "subject": "Subject",
+      "class": "Class",
+      "academicYear": "Academic Year",
+      "sessionType": "Session",
+      "date": "Date",
+      "totalScore": "Total Score",
+      "rating": "Rating",
+      "ulasan": "Overall Remarks"
+    },
+    "placeholders": {
+      "teacher": "Select teacher...",
+      "subject": "e.g. 华文, Matematik",
+      "class": "Select class...",
+      "year": "Select academic year...",
+      "ulasan": "Enter overall remarks (optional)..."
+    },
+    "success": {
+      "created": "Assessment created successfully.",
+      "updated": "Assessment updated successfully.",
+      "deleted": "Assessment deleted successfully.",
+      "exported": "Document exported successfully."
+    },
+    "errors": {
+      "loadFailed": "Failed to load assessment data.",
+      "saveFailed": "Failed to save assessment.",
+      "deleteFailed": "Failed to delete assessment.",
+      "exportFailed": "Failed to export document.",
+      "teacherRequired": "Please select a teacher.",
+      "classRequired": "Please select a class.",
+      "subjectRequired": "Subject is required.",
+      "yearRequired": "Please select an academic year.",
+      "dateRequired": "Assessment date is required.",
+      "locked": "This assessment is locked. Admin evaluation already exists."
+    }
   }
 }

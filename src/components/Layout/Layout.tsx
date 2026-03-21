@@ -206,6 +206,13 @@ const Layout = () => {
             roles: ['SchoolAdmin', 'Teacher']
         },
         {
+            path: '/mypdp',
+            icon: ClipboardCheck,
+            label: t('nav.mypdp'),
+            permission: 'ViewMyPDP',
+            roles: ['SchoolAdmin', 'Teacher']
+        },
+        {
             path: '/gallery',
             icon: Images,
             label: t('nav.gallery'),

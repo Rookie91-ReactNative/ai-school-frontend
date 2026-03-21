@@ -1860,5 +1860,61 @@
     "photoCount": "共 {{count}} 张照片",
     "confirmDelete": "删除照片",
     "confirmDeleteMsg": "确定要删除此照片吗？此操作无法撤销。"
+  },
+
+  "mypdp": {
+    "title": "MyPDP 评估",
+    "subtitle": "SKPM Standard 4 PdPc 课堂教学评估",
+    "newAssessment": "新建评估",
+    "createTitle": "新建 PdPc 评估",
+    "editTitle": "编辑评估",
+    "viewTitle": "评估详情",
+    "deleteTitle": "删除评估",
+    "deleteConfirm": "确定要删除这份评估吗？此操作无法撤销。",
+    "searchPlaceholder": "搜索老师、科目或班级...",
+    "noAssessments": "暂无评估记录",
+    "noAssessmentsHint": "新建一份 PdPc 评估开始吧。",
+    "scoring": "评分（0 = 不符合，4 = 最高）",
+    "exportWord": "导出 Word",
+    "exportPdf": "导出 PDF",
+
+    "fields": {
+      "teacher": "老师",
+      "subject": "科目",
+      "class": "班级",
+      "academicYear": "学年",
+      "sessionType": "评估次数",
+      "date": "日期",
+      "totalScore": "总分",
+      "rating": "评级",
+      "ulasan": "总体评语"
+    },
+
+    "placeholders": {
+      "teacher": "选择老师...",
+      "subject": "例如：华文、数学",
+      "class": "选择班级...",
+      "year": "选择学年...",
+      "ulasan": "输入总体评语（选填）..."
+    },
+
+    "success": {
+      "created": "评估创建成功。",
+      "updated": "评估更新成功。",
+      "deleted": "评估删除成功。",
+      "exported": "文档导出成功。"
+    },
+
+    "errors": {
+      "loadFailed": "加载评估数据失败。",
+      "saveFailed": "保存评估失败。",
+      "deleteFailed": "删除评估失败。",
+      "exportFailed": "导出文档失败。",
+      "teacherRequired": "请选择老师。",
+      "classRequired": "请选择班级。",
+      "subjectRequired": "科目为必填项。",
+      "yearRequired": "请选择学年。",
+      "dateRequired": "评估日期为必填项。"
+    }
   }
 }

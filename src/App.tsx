@@ -24,6 +24,7 @@ import ImportStudentsPage from './pages/ImportStudentsPage';
 import LateStudentsReportPage from './pages/LateStudentsReportPage';
 import LateCheckInPage from './pages/LateCheckInPage';
 import PencerapanPage from './pages/PencerapanPage';
+import MyPdpPage from './pages/MyPdpPage';
 import HomeWorkPage from './pages/HomeWorkPage';
 import LeavePage from './pages/LeavePage';
 import LaporanPage from './pages/LaporanPage';
@@ -223,6 +224,19 @@ function App() {
                                 requiredRole={['SchoolAdmin']}
                             >
                                 <PencerapanPage />
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    {/* ✅ NEW — MyPDP / SKPM Standard 4 PdPc Assessment */}
+                    <Route
+                        path="/mypdp"
+                        element={
+                            <ProtectedRoute
+                                requiredPermission="ViewMyPDP"
+                                requiredRole={['SchoolAdmin', 'Teacher']}
+                            >
+                                <MyPdpPage />
                             </ProtectedRoute>
                         }
                     />

@@ -1864,5 +1864,61 @@
     "photoCount": "{{count}} foto",
     "confirmDelete": "Padam Foto",
     "confirmDeleteMsg": "Adakah anda pasti mahu memadamkan foto ini? Tindakan ini tidak boleh dibatalkan."
+  },
+
+  "mypdp": {
+    "title": "Penilaian MyPDP",
+    "subtitle": "Penilaian PdPc Standard 4 SKPM",
+    "newAssessment": "Penilaian Baru",
+    "createTitle": "Penilaian PdPc Baharu",
+    "editTitle": "Kemaskini Penilaian",
+    "viewTitle": "Butiran Penilaian",
+    "deleteTitle": "Padam Penilaian",
+    "deleteConfirm": "Adakah anda pasti untuk memadam penilaian ini? Tindakan ini tidak boleh dibatalkan.",
+    "searchPlaceholder": "Cari mengikut guru, mata pelajaran atau kelas...",
+    "noAssessments": "Tiada rekod penilaian ditemui",
+    "noAssessmentsHint": "Cipta penilaian PdPc baharu untuk bermula.",
+    "scoring": "Pemarkahan (0 = tidak mengambil kira, 4 = tertinggi)",
+    "exportWord": "Eksport Word",
+    "exportPdf": "Eksport PDF",
+
+    "fields": {
+      "teacher": "Guru",
+      "subject": "Mata Pelajaran",
+      "class": "Kelas",
+      "academicYear": "Tahun Akademik",
+      "sessionType": "Sesi Pencerapan",
+      "date": "Tarikh",
+      "totalScore": "Jumlah Skor",
+      "rating": "Taraf",
+      "ulasan": "Ulasan Keseluruhan"
+    },
+
+    "placeholders": {
+      "teacher": "Pilih guru...",
+      "subject": "cth. Bahasa Malaysia, Matematik",
+      "class": "Pilih kelas...",
+      "year": "Pilih tahun akademik...",
+      "ulasan": "Masukkan ulasan keseluruhan (pilihan)..."
+    },
+
+    "success": {
+      "created": "Penilaian berjaya dicipta.",
+      "updated": "Penilaian berjaya dikemaskini.",
+      "deleted": "Penilaian berjaya dipadam.",
+      "exported": "Dokumen berjaya dieksport."
+    },
+
+    "errors": {
+      "loadFailed": "Gagal memuatkan data penilaian.",
+      "saveFailed": "Gagal menyimpan penilaian.",
+      "deleteFailed": "Gagal memadam penilaian.",
+      "exportFailed": "Gagal mengeksport dokumen.",
+      "teacherRequired": "Sila pilih guru.",
+      "classRequired": "Sila pilih kelas.",
+      "subjectRequired": "Mata pelajaran diperlukan.",
+      "yearRequired": "Sila pilih tahun akademik.",
+      "dateRequired": "Tarikh penilaian diperlukan."
+    }
   }
 }
