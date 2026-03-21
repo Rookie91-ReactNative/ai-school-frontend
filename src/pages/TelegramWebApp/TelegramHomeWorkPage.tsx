@@ -65,9 +65,9 @@ const TelegramHomeWorkPage = () => {
             setError(null);
             const fd = new FormData();
             fd.append('file', file);
-            const res = await fetch(`${API_URL}/homework/upload-photo`, {
+            fd.append('authHeader', AUTH_HEADER);  // ✅ use AuthHeader — no JWT needed
+            const res = await fetch(`${API_URL}/telegram/homework/upload-photo`, {
                 method: 'POST',
-                headers: { Authorization: `Bearer ${getTokenFromUrl()}` },
                 body: fd,
             });
             const data = await res.json();
