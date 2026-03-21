@@ -21,7 +21,7 @@ interface FormData {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://ai-school.azurewebsites.net/api'; //'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 const AUTH_HEADER = '9B3F7D33-9681-CA49-98B5-465021004D38';
 
 const getTokenFromUrl = () => new URLSearchParams(window.location.search).get('token') ?? '';
@@ -135,12 +135,12 @@ const TelegramLeavePage = () => {
                     <p className="text-gray-500 text-sm">
                         Permohonan cuti anda telah dihantar kepada pentadbiran sekolah.
                     </p>
-                    <button
-                        onClick={() => window.close()}
-                        className="mt-6 w-full py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors"
-                    >
-                        Tutup
-                    </button>
+                    {/*<button*/}
+                    {/*    onClick={() => window.close()}*/}
+                    {/*    className="mt-6 w-full py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors"*/}
+                    {/*>*/}
+                    {/*    Tutup*/}
+                    {/*</button>*/}
                 </div>
             </div>
         );
