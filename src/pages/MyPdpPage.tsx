@@ -38,6 +38,22 @@ const SESSION_TYPES_ADMIN: SessionType[] = ['PENCERAPAN KEDUA', 'PENCERAPAN KETI
 // All session types — used in filter dropdown
 const SESSION_TYPES: SessionType[] = ['PENCERAPAN PERTAMA', 'PENCERAPAN KEDUA', 'PENCERAPAN KETIGA'];
 
+// ─── Format criteria text — split on ii. iii. iv. into separate lines ──────────
+const formatCriteria = (text: string): React.ReactNode => {
+    if (!text) return null;
+    const parts = text.split(/(?=\bii\.|\biii\.|\biv\.)/);
+    // Single part (no roman numeral segments) → keep parent's text-center
+    if (parts.length <= 1) return <>{text}</>;
+    // Multiple parts → all left-aligned
+    return (
+        <>
+            {parts.map((part, idx) => (
+                <span key={idx} className="block text-left">{part.trim()}</span>
+            ))}
+        </>
+    );
+};
+
 // ─── Rating badge ────────────────────────────────────────────────────────────
 const RatingBadge = ({ rating }: { rating: string }) => {
     const cfg = RATING_CONFIG[rating as RatingType] ?? { color: 'text-gray-600', bg: 'bg-gray-100', label: rating };
@@ -154,7 +170,7 @@ const StandardSection = ({
                                             >
                                                 <span className={`text-base font-bold ${isSelected ? 'text-white' : 'text-gray-700'}`}>{v}</span>
                                                 <span className={`text-[10px] leading-tight text-center ${isSelected ? 'text-blue-100' : 'text-gray-500'}`}>
-                                                    {getCriteriaText(v, idx)}
+                                                    {formatCriteria(getCriteriaText(v, idx))}
                                                 </span>
                                             </button>
                                         );
@@ -178,7 +194,7 @@ const StandardSection = ({
                                     <div className={`rounded-lg px-3 py-2 text-xs leading-relaxed ${current > 0 ? 'bg-blue-50 text-blue-700' : 'bg-gray-50 text-gray-500'
                                         }`}>
                                         <span className="font-semibold">Skor {current}: </span>
-                                        {getCriteriaText(current, 4 - current)}
+                                        {formatCriteria(getCriteriaText(current, 4 - current))}
                                     </div>
                                 </div>
                             </div>
@@ -332,7 +348,10 @@ export default function MyPdpPage() {
 
     // ── Open modals ──────────────────────────────────────────────────────────
     const openCreate = () => {
-        setFormTeacher(0); setFormClass(0); setFormSubject('');
+        const myTeacherId = isTeacher
+            ? (teachers.find(tc => tc.userID === user?.userId)?.teacherID ?? 0)
+            : 0;
+        setFormTeacher(myTeacherId); setFormClass(0); setFormSubject('');
         setFormYear(activeYear?.academicYearID ?? 0);
         // Teacher always creates PERTAMA; Admin creates KEDUA by default
         setFormSession(isTeacher ? 'PENCERAPAN PERTAMA' : 'PENCERAPAN KEDUA');
