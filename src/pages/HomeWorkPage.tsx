@@ -1,6 +1,6 @@
-﻿import { useState, useEffect } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, Plus, Search, Edit, Trash2, AlertCircle, X, Image } from 'lucide-react';
+import { BookOpen, Plus, Search, Edit, Trash2, AlertCircle, X, Image, Upload, Loader } from 'lucide-react';
 import api from '../services/api';
 import axios from 'axios';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
@@ -55,6 +55,8 @@ const HomeWorkPage = () => {
     const [editingRecord, setEditingRecord] = useState<HomeWork | null>(null);
     const [formData, setFormData] = useState<HomeWorkFormData>(emptyForm);
     const [saving, setSaving] = useState(false);
+    const [uploadingPhoto, setUploadingPhoto] = useState(false);
+    const photoInputRef = useRef<HTMLInputElement>(null);
     const [formError, setFormError] = useState<string | null>(null);
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [previewPhoto, setPreviewPhoto] = useState<string | null>(null);
@@ -104,6 +106,28 @@ const HomeWorkPage = () => {
             subject: record.subject ?? '', photoUrl: record.photoUrl ?? '',
         });
         setFormError(null); setIsModalOpen(true);
+    };
+
+    const handlePhotoUpload = async (file: File) => {
+        if (!file) return;
+        const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowed.includes(file.type)) { setFormError(t('homework.photoTypeError')); return; }
+        if (file.size > 10 * 1024 * 1024) { setFormError(t('homework.photoSizeError')); return; }
+        try {
+            setUploadingPhoto(true);
+            setFormError(null);
+            const fd = new FormData();
+            fd.append('file', file);
+            const res = await api.post('/homework/upload-photo', fd, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            setFormData(prev => ({ ...prev, photoUrl: res.data.data.url }));
+        } catch (err) {
+            if (axios.isAxiosError(err)) setFormError(err.response?.data?.message ?? t('common.error'));
+            else setFormError(t('common.error'));
+        } finally {
+            setUploadingPhoto(false);
+        }
     };
 
     const handleSave = async () => {
@@ -277,13 +301,29 @@ const HomeWorkPage = () => {
                                 <textarea rows={4} value={formData.content} onChange={e => setFormData({ ...formData, content: e.target.value })}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 resize-none" />
                             </div>
-                            {/* Photo URL */}
+                            {/* Photo Upload */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">{t('homework.photoUrl')}</label>
-                                <input type="text" placeholder="https://..." value={formData.photoUrl}
-                                    onChange={e => setFormData({ ...formData, photoUrl: e.target.value })}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
-                                <p className="text-xs text-gray-400 mt-1">{t('homework.photoUrlHint')}</p>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">{t('homework.photo')}</label>
+                                <input ref={photoInputRef} type="file" accept="image/*" className="hidden"
+                                    onChange={e => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }} />
+                                {formData.photoUrl ? (
+                                    <div className="relative">
+                                        <img src={formData.photoUrl} alt="preview" className="w-full h-40 object-cover rounded-lg border border-gray-200" />
+                                        <button type="button" onClick={() => { setFormData(prev => ({ ...prev, photoUrl: '' })); if (photoInputRef.current) photoInputRef.current.value = ''; }}
+                                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button type="button" onClick={() => photoInputRef.current?.click()} disabled={uploadingPhoto}
+                                        className="w-full flex items-center justify-center gap-2 px-3 py-6 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-green-400 hover:text-green-600 transition-colors disabled:opacity-50">
+                                        {uploadingPhoto
+                                            ? <><Loader className="w-4 h-4 animate-spin" /> {t('common.loading')}...</>
+                                            : <><Upload className="w-4 h-4" /> {t('homework.uploadPhoto')}</>
+                                        }
+                                    </button>
+                                )}
+                                <p className="text-xs text-gray-400 mt-1">{t('homework.photoHint')}</p>
                             </div>
                         </div>
                         <div className="flex justify-end gap-3 px-5 py-4 border-t bg-gray-50 rounded-b-xl">

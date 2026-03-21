@@ -1,7 +1,7 @@
-﻿import { useState, useEffect } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 /*import { useTranslation } from 'react-i18next';*/
 import { SUBJECTS, getSubjectLabel } from '../../utils/subjects';
-import { CheckCircle, AlertCircle, Loader, Image } from 'lucide-react';
+import { CheckCircle, AlertCircle, Loader, Upload, X } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -14,7 +14,7 @@ interface FormData {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://ai-school.azurewebsites.net/api'; //'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 const AUTH_HEADER = '9B3F7D33-9681-CA49-98B5-465021004D38';
 
 const getTokenFromUrl = () => new URLSearchParams(window.location.search).get('token') ?? '';
@@ -31,6 +31,8 @@ const TelegramHomeWorkPage = () => {
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [uploadingPhoto, setUploadingPhoto] = useState(false);
+    const photoInputRef = useRef<HTMLInputElement>(null);
 
     // ── Load classes ───────────────────────────────────────────────────────────
 
@@ -49,6 +51,35 @@ const TelegramHomeWorkPage = () => {
             if (list.length > 0) setForm(f => ({ ...f, className: list[0] }));
         } catch {
             // leave empty — user can type manually
+        }
+    };
+
+    // ── Photo upload ───────────────────────────────────────────────────────────
+
+    const handlePhotoUpload = async (file: File) => {
+        const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowed.includes(file.type)) { setError('Jenis fail tidak dibenarkan. Sila pilih imej.'); return; }
+        if (file.size > 10 * 1024 * 1024) { setError('Saiz fail melebihi had 10MB.'); return; }
+        try {
+            setUploadingPhoto(true);
+            setError(null);
+            const fd = new FormData();
+            fd.append('file', file);
+            const res = await fetch(`${API_URL}/homework/upload-photo`, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${getTokenFromUrl()}` },
+                body: fd,
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setForm(f => ({ ...f, photoUrl: data.data.url }));
+            } else {
+                setError(data.message ?? 'Gagal muat naik foto.');
+            }
+        } catch {
+            setError('Tiada sambungan. Sila cuba lagi.');
+        } finally {
+            setUploadingPhoto(false);
         }
     };
 
@@ -71,6 +102,7 @@ const TelegramHomeWorkPage = () => {
                     Content: form.content,
                     Class: form.className,
                     Subject: form.subject,
+                    PhotoUrl: form.photoUrl || null,
                 }),
             });
 
@@ -102,17 +134,18 @@ const TelegramHomeWorkPage = () => {
                         onClick={() => {
                             setSubmitted(false);
                             setForm(f => ({ ...f, subject: '', content: '', photoUrl: '' }));
+                            if (photoInputRef.current) photoInputRef.current.value = '';
                         }}
                         className="mt-4 w-full py-2.5 bg-green-600 text-white rounded-xl text-sm font-medium hover:bg-green-700 transition-colors"
                     >
                         Tambah Lagi
                     </button>
-                    <button
-                        onClick={() => window.close()}
-                        className="mt-2 w-full py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition-colors"
-                    >
-                        Tutup
-                    </button>
+                    {/*<button*/}
+                    {/*    onClick={() => window.close()}*/}
+                    {/*    className="mt-2 w-full py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition-colors"*/}
+                    {/*>*/}
+                    {/*    Tutup*/}
+                    {/*</button>*/}
                 </div>
             </div>
         );
@@ -188,22 +221,31 @@ const TelegramHomeWorkPage = () => {
                         />
                     </div>
 
-                    {/* URL Foto (optional) */}
+                    {/* Foto (optional) */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            <Image className="w-3.5 h-3.5 inline mr-1" />
-                            URL Foto <span className="text-gray-400 font-normal">(pilihan)</span>
+                            Foto <span className="text-gray-400 font-normal">(pilihan)</span>
                         </label>
-                        <input
-                            type="text"
-                            placeholder="https://..."
-                            value={form.photoUrl}
-                            onChange={e => setForm(f => ({ ...f, photoUrl: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-                        />
-                        <p className="text-xs text-gray-400 mt-1">
-                            Tampal pautan foto dari Telegram jika ada.
-                        </p>
+                        <input ref={photoInputRef} type="file" accept="image/*" className="hidden"
+                            onChange={e => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f); }} />
+                        {form.photoUrl ? (
+                            <div className="relative">
+                                <img src={form.photoUrl} alt="preview" className="w-full h-40 object-cover rounded-xl border border-gray-200" />
+                                <button type="button"
+                                    onClick={() => { setForm(f => ({ ...f, photoUrl: '' })); if (photoInputRef.current) photoInputRef.current.value = ''; }}
+                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                                    <X className="w-3 h-3" />
+                                </button>
+                            </div>
+                        ) : (
+                            <button type="button" onClick={() => photoInputRef.current?.click()} disabled={uploadingPhoto}
+                                className="w-full flex items-center justify-center gap-2 px-3 py-6 border-2 border-dashed border-gray-300 rounded-xl text-sm text-gray-500 hover:border-green-400 hover:text-green-600 transition-colors disabled:opacity-50">
+                                {uploadingPhoto
+                                    ? <><Loader className="w-4 h-4 animate-spin" /> Memuat naik...</>
+                                    : <><Upload className="w-4 h-4" /> Pilih Foto</>
+                                }
+                            </button>
+                        )}
                     </div>
 
                     {/* Error */}

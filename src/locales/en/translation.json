@@ -1899,7 +1899,11 @@
     "viewPhoto": "View Photo",
     "validationRequired": "Class, Subject and Content are required",
     "confirmDelete": "Delete Homework",
-    "confirmDeleteMsg": "Are you sure you want to delete this homework record? This action cannot be undone."
+    "confirmDeleteMsg": "Are you sure you want to delete this homework record? This action cannot be undone.",
+    "uploadPhoto": "Click to upload photo",
+    "photoHint": "Max 10MB · JPG, PNG, GIF, WebP",
+    "photoTypeError": "Only image files are allowed",
+    "photoSizeError": "File size exceeds 10MB limit"
   },
 
   "laporan": {

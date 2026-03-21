@@ -1793,7 +1793,11 @@
     "viewPhoto": "查看照片",
     "validationRequired": "班级、科目和内容为必填项",
     "confirmDelete": "删除作业",
-    "confirmDeleteMsg": "确定要删除此作业记录吗？此操作无法撤销。"
+    "confirmDeleteMsg": "确定要删除此作业记录吗？此操作无法撤销。",
+    "uploadPhoto": "点击上传照片",
+    "photoHint": "最大 10MB · JPG, PNG, GIF, WebP",
+    "photoTypeError": "只允许上传图片文件",
+    "photoSizeError": "文件大小超过 10MB 限制"
   },
 
   "laporan": {

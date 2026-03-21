@@ -2,7 +2,7 @@ import axios from 'axios';
 import { authService } from './authService';
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'https://ai-school.azurewebsites.net/api', //'http://localhost:5001/api',
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api', // 'https://ai-school.azurewebsites.net/api', //'http://localhost:5001/api',
     headers: {
         'Content-Type': 'application/json',
     },

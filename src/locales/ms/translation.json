@@ -1797,7 +1797,11 @@
     "viewPhoto": "Lihat Foto",
     "validationRequired": "Kelas, Mata Pelajaran dan Kandungan adalah wajib",
     "confirmDelete": "Padam Kerja Rumah",
-    "confirmDeleteMsg": "Adakah anda pasti mahu memadamkan rekod kerja rumah ini? Tindakan ini tidak boleh dibatalkan."
+    "confirmDeleteMsg": "Adakah anda pasti mahu memadamkan rekod kerja rumah ini? Tindakan ini tidak boleh dibatalkan.",
+    "uploadPhoto": "Klik untuk muat naik foto",
+    "photoHint": "Maks 10MB · JPG, PNG, GIF, WebP",
+    "photoTypeError": "Hanya fail imej dibenarkan",
+    "photoSizeError": "Saiz fail melebihi had 10MB"
   },
 
   "laporan": {
